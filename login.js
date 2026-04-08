@@ -26,8 +26,9 @@ function sendOtp() {
   firebase.auth().signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
     .then((confirmationResult) => {
 
-      window.confirmationResult = confirmationResult;
-      window.location.href = "otp.html";
+     window.confirmationResult = confirmationResult;
+     window.confirmationResultGlobal = confirmationResult;
+     window.location.href = "otp.html";
 
     })
     .catch((error) => {
