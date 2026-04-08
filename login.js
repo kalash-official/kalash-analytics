@@ -29,7 +29,7 @@ function sendOtp() {
      window.confirmationResult = confirmationResult;
      window.confirmationResultGlobal = confirmationResult;
      window.location.href = "otp.html";
-
+     sessionStorage.setItem("verificationId", confirmationResult.verificationId);
     })
     .catch((error) => {
       alert(error.message);
