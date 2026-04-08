@@ -6,44 +6,25 @@
 <title>Verify OTP</title>
 <link rel="stylesheet" href="css/otp.css">
 </head>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
-  authDomain: "kalash2-2bf90.firebaseapp.com",
-  projectId: "kalash2-2bf90",
-  appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
-});
-</script>
-  
 <body>
 
 <div class="container">
-
   <h1>Verify OTP</h1>
   <p class="subtitle">Enter the code sent to your phone</p>
 
-  <!-- OTP Card -->
   <div class="card">
-
     <input type="number" id="otp" placeholder="Enter OTP">
 
     <div class="resend">
       <span>Didn't receive the code?</span>
       <span class="resend-btn" onclick="resendOtp()">Resend</span>
     </div>
-
   </div>
 
-  <!-- Timer -->
   <p class="timer" id="timer">02:00</p>
 
-  <!-- Button -->
   <button class="btn" onclick="verifyOtp()">Verify and Continue</button>
-
 </div>
 
 <!-- Loading -->
@@ -52,6 +33,22 @@ firebase.initializeApp({
   <p>Verifying OTP...</p>
 </div>
 
+<!-- ✅ Firebase (Correct order) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- ✅ Firebase Init -->
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
+  authDomain: "kalash2-2bf90.firebaseapp.com",
+  projectId: "kalash2-2bf90",
+  appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
+});
+</script>
+
+<!-- ✅ Your JS -->
 <script src="js/otp.js"></script>
 
 </body>
