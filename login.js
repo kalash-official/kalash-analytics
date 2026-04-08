@@ -32,7 +32,7 @@ function sendOtp() {
   //    sessionStorage.setItem("verificationId", confirmationResult.verificationId);
       
   //   })
-  //   .catch((error) => {
+  //   .catch((error) => { 
   //     alert(error.message);
   //     loading.style.display = "none";
   //     btn.disabled = false;
