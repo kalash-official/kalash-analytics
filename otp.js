@@ -1,56 +1,73 @@
 // DOM
-const phoneInput = document.querySelector("input");
-const btn = document.querySelector(".btn");
+const otpInput = document.getElementById("otp");
 const loading = document.getElementById("loading");
+const timerEl = document.getElementById("timer");
 
-// Recaptcha
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-  size: 'normal'
-});
+// ================= VERIFY OTP =================
+function verifyOtp() {
 
-// Click event
-btn.addEventListener("click", sendOtp);
-
-// FUNCTION (same as Android sendOtp)
-function sendOtp() {
-
-  let phone = phoneInput.value.trim();
+  let code = otpInput.value.trim();
 
   // 🔴 Validation (same as Android)
-  if (phone === "" || phone.length < 10) {
-    alert("Enter valid phone");
+  if (code === "" || code.length < 6) {
+    alert("Enter valid OTP");
     return;
   }
 
   // 🔄 Loading ON
   loading.style.display = "flex";
-  btn.disabled = true;
 
-  let fullPhone = "+91" + phone;
+  // Firebase verify
+  window.confirmationResult.confirm(code)
+    .then((result) => {
 
-  // Firebase call (same logic)
-  firebase.auth().signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
+      // ✅ Success (same as signInWithCredential)
+      alert("Login Success 🚀");
 
-    .then((confirmationResult) => {
+      // redirect (same as Intent)
+      window.location.href = "dashboard.html";
 
-      // save verificationId (same concept)
-      window.confirmationResult = confirmationResult;
-
-      // Navigate to OTP page (same as Intent)
-      window.location.href = "otp.html";
-
-      // loading OFF
-      loading.style.display = "none";
-      btn.disabled = false;
     })
-
     .catch((error) => {
 
-      // Error message (same as Toast)
-      alert("Error: " + error.message);
+      // ❌ Error (same as Toast)
+      alert("Invalid OTP");
 
       // loading OFF
       loading.style.display = "none";
-      btn.disabled = false;
     });
 }
+
+// ================= RESEND OTP =================
+function resendOtp() {
+
+  alert("Resending OTP...");
+
+  // 🔥 IMPORTANT:
+  // real resend ke liye phone number store karna padega
+  // abhi demo hai
+
+  // Example future logic:
+  // sendOtp() again
+
+}
+
+// ================= TIMER =================
+let time = 120; // 2 minutes
+
+const interval = setInterval(() => {
+
+  let minutes = Math.floor(time / 60);
+  let seconds = time % 60;
+
+  timerEl.innerText =
+    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+  if (time <= 0) {
+    clearInterval(interval);
+    timerEl.innerText = "Expired ⏱️";
+  }
+
+  time--;
+
+}, 1000);
