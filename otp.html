@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify OTP</title>
+<link rel="stylesheet" href="css/otp.css">
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Verify OTP</h1>
+  <p class="subtitle">Enter the code sent to your phone</p>
+
+  <!-- OTP Card -->
+  <div class="card">
+
+    <input type="number" id="otp" placeholder="Enter OTP">
+
+    <div class="resend">
+      <span>Didn't receive the code?</span>
+      <span class="resend-btn" onclick="resendOtp()">Resend</span>
+    </div>
+
+  </div>
+
+  <!-- Timer -->
+  <p class="timer" id="timer">02:00</p>
+
+  <!-- Button -->
+  <button class="btn" onclick="verifyOtp()">Verify and Continue</button>
+
+</div>
+
+<!-- Loading -->
+<div class="overlay" id="loading">
+  <div class="loader"></div>
+  <p>Verifying OTP...</p>
+</div>
+
+<script src="js/otp.js"></script>
+
+</body>
+</html>
