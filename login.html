@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalash Login</title>
+<link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- LOGO -->
+  <img src="images/kalash.jpg" class="logo" alt="Kalash Logo">
+
+  <h1>Welcome Back</h1>
+  <p class="subtitle">Sign in to continue</p>
+
+  <!-- Phone Input -->
+  <div class="card">
+    <div class="phone-box">
+      
+      <div class="country">
+        <span>📞</span>
+        <span>+91</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <input type="tel" placeholder="Phone number">
+    </div>
+  </div>
+
+  <p class="disclaimer">
+    By logging in, you agree to our Terms and Conditions
+  </p>
+
+  <!-- ✅ FIXED BUTTON -->
+  <button class="btn">Send OTP</button>
+
+  <!-- ✅ REQUIRED -->
+  <div id="recaptcha-container"></div>
+
+</div>
+
+<!-- Loading -->
+<div class="overlay" id="loading">
+  <div class="loader"></div>
+  <p>Sending OTP...</p>
+</div>
+
+<!-- ✅ Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<!-- ✅ Firebase Init -->
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
+  authDomain: "kalash2-2bf90.firebaseapp.com",
+  projectId: "kalash2-2bf90",
+  appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
+};
+
+firebase.initializeApp(firebaseConfig);
+</script>
+
+<!-- ✅ JS LAST -->
+<script src="js/login.js"></script>
+
+</body>
+</html>
