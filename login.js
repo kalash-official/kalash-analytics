@@ -23,17 +23,36 @@ function sendOtp() {
 
   let fullPhone = "+91" + phone;
 
-  firebase.auth().signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
-    .then((confirmationResult) => {
+  // firebase.auth().signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
+  //   .then((confirmationResult) => {
 
-     window.confirmationResult = confirmationResult;
-     window.confirmationResultGlobal = confirmationResult;
-     window.location.href = "otp.html";
-     sessionStorage.setItem("verificationId", confirmationResult.verificationId);
-    })
-    .catch((error) => {
-      alert(error.message);
-      loading.style.display = "none";
-      btn.disabled = false;
-    });
+  //    window.confirmationResult = confirmationResult;
+  //    window.confirmationResultGlobal = confirmationResult;
+  //    window.location.href = "otp.html";
+  //    sessionStorage.setItem("verificationId", confirmationResult.verificationId);
+      
+  //   })
+  //   .catch((error) => {
+  //     alert(error.message);
+  //     loading.style.display = "none";
+  //     btn.disabled = false;
+  //   });
+
+  firebase.auth().signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
+  .then((confirmationResult) => {
+
+    // 🔥 FIRST save karo
+    sessionStorage.setItem("verificationId", confirmationResult.verificationId);
+
+    // optional (not needed now)
+    window.confirmationResult = confirmationResult;
+
+    // 🔥 THEN redirect
+    window.location.href = "otp.html";
+  })
+  .catch((error) => {
+    alert(error.message);
+    loading.style.display = "none";
+    btn.disabled = false;
+  });
 }
