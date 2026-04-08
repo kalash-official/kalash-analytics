@@ -1,0 +1,131 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  color: #111;
+}
+
+/* ================= NAVBAR ================= */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 50px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Logo */
+nav h2 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* Menu */
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 25px;
+}
+
+nav ul li {
+  cursor: pointer;
+  font-size: 15px;
+}
+
+/* Login Button (RIGHT - GREEN) */
+.login-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+/* Hover */
+.login-btn:hover {
+  background: #16a34a;
+  transform: scale(1.05);
+}
+
+/* ================= HERO ================= */
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.hero h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 18px;
+  color: #555;
+}
+
+/* Hero Button */
+.hero button {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.hero button:hover {
+  background: #333;
+}
+
+/* ================= SERVICES ================= */
+.services {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.services h2 {
+  margin-bottom: 30px;
+}
+
+/* Cards Container */
+.services {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Card */
+.card {
+  background: #f1f5f9;
+  margin: 15px;
+  padding: 25px;
+  width: 280px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+/* Card Hover */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* ================= FOOTER ================= */
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #f1f5f9;
+  margin-top: 40px;
+}
