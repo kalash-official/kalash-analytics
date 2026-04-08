@@ -1,7 +1,14 @@
+// 🔥 Check if verificationId exists
+const verificationId = sessionStorage.getItem("verificationId");
+
+if (!verificationId) {
+  alert("Session expired. Please login again.");
+  window.location.href = "login.html";
+}
+
 // DOM
 const otpInput = document.getElementById("otp");
 const loading = document.getElementById("loading");
-const timerEl = document.getElementById("timer");
 
 // ================= VERIFY OTP =================
 function verifyOtp() {
@@ -17,43 +24,48 @@ function verifyOtp() {
   // 🔄 Loading ON
   loading.style.display = "flex";
 
-  // Firebase verify
-  window.confirmationResult.confirm(code)
-    .then((result) => {
+  try {
+    // 🔥 Create credential manually (IMPORTANT FIX)
+    const credential = firebase.auth.PhoneAuthProvider.credential(
+      verificationId,
+      code
+    );
 
-      // ✅ Success (same as signInWithCredential)
-      alert("Login Success 🚀");
+    // 🔐 Sign in (same as Android signInWithCredential)
+    firebase.auth().signInWithCredential(credential)
+      .then((result) => {
 
-      // redirect (same as Intent)
-      window.location.href = "dashboard.html";
+        // ✅ Success
+        alert("Login Success 🚀");
 
-    })
-    .catch((error) => {
+        // Clear session
+        sessionStorage.removeItem("verificationId");
 
-      // ❌ Error (same as Toast)
-      alert("Invalid OTP");
+        // Redirect
+        window.location.href = "dashboard.html";
+      })
+      .catch((error) => {
 
-      // loading OFF
-      loading.style.display = "none";
-    });
+        // ❌ Error
+        alert("Invalid OTP");
+
+        loading.style.display = "none";
+      });
+
+  } catch (err) {
+    alert("Error: " + err.message);
+    loading.style.display = "none";
+  }
 }
 
 // ================= RESEND OTP =================
 function resendOtp() {
-
-  alert("Resending OTP...");
-
-  // 🔥 IMPORTANT:
-  // real resend ke liye phone number store karna padega
-  // abhi demo hai
-
-  // Example future logic:
-  // sendOtp() again
-
+  alert("Resend OTP feature coming soon 🔄");
 }
 
 // ================= TIMER =================
-let time = 120; // 2 minutes
+let time = 120;
+const timerEl = document.getElementById("timer");
 
 const interval = setInterval(() => {
 
