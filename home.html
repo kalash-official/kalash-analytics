@@ -347,12 +347,11 @@ function loadSwitchState() {
     });
 }
 
-sw.addEventListener("click", () => {
-  sw.disabled = true;
-  let live_status = sw.checked;
-  // reverse immediately (like Android)
-  sw.checked = !live_status;
+sw.addEventListener("change", () => {
 
+  sw.disabled = true;
+
+  let live_status = sw.checked; // correct value
   const sts = String(live_status);
 
   db.collection("users_setting")
@@ -362,10 +361,8 @@ sw.addEventListener("click", () => {
     .then((snapshot) => {
 
       if (snapshot.empty) {
-
         sw.checked = false;
         sw.disabled = false;
-
         alert("Your request is pending ⚠️");
         return;
       }
@@ -380,7 +377,7 @@ sw.addEventListener("click", () => {
         const wa_status = data.wa_status;
         const us_did = doc.id;
 
-        if (sts === "true") {
+        if (live_status) {
           checkAllConditionForLive(block_status, trade_id, us_did, reason, wa_status);
         } else {
           userOffline(us_did);
@@ -400,6 +397,7 @@ sw.addEventListener("click", () => {
 auth.onAuthStateChanged((user) => {
   if (user) {
     loadQueueBadge();
+    loadSwitchState();
   }
 });
 </script>
