@@ -242,7 +242,7 @@ input:checked + .slider::before{
       </div>
 
       <label class="switch">
-        <input type="checkbox">
+        <input type="checkbox" id="liveSwitch">
         <span class="slider"></span>
       </label>
     </div>
@@ -310,6 +310,40 @@ function loadQueueBadge() {
       if (error !== "FOUND") {
         console.error("Error:", error);
       }
+    });
+}
+
+  // 🔥 LIVE SWITCH LOGIC
+const sw = document.getElementById("liveSwitch");
+let userSettingDocId = null; // like SharedPreferences
+function loadSwitchState() {
+  db.collection("users_setting")
+    .where("number", "==", auth.currentUser.phoneNumber)
+    .limit(1)
+    .get()
+    .then((snapshot) => {
+
+      if (!snapshot.empty) {
+        snapshot.forEach((doc) => {
+
+          userSettingDocId = doc.id;
+
+          const data = doc.data();
+          const live_status = data.live_status;
+
+          sw.checked = (live_status === "true");
+
+          // save like SharedPreferences
+          localStorage.setItem("us_did", userSettingDocId);
+
+        });
+      } else {
+        sw.checked = false;
+      }
+
+    })
+    .catch(() => {
+      alert("Error loading switch");
     });
 }
 
