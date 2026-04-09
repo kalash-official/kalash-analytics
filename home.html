@@ -386,9 +386,9 @@ sw.addEventListener("change", () => {
       });
 
     })
-    .catch(() => {
-      alert("Error");
-      sw.disabled = false;
+    .catch((error) => {
+    console.error("FULL ERROR:", error);
+    alert(error.message);
     });
 
 });
