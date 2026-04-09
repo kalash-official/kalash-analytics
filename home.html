@@ -393,6 +393,23 @@ sw.addEventListener("change", () => {
 
 });
 
+function userOffline(docId) {
+  db.collection("users_setting").doc(docId)
+    .update({
+      live_status: "false"
+    })
+    .then(() => {
+      alert("You are offline now ❌");
+      sw.disabled = false;
+    })
+    .catch((error) => {
+      console.error(error);
+      alert("Error: " + error.message);
+      sw.disabled = false;
+    });
+
+}
+
 // 🔥 RUN AFTER LOGIN
 auth.onAuthStateChanged((user) => {
   if (user) {
