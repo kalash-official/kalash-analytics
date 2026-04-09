@@ -222,7 +222,65 @@ input:checked + .slider::before{
   </div>
 
 </div>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+<script>
+// 🔥 YOUR FIREBASE CONFIG (replace with your own)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// 🔥 QUEUE BADGE LOGIC
+function loadQueueBadge() {
+
+  const badge = document.getElementById("queueBadge");
+  let count = 0;
+
+  badge.style.display = "none";
+
+  db.collection("users_setting")
+    .where("live_srno", ">", 0)
+    .orderBy("live_srno", "asc")
+    .get()
+    .then((querySnapshot) => {
+
+      querySnapshot.forEach((doc) => {
+        count++;
+
+        let number = doc.data().number;
+
+        if (auth.currentUser && number === auth.currentUser.phoneNumber) {
+          badge.style.display = "flex";
+          badge.innerText = count;
+          throw "FOUND"; // break loop
+        }
+      });
+
+    })
+    .catch((error) => {
+      if (error !== "FOUND") {
+        console.error("Error:", error);
+      }
+    });
+}
+
+// 🔥 RUN AFTER LOGIN
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    loadQueueBadge();
+  }
+});
+</script>
 <script>
 // Sidebar toggle
 function toggleSidebar(){
