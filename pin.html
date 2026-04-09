@@ -11,23 +11,51 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* 🔥 PREMIUM BACKGROUND */
 body {
     margin: 0;
     height: 100vh;
-    background: #f6f7fb;
+    background: linear-gradient(135deg, #f0f4ff, #e6ecff);
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Card */
+/* Circles */
+body::before {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: rgba(0,123,255,0.12);
+    border-radius: 50%;
+    top: -80px;
+    left: -80px;
+}
+
+body::after {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    background: rgba(0,123,255,0.08);
+    border-radius: 50%;
+    bottom: -80px;
+    right: -80px;
+}
+
+/* 💎 Card */
 .card {
+    position: relative;
+    z-index: 1;
     width: 90%;
     max-width: 380px;
     padding: 28px;
     border-radius: 20px;
     background: #ffffff;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
     text-align: center;
 }
 
@@ -42,7 +70,7 @@ h1 {
     margin-bottom: 25px;
 }
 
-/* PIN Inputs */
+/* PIN */
 .pin-group {
     display: flex;
     justify-content: center;
@@ -152,7 +180,7 @@ const warningText = document.getElementById("warningText");
 const card = document.getElementById("card");
 let show = false;
 
-// Auto focus + backspace
+// Auto next + backspace
 inputs.forEach((input, index) => {
 
     input.addEventListener("input", () => {
@@ -203,7 +231,7 @@ function showError(msg) {
     setTimeout(() => card.classList.remove("shake"), 250);
 }
 
-// Toggle show/hide
+// Toggle PIN
 function togglePin() {
     show = !show;
     inputs.forEach(i => i.type = show ? "text" : "password");
