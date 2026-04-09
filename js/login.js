@@ -4,7 +4,7 @@ const loading = document.getElementById("loading");
 
 // Recaptcha
 window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-  size: 'invisible'
+  size: 'normal'
 });
 
 // Click
