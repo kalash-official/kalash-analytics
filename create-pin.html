@@ -9,31 +9,65 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #f5f5f5;
+    background: linear-gradient(135deg, #f0f4ff, #e6ecff);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    position: relative;
+    overflow: hidden;
 }
+
+/* 🔥 Background circles */
+body::before {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: rgba(0,123,255,0.12);
+    border-radius: 50%;
+    top: -80px;
+    left: -80px;
+}
+
+body::after {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    background: rgba(0,123,255,0.08);
+    border-radius: 50%;
+    bottom: -80px;
+    right: -80px;
+}
+
+/* Card */
 .card {
+    position: relative;
+    z-index: 1;
     background: #fff;
     padding: 24px;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     width: 90%;
     max-width: 350px;
     text-align: center;
 }
+
+/* Text */
 .label {
     margin: 12px 0;
     font-weight: bold;
 }
+
+/* PIN */
 .pin-group {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-bottom: 20px;
 }
+
 .pin-input {
     width: 45px;
     height: 45px;
@@ -41,11 +75,17 @@ body {
     text-align: center;
     border: 1px solid #ccc;
     border-radius: 8px;
+    background: #fafafa;
+    transition: 0.2s;
 }
+
 .pin-input:focus {
     border-color: #007bff;
     outline: none;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
 }
+
+/* Warning */
 .warning {
     background: #ffe5e5;
     color: red;
@@ -54,15 +94,31 @@ body {
     margin-bottom: 16px;
     display: none;
 }
+
+/* Button */
 button {
     width: 100%;
     padding: 12px;
-    background: #007bff;
+    background: linear-gradient(45deg, #007bff, #0056d2);
     color: #fff;
     border: none;
     border-radius: 12px;
     font-size: 16px;
     cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    box-shadow: 0 5px 15px rgba(0,123,255,0.25);
+    transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+    .pin-input {
+        width: 40px;
+        height: 40px;
+    }
 }
 </style>
 </head>
@@ -75,7 +131,6 @@ button {
 
     <div class="label">Enter 4-digit PIN</div>
 
-    <!-- ✅ FIXED ID -->
     <div class="pin-group" id="newPinGroup">
         <input type="password" maxlength="1" class="pin-input">
         <input type="password" maxlength="1" class="pin-input">
@@ -85,7 +140,6 @@ button {
 
     <div class="label">Confirm PIN</div>
 
-    <!-- ✅ FIXED ID -->
     <div class="pin-group" id="confirmPinGroup">
         <input type="password" maxlength="1" class="pin-input">
         <input type="password" maxlength="1" class="pin-input">
@@ -100,16 +154,13 @@ button {
 </div>
 
 <script>
-// ✅ FIXED SELECTORS
 const newPinInputs = document.querySelectorAll("#newPinGroup .pin-input");
 const confirmPinInputs = document.querySelectorAll("#confirmPinGroup .pin-input");
 const warningText = document.getElementById("warningText");
 
-// 🔹 Setup inputs
 function setupPinInputs(inputs) {
     inputs.forEach((input, index) => {
 
-        // Only numbers
         input.addEventListener("input", () => {
             input.value = input.value.replace(/[^0-9]/g, "");
 
@@ -118,7 +169,6 @@ function setupPinInputs(inputs) {
             }
         });
 
-        // Backspace
         input.addEventListener("keydown", (e) => {
             if (e.key === "Backspace") {
                 if (input.value === "" && index > 0) {
@@ -130,23 +180,21 @@ function setupPinInputs(inputs) {
     });
 }
 
-// 🔹 Collect PIN
 function collectPin(inputs) {
     let pin = "";
     inputs.forEach(input => pin += input.value);
     return pin;
 }
 
-// 🔹 Warning
 function showWarning(msg) {
     warningText.innerText = msg;
     warningText.style.display = "block";
 }
+
 function hideWarning() {
     warningText.style.display = "none";
 }
 
-// 🔹 Submit
 function submitPin() {
     const newPin = collectPin(newPinInputs);
     const confirmPin = collectPin(confirmPinInputs);
@@ -175,11 +223,9 @@ function submitPin() {
     }
 }
 
-// 🔹 Init
 setupPinInputs(newPinInputs);
 setupPinInputs(confirmPinInputs);
 
-// ✅ SAFE FOCUS (FIXED ERROR)
 if (newPinInputs.length > 0) {
     newPinInputs[0].focus();
 }
