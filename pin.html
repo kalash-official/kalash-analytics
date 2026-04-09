@@ -14,7 +14,7 @@
 body {
     margin: 0;
     height: 100vh;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: #f6f7fb;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,20 +26,19 @@ body {
     max-width: 380px;
     padding: 28px;
     border-radius: 20px;
-    backdrop-filter: blur(20px);
-    background: rgba(255,255,255,0.15);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     text-align: center;
-    color: white;
 }
 
 /* Title */
 h1 {
     margin-bottom: 5px;
     font-size: 24px;
+    color: #222;
 }
 .subtitle {
-    opacity: 0.8;
+    color: #777;
     margin-bottom: 25px;
 }
 
@@ -56,24 +55,25 @@ h1 {
     height: 55px;
     font-size: 22px;
     border-radius: 12px;
-    border: none;
+    border: 1px solid #ddd;
     text-align: center;
-    background: rgba(255,255,255,0.2);
-    color: white;
-    transition: 0.3s;
+    background: #fafafa;
+    transition: 0.25s;
 }
 
 .pin-input:focus {
     outline: none;
-    transform: scale(1.1);
-    background: rgba(255,255,255,0.3);
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    transform: scale(1.05);
 }
 
 /* Warning */
 .warning {
-    color: #ffb3b3;
+    color: #d93025;
     margin-bottom: 15px;
     display: none;
+    font-size: 14px;
 }
 
 /* Button */
@@ -83,14 +83,15 @@ button {
     border-radius: 14px;
     border: none;
     font-size: 16px;
-    font-weight: bold;
-    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    font-weight: 600;
+    background: linear-gradient(45deg, #007bff, #0056d2);
     color: white;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.25s;
 }
 button:hover {
-    transform: scale(1.03);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,123,255,0.25);
 }
 
 /* Toggle */
@@ -98,22 +99,22 @@ button:hover {
     margin-top: 10px;
     cursor: pointer;
     font-size: 13px;
-    opacity: 0.8;
+    color: #555;
 }
 
 /* Shake animation */
 @keyframes shake {
     0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
     100% { transform: translateX(0); }
 }
 .shake {
-    animation: shake 0.3s;
+    animation: shake 0.25s;
 }
 
-/* Mobile */
+/* Responsive */
 @media (max-width: 400px) {
     .pin-input {
         width: 48px;
@@ -127,10 +128,10 @@ button:hover {
 
 <div class="card" id="card">
 
-    <h1>🔐 Welcome</h1>
+    <h1>Welcome</h1>
     <div class="subtitle">Enter your secure PIN</div>
 
-    <div class="pin-group" id="pinGroup">
+    <div class="pin-group">
         <input type="password" maxlength="1" class="pin-input">
         <input type="password" maxlength="1" class="pin-input">
         <input type="password" maxlength="1" class="pin-input">
@@ -139,7 +140,7 @@ button:hover {
 
     <div class="warning" id="warningText"></div>
 
-    <button onclick="submitPin()">Unlock</button>
+    <button onclick="submitPin()">Continue</button>
 
     <div class="toggle" onclick="togglePin()">👁 Show PIN</div>
 
@@ -151,7 +152,7 @@ const warningText = document.getElementById("warningText");
 const card = document.getElementById("card");
 let show = false;
 
-// Auto next + back
+// Auto focus + backspace
 inputs.forEach((input, index) => {
 
     input.addEventListener("input", () => {
@@ -188,7 +189,7 @@ function submitPin() {
         showError("Incorrect PIN");
     } else {
         warningText.style.display = "none";
-        alert("✅ Access Granted");
+        alert("✅ Login successful");
         window.location.href = "home.html";
     }
 }
@@ -199,10 +200,10 @@ function showError(msg) {
     warningText.style.display = "block";
 
     card.classList.add("shake");
-    setTimeout(() => card.classList.remove("shake"), 300);
+    setTimeout(() => card.classList.remove("shake"), 250);
 }
 
-// Show/Hide PIN
+// Toggle show/hide
 function togglePin() {
     show = !show;
     inputs.forEach(i => i.type = show ? "text" : "password");
