@@ -181,5 +181,132 @@ function submitForm() {
 }
 </script>
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+</script>
+    <script>
+// Inputs
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const addressInput = document.getElementById("address");
+const warningBox = document.getElementById("warningBox");
+const button = document.querySelector("button");
+
+// 🔥 Simulated current user (replace with Firebase auth)
+const currentUserPhone = localStorage.getItem("user_phone") || "9999999999";
+
+// 🔹 Fake DB (localStorage as Firestore)
+function getUsers() {
+    return JSON.parse(localStorage.getItem("users")) || [];
+}
+
+function saveUsers(users) {
+    localStorage.setItem("users", JSON.stringify(users));
+}
+
+// 🔹 Check level (like onCreate)
+(function checkUserLevel() {
+    const users = getUsers();
+
+    const user = users.find(u => u.number === currentUserPhone);
+
+    if (user && user.level === "2") {
+        // redirect like Intent
+        window.location.href = "create-pin.html";
+    }
+})();
+
+// 🔹 Show warning
+function showWarning(msg) {
+    warningBox.style.display = "flex";
+    warningBox.innerHTML = "⚠️ " + msg;
+}
+
+// 🔹 Submit
+function submitForm() {
+
+    const name = nameInput.value.trim();
+    const gmail = emailInput.value.trim();
+    const address = addressInput.value.trim();
+
+    button.disabled = true;
+
+    // Validation (same as Java)
+    if (!name || !gmail || !address) {
+        showWarning("Field is empty");
+        button.disabled = false;
+        return;
+    }
+
+    if (name.length < 5) {
+        showWarning("Enter full name");
+        button.disabled = false;
+        return;
+    }
+
+    if (address.length < 15) {
+        showWarning("Enter full address");
+        button.disabled = false;
+        return;
+    }
+
+    let users = getUsers();
+
+    // Check gmail exists
+    const gmailExists = users.some(u => u.gmail === gmail);
+
+    if (gmailExists) {
+        showWarning("Gmail already registered");
+        button.disabled = false;
+        return;
+    }
+
+    // Find current user
+    let userIndex = users.findIndex(u => u.number === currentUserPhone);
+
+    if (userIndex !== -1) {
+
+        // Update user (like Firestore update)
+        users[userIndex] = {
+            ...users[userIndex],
+            name: name,
+            gmail: gmail,
+            address: address,
+            level: "2",
+            profile_status: "completed",
+            second_level_signup_time: new Date().toISOString()
+        };
+
+        saveUsers(users);
+
+        // Save login status (SharedPreferences)
+        localStorage.setItem("login_data", JSON.stringify({
+            login_status: "profile_complete"
+        }));
+
+        alert("✅ Profile information saved successfully!");
+
+        // Redirect
+        window.location.href = "create-pin.html";
+    } else {
+        showWarning("User not found");
+        button.disabled = false;
+    }
+}
+</script>
+
 </body>
 </html>
