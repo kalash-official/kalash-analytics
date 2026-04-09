@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create PIN</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .card {
+        background: #fff;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        width: 90%;
+        max-width: 350px;
+        text-align: center;
+    }
+
+    h2 {
+        margin-bottom: 8px;
+    }
+
+    .label {
+        margin: 12px 0;
+        font-weight: bold;
+    }
+
+    .pin-group {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .pin-input {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .pin-input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .warning {
+        background: #ffe5e5;
+        color: red;
+        padding: 8px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+        display: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    @media (max-width: 400px) {
+        .pin-input {
+            width: 40px;
+            height: 40px;
+        }
+    }
+</style>
+
+</head>
+<body>
+
+<div class="card">
+
+    <h2>Create Security PIN</h2>
+
+    <div class="label">Enter 4-digit PIN</div>
+
+    <div class="pin-group">
+        <input type="password" maxlength="1" class="pin-input">
+        <input type="password" maxlength="1" class="pin-input">
+        <input type="password" maxlength="1" class="pin-input">
+        <input type="password" maxlength="1" class="pin-input">
+    </div>
+
+    <div class="label">Confirm PIN</div>
+
+    <div class="pin-group">
+        <input type="password" maxlength="1" class="pin-input">
+        <input type="password" maxlength="1" class="pin-input">
+        <input type="password" maxlength="1" class="pin-input">
+        <input type="password" maxlength="1" class="pin-input">
+    </div>
+
+    <div class="warning" id="warningText"></div>
+
+    <button onclick="submitPin()">Submit</button>
+
+</div>
+
+<script>
+function submitPin() {
+    alert("PIN Submitted");
+}
+</script>
+
+</body>
+</html>
