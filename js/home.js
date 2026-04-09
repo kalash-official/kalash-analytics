@@ -12,6 +12,8 @@ auth.onAuthStateChanged((user) => {
         const phone = user.phoneNumber;
         let count = 0;
 
+        alert(phone");
+        
         db.collection("users_setting")
           .where("live_srno", ">", 0)
           .orderBy("live_srno", "asc")
