@@ -120,9 +120,94 @@
 </div>
 
 <script>
-function submitPin() {
-    alert("PIN Submitted");
+const newPinInputs = document.querySelectorAll(".pin-group:nth-of-type(1) .pin-input");
+const confirmPinInputs = document.querySelectorAll(".pin-group:nth-of-type(2) .pin-input");
+const warningText = document.getElementById("warningText");
+
+// 🔹 Setup inputs (auto next + backspace)
+function setupPinInputs(inputs) {
+    inputs.forEach((input, index) => {
+
+        // Only allow numbers
+        input.addEventListener("input", (e) => {
+            input.value = input.value.replace(/[^0-9]/g, "");
+
+            if (input.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        });
+
+        // Handle backspace
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace") {
+                if (input.value === "" && index > 0) {
+                    inputs[index - 1].focus();
+                    inputs[index - 1].value = "";
+                }
+            }
+        });
+    });
 }
+
+// 🔹 Collect PIN
+function collectPin(inputs) {
+    let pin = "";
+    inputs.forEach(input => {
+        pin += input.value;
+    });
+    return pin;
+}
+
+// 🔹 Show warning
+function showWarning(message) {
+    warningText.innerText = message;
+    warningText.style.display = "block";
+}
+
+// 🔹 Hide warning
+function hideWarning() {
+    warningText.style.display = "none";
+}
+
+// 🔹 Submit logic
+function submitPin() {
+    const newPin = collectPin(newPinInputs);
+    const confirmPin = collectPin(confirmPinInputs);
+
+    if (newPin.length < 4 || confirmPin.length < 4) {
+        showWarning("Please enter 4 digits in both fields.");
+    } 
+    else if (newPin !== confirmPin) {
+        showWarning("PINs do not match!");
+    } 
+    else if (/^(\d)\1{3}$/.test(newPin)) {
+        showWarning("PIN cannot be all same digits.");
+    } 
+    else {
+        hideWarning();
+
+        // 🔥 Simulating Firebase + SharedPreferences
+        const userData = {
+            name: "User", // Replace with real data
+            user_pin: confirmPin,
+            login_status: "pin_complete"
+        };
+
+        localStorage.setItem("login_data", JSON.stringify(userData));
+
+        alert("PIN set successfully!");
+
+        // 🔁 Redirect (like Intent)
+        window.location.href = "pin.html";
+    }
+}
+
+// 🔹 Init
+setupPinInputs(newPinInputs);
+setupPinInputs(confirmPinInputs);
+
+// Focus first input
+newPinInputs[0].focus();
 </script>
 
 </body>
