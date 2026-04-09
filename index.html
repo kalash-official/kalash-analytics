@@ -16,7 +16,7 @@
     <li>Contact</li>
   </ul>
 
-  <button class="login-btn" onclick="window.location.href='login.html'">Login</button>
+  <button class="login-btn" onclick="checkLogin()">Login</button>
 </nav>
 
 <!-- Hero Section -->
@@ -49,7 +49,26 @@
 <footer>
   <p>© 2026 Kalash Analytics</p>
 </footer>
+  
+<script>
+  function checkLogin() {
+  let data = localStorage.getItem("login_data");
+    alert(data);
+  if (data) {
+    let parsed = JSON.parse(data);
 
+    if (parsed.login_status === "pin_complete") {
+      // ✅ Already logged in → PIN page
+      window.location.href = "pin.html";
+      return;
+    }
+  }
+
+  // ❌ Not logged in → Login page
+  window.location.href = "login.html";
+}
+  
+</script>
 <script src="js/script.js"></script>
 </body>
 </html>
