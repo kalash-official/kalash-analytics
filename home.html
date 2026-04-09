@@ -347,6 +347,55 @@ function loadSwitchState() {
     });
 }
 
+sw.addEventListener("click", () => {
+  sw.disabled = true;
+  let live_status = sw.checked;
+  // reverse immediately (like Android)
+  sw.checked = !live_status;
+
+  const sts = String(live_status);
+
+  db.collection("users_setting")
+    .where("number", "==", auth.currentUser.phoneNumber)
+    .limit(1)
+    .get()
+    .then((snapshot) => {
+
+      if (snapshot.empty) {
+
+        sw.checked = false;
+        sw.disabled = false;
+
+        alert("Your request is pending ⚠️");
+        return;
+      }
+
+      snapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        const block_status = data.block_status;
+        const trade_id = data.trade_id;
+        const reason = data.block_reason;
+        const wa_status = data.wa_status;
+        const us_did = doc.id;
+
+        if (sts === "true") {
+          checkAllConditionForLive(block_status, trade_id, us_did, reason, wa_status);
+        } else {
+          userOffline(us_did);
+        }
+
+      });
+
+    })
+    .catch(() => {
+      alert("Error");
+      sw.disabled = false;
+    });
+
+});
+
 // 🔥 RUN AFTER LOGIN
 auth.onAuthStateChanged((user) => {
   if (user) {
