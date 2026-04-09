@@ -6,89 +6,67 @@
 <title>Create PIN</title>
 
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .card {
-        background: #fff;
-        padding: 24px;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        width: 90%;
-        max-width: 350px;
-        text-align: center;
-    }
-
-    h2 {
-        margin-bottom: 8px;
-    }
-
-    .label {
-        margin: 12px 0;
-        font-weight: bold;
-    }
-
-    .pin-group {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .pin-input {
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
-        text-align: center;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-    }
-
-    .pin-input:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-
-    .warning {
-        background: #ffe5e5;
-        color: red;
-        padding: 8px;
-        border-radius: 6px;
-        margin-bottom: 16px;
-        display: none;
-    }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        background: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background: #0056b3;
-    }
-
-    @media (max-width: 400px) {
-        .pin-input {
-            width: 40px;
-            height: 40px;
-        }
-    }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+}
+.label {
+    margin: 12px 0;
+    font-weight: bold;
+}
+.pin-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.pin-input {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+.pin-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+.warning {
+    background: #ffe5e5;
+    color: red;
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    display: none;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
 </style>
-
 </head>
+
 <body>
 
 <div class="card">
@@ -97,7 +75,8 @@
 
     <div class="label">Enter 4-digit PIN</div>
 
-    <div class="pin-group">
+    <!-- ✅ FIXED ID -->
+    <div class="pin-group" id="newPinGroup">
         <input type="password" maxlength="1" class="pin-input">
         <input type="password" maxlength="1" class="pin-input">
         <input type="password" maxlength="1" class="pin-input">
@@ -106,7 +85,8 @@
 
     <div class="label">Confirm PIN</div>
 
-    <div class="pin-group">
+    <!-- ✅ FIXED ID -->
+    <div class="pin-group" id="confirmPinGroup">
         <input type="password" maxlength="1" class="pin-input">
         <input type="password" maxlength="1" class="pin-input">
         <input type="password" maxlength="1" class="pin-input">
@@ -120,16 +100,17 @@
 </div>
 
 <script>
-const newPinInputs = document.querySelectorAll(".pin-group:nth-of-type(1) .pin-input");
-const confirmPinInputs = document.querySelectorAll(".pin-group:nth-of-type(2) .pin-input");
+// ✅ FIXED SELECTORS
+const newPinInputs = document.querySelectorAll("#newPinGroup .pin-input");
+const confirmPinInputs = document.querySelectorAll("#confirmPinGroup .pin-input");
 const warningText = document.getElementById("warningText");
 
-// 🔹 Setup inputs (auto next + backspace)
+// 🔹 Setup inputs
 function setupPinInputs(inputs) {
     inputs.forEach((input, index) => {
 
-        // Only allow numbers
-        input.addEventListener("input", (e) => {
+        // Only numbers
+        input.addEventListener("input", () => {
             input.value = input.value.replace(/[^0-9]/g, "");
 
             if (input.value.length === 1 && index < inputs.length - 1) {
@@ -137,7 +118,7 @@ function setupPinInputs(inputs) {
             }
         });
 
-        // Handle backspace
+        // Backspace
         input.addEventListener("keydown", (e) => {
             if (e.key === "Backspace") {
                 if (input.value === "" && index > 0) {
@@ -152,24 +133,20 @@ function setupPinInputs(inputs) {
 // 🔹 Collect PIN
 function collectPin(inputs) {
     let pin = "";
-    inputs.forEach(input => {
-        pin += input.value;
-    });
+    inputs.forEach(input => pin += input.value);
     return pin;
 }
 
-// 🔹 Show warning
-function showWarning(message) {
-    warningText.innerText = message;
+// 🔹 Warning
+function showWarning(msg) {
+    warningText.innerText = msg;
     warningText.style.display = "block";
 }
-
-// 🔹 Hide warning
 function hideWarning() {
     warningText.style.display = "none";
 }
 
-// 🔹 Submit logic
+// 🔹 Submit
 function submitPin() {
     const newPin = collectPin(newPinInputs);
     const confirmPin = collectPin(confirmPinInputs);
@@ -186,18 +163,14 @@ function submitPin() {
     else {
         hideWarning();
 
-        // 🔥 Simulating Firebase + SharedPreferences
-        const userData = {
-            name: "User", // Replace with real data
+        const data = {
             user_pin: confirmPin,
             login_status: "pin_complete"
         };
 
-        localStorage.setItem("login_data", JSON.stringify(userData));
+        localStorage.setItem("login_data", JSON.stringify(data));
 
         alert("PIN set successfully!");
-
-        // 🔁 Redirect (like Intent)
         window.location.href = "pin.html";
     }
 }
@@ -206,8 +179,10 @@ function submitPin() {
 setupPinInputs(newPinInputs);
 setupPinInputs(confirmPinInputs);
 
-// Focus first input
-newPinInputs[0].focus();
+// ✅ SAFE FOCUS (FIXED ERROR)
+if (newPinInputs.length > 0) {
+    newPinInputs[0].focus();
+}
 </script>
 
 </body>
