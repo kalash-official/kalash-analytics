@@ -775,9 +775,15 @@ async function checkAllConditionForLive(
   }
 }
 
-function showWhatsAppDialog(sw, users_setting_did) {
-  const modal = document.createElement("div");
-  modal.innerHTML = `
+  function showWhatsAppDialog(sw, users_setting_did) {
+  // Remove existing modal if already open
+  const existingModal = document.getElementById("waModal");
+  if (existingModal) {
+    existingModal.remove();
+  }
+
+  const modalWrapper = document.createElement("div");
+  modalWrapper.innerHTML = `
     <div id="waModal">
       <div class="wa-modal-content">
         <div class="wa-icon">📱</div>
@@ -801,28 +807,31 @@ function showWhatsAppDialog(sw, users_setting_did) {
     </div>
   `;
 
-  document.body.appendChild(modal);
+  document.body.appendChild(modalWrapper);
 
   const waModal = document.getElementById("waModal");
   const closeBtn = document.getElementById("closeWaModal");
   const submitBtn = document.getElementById("submitWaCode");
   const codeInput = document.getElementById("waCodeInput");
 
+  // Focus input automatically
+  codeInput.focus();
+
   // Close Modal
   closeBtn.onclick = () => {
-    document.body.removeChild(modal);
+    modalWrapper.remove();
     sw.checked = false;
     sw.disabled = false;
   };
 
   // Close when clicking outside
-  waModal.onclick = (e) => {
+  waModal.addEventListener("click", (e) => {
     if (e.target === waModal) {
-      document.body.removeChild(modal);
+      modalWrapper.remove();
       sw.checked = false;
       sw.disabled = false;
     }
-  };
+  });
 
   // Verify Code
   submitBtn.onclick = async () => {
@@ -833,6 +842,8 @@ function showWhatsAppDialog(sw, users_setting_did) {
       return;
     }
 
+    submitBtn.disabled = true;
+
     try {
       const snapshot = await db.collection("compnay_setting").limit(1).get();
 
@@ -840,6 +851,7 @@ function showWhatsAppDialog(sw, users_setting_did) {
         alert("Company setting not found");
         sw.checked = false;
         sw.disabled = false;
+        modalWrapper.remove();
         return;
       }
 
@@ -848,6 +860,7 @@ function showWhatsAppDialog(sw, users_setting_did) {
 
       if (!wa_code) {
         alert("Invalid server data");
+        submitBtn.disabled = false;
         return;
       }
 
@@ -857,21 +870,25 @@ function showWhatsAppDialog(sw, users_setting_did) {
           .update({ wa_status: "true" });
 
         alert("Code verified successfully");
-        document.body.removeChild(modal);
+        modalWrapper.remove();
         sw.checked = true;
         sw.disabled = false;
       } else {
         alert("Invalid code");
+        submitBtn.disabled = false;
       }
 
     } catch (error) {
-      console.error(error);
+      console.error("Verification Error:", error);
       alert("Error: " + error.message);
       sw.checked = false;
       sw.disabled = false;
+      submitBtn.disabled = false;
     }
   };
 }
+
+
 
   document.getElementById("submitWaCode").onclick = async () => {
     const code = document.getElementById("waCodeInput").value.trim();
