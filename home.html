@@ -364,6 +364,135 @@ input:checked + .slider::before {
     font-size: 13px;
   }
 }
+/* ================= WHATSAPP MODAL UI ================= */
+#waModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.wa-modal-content {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease;
+}
+
+/* Icon */
+.wa-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(37, 211, 102, 0.4);
+}
+
+.wa-modal-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.wa-modal-content p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 18px;
+}
+
+/* Input */
+#waCodeInput {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 4px;
+  outline: none;
+  transition: 0.3s;
+}
+
+#waCodeInput:focus {
+  border-color: #25D366;
+  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
+}
+
+/* Buttons */
+.wa-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.wa-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+/* Close Button */
+.wa-btn-close {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.wa-btn-close:hover {
+  background: #e5e7eb;
+}
+
+/* Verify Button */
+.wa-btn-verify {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(37, 211, 102, 0.35);
+}
+
+.wa-btn-verify:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 211, 102, 0.45);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 </style>
 </head>
 
@@ -646,49 +775,103 @@ async function checkAllConditionForLive(
   }
 }
 
-  function showWhatsAppDialog(sw, users_setting_did) {
+function showWhatsAppDialog(sw, users_setting_did) {
   const modal = document.createElement("div");
   modal.innerHTML = `
-    <div id="waModal" style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;">
-      
-      <div style="
-        background: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        width: 320px;
-        text-align: center;">
-        
+    <div id="waModal">
+      <div class="wa-modal-content">
+        <div class="wa-icon">📱</div>
         <h3>WhatsApp Verification</h3>
-        <p>Enter the 6-digit code</p>
-        
-        <input type="text" id="waCodeInput"
-          maxlength="6"
-          placeholder="Enter Code"
-          style="width:100%; padding:10px; margin:10px 0; text-align:center;">
-        
-        <button id="submitWaCode">Verify</button>
-        <button id="closeWaModal">Close</button>
+        <p>Enter the 6-digit verification code</p>
+
+        <input 
+          type="text" 
+          id="waCodeInput" 
+          maxlength="6" 
+          placeholder="------"
+          inputmode="numeric"
+          pattern="[0-9]*"
+        />
+
+        <div class="wa-buttons">
+          <button class="wa-btn wa-btn-close" id="closeWaModal">Cancel</button>
+          <button class="wa-btn wa-btn-verify" id="submitWaCode">Verify</button>
+        </div>
       </div>
     </div>
   `;
 
   document.body.appendChild(modal);
 
-  document.getElementById("closeWaModal").onclick = () => {
+  const waModal = document.getElementById("waModal");
+  const closeBtn = document.getElementById("closeWaModal");
+  const submitBtn = document.getElementById("submitWaCode");
+  const codeInput = document.getElementById("waCodeInput");
+
+  // Close Modal
+  closeBtn.onclick = () => {
     document.body.removeChild(modal);
     sw.checked = false;
     sw.disabled = false;
   };
+
+  // Close when clicking outside
+  waModal.onclick = (e) => {
+    if (e.target === waModal) {
+      document.body.removeChild(modal);
+      sw.checked = false;
+      sw.disabled = false;
+    }
+  };
+
+  // Verify Code
+  submitBtn.onclick = async () => {
+    const code = codeInput.value.trim();
+
+    if (code.length !== 6) {
+      alert("Enter valid 6-digit code");
+      return;
+    }
+
+    try {
+      const snapshot = await db.collection("compnay_setting").limit(1).get();
+
+      if (snapshot.empty) {
+        alert("Company setting not found");
+        sw.checked = false;
+        sw.disabled = false;
+        return;
+      }
+
+      const doc = snapshot.docs[0];
+      const wa_code = doc.data().wa_code;
+
+      if (!wa_code) {
+        alert("Invalid server data");
+        return;
+      }
+
+      if (wa_code.toString() === code) {
+        await db.collection("users_setting")
+          .doc(users_setting_did)
+          .update({ wa_status: "true" });
+
+        alert("Code verified successfully");
+        document.body.removeChild(modal);
+        sw.checked = true;
+        sw.disabled = false;
+      } else {
+        alert("Invalid code");
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert("Error: " + error.message);
+      sw.checked = false;
+      sw.disabled = false;
+    }
+  };
+}
 
   document.getElementById("submitWaCode").onclick = async () => {
     const code = document.getElementById("waCodeInput").value.trim();
