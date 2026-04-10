@@ -646,6 +646,150 @@ async function checkAllConditionForLive(
   }
 }
 
+  function showWhatsAppDialog(sw, users_setting_did) {
+  const modal = document.createElement("div");
+  modal.innerHTML = `
+    <div id="waModal" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;">
+      
+      <div style="
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        width: 320px;
+        text-align: center;">
+        
+        <h3>WhatsApp Verification</h3>
+        <p>Enter the 6-digit code</p>
+        
+        <input type="text" id="waCodeInput"
+          maxlength="6"
+          placeholder="Enter Code"
+          style="width:100%; padding:10px; margin:10px 0; text-align:center;">
+        
+        <button id="submitWaCode">Verify</button>
+        <button id="closeWaModal">Close</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document.getElementById("closeWaModal").onclick = () => {
+    document.body.removeChild(modal);
+    sw.checked = false;
+    sw.disabled = false;
+  };
+
+  document.getElementById("submitWaCode").onclick = async () => {
+    const code = document.getElementById("waCodeInput").value.trim();
+
+    if (code.length !== 6) {
+      alert("Enter valid 6-digit code");
+      return;
+    }
+
+    try {
+      const snapshot = await db.collection("compnay_setting").limit(1).get();
+
+      if (snapshot.empty) {
+        alert("Company setting not found");
+        sw.checked = false;
+        sw.disabled = false;
+        return;
+      }
+
+      const doc = snapshot.docs[0];
+      const wa_code = doc.data().wa_code;
+
+      if (!wa_code) {
+        alert("Invalid server data");
+        return;
+      }
+
+      if (wa_code.toString() === code) {
+        await db.collection("users_setting")
+          .doc(users_setting_did)
+          .update({ wa_status: "true" });
+
+        alert("Code verified successfully");
+        document.body.removeChild(modal);
+        sw.checked = true;
+        sw.disabled = false;
+      } else {
+        alert("Invalid code");
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert("Error: " + error.message);
+      sw.checked = false;
+      sw.disabled = false;
+    }
+  };
+}
+  
+function showBlockDialog(reason) {
+  const modal = document.createElement("div");
+  modal.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;">
+      
+      <div style="
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        width: 320px;
+        text-align: center;">
+        
+        <h3>Access Blocked</h3>
+        <p>You are blocked for trade due to <b>${reason}</b></p>
+        <button onclick="this.closest('div').remove()">OK</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+function showTradingInfoDialog(sw, users_setting_did) {
+  alert("You are now Live for trading.");
+
+  db.collection("users_setting")
+    .doc(users_setting_did)
+    .update({
+      live_status: "true"
+    })
+    .then(() => {
+      sw.checked = true;
+      sw.disabled = false;
+    })
+    .catch((error) => {
+      console.error(error);
+      sw.checked = false;
+      sw.disabled = false;
+      alert("Error enabling live status");
+    });
+}
+
 // 🔥 RUN AFTER LOGIN
 auth.onAuthStateChanged((user) => {
   if (user) {
