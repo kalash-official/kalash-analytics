@@ -1063,52 +1063,52 @@ async function checkAllConditionForLive(
 
 
 
-document.getElementById("submitWaCode").onclick = async () => {
-    const code = document.getElementById("waCodeInput").value.trim();
+// document.getElementById("submitWaCode").onclick = async () => {
+//     const code = document.getElementById("waCodeInput").value.trim();
 
-    if (code.length !== 6) {
-      alert("Enter valid 6-digit code");
-      return;
-    }
+//     if (code.length !== 6) {
+//       alert("Enter valid 6-digit code");
+//       return;
+//     }
 
-    try {
-      const snapshot = await db.collection("compnay_setting").limit(1).get();
+//     try {
+//       const snapshot = await db.collection("compnay_setting").limit(1).get();
 
-      if (snapshot.empty) {
-        alert("Company setting not found");
-        sw.checked = false;
-        sw.disabled = false;
-        return;
-      }
+//       if (snapshot.empty) {
+//         alert("Company setting not found");
+//         sw.checked = false;
+//         sw.disabled = false;
+//         return;
+//       }
 
-      const doc = snapshot.docs[0];
-      const wa_code = doc.data().wa_code;
+//       const doc = snapshot.docs[0];
+//       const wa_code = doc.data().wa_code;
 
-      if (!wa_code) {
-        alert("Invalid server data");
-        return;
-      }
+//       if (!wa_code) {
+//         alert("Invalid server data");
+//         return;
+//       }
 
-      if (wa_code.toString() === code) {
-        await db.collection("users_setting")
-          .doc(users_setting_did)
-          .update({ wa_status: "true" });
+//       if (wa_code.toString() === code) {
+//         await db.collection("users_setting")
+//           .doc(users_setting_did)
+//           .update({ wa_status: "true" });
 
-        alert("Code verified successfully");
-        document.body.removeChild(modal);
-        sw.checked = true;
-        sw.disabled = false;
-      } else {
-        alert("Invalid code");
-      }
+//         alert("Code verified successfully");
+//         document.body.removeChild(modal);
+//         sw.checked = true;
+//         sw.disabled = false;
+//       } else {
+//         alert("Invalid code");
+//       }
 
-    } catch (error) {
-      console.error(error);
-      alert("Error: " + error.message);
-      sw.checked = false;
-      sw.disabled = false;
-    }
-};
+//     } catch (error) {
+//       console.error(error);
+//       alert("Error: " + error.message);
+//       sw.checked = false;
+//       sw.disabled = false;
+//     }
+// };
 
   
 function showBlockDialog(reason) {
