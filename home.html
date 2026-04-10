@@ -571,6 +571,103 @@ input:checked + .slider::before {
   background: #2563eb;
   color: #ffffff;
 }
+
+/* ================= BLOCK MODAL (MODERN UI) ================= */
+.block-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.block-modal {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease;
+}
+
+/* Icon */
+.block-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.4);
+}
+
+/* Title */
+.block-modal h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+/* Message */
+.block-modal p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Button */
+.block-btn {
+  padding: 11px 26px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
+  transition: all 0.3s ease;
+}
+
+.block-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.45);
+}
+
+.block-btn:active {
+  transform: scale(0.96);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 </style>
 </head>
 
@@ -839,10 +936,10 @@ async function checkAllConditionForLive(
 
   // 🔹 3. User Blocked
   else if (block_status === "true") {
-    showBlockDialog(reason);
-    sw.checked = false;
-    sw.disabled = false;
-    return;
+     showBlockDialog(reason);
+     sw.checked = false;
+     sw.disabled = false;
+     return;
   }
 
   // 🔹 4. All Conditions Passed
@@ -1015,35 +1112,43 @@ document.getElementById("submitWaCode").onclick = async () => {
 
   
 function showBlockDialog(reason) {
+  // Remove existing modal if already open
+  const existingModal = document.getElementById("blockModal");
+  if (existingModal) {
+    existingModal.remove();
+  }
+
+  // Create modal wrapper
   const modal = document.createElement("div");
+  modal.id = "blockModal";
+
   modal.innerHTML = `
-    <div style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;">
-      
-      <div style="
-        background: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        width: 320px;
-        text-align: center;">
+    <div class="block-overlay">
+      <div class="block-modal">
+        
+        <div class="block-icon">⛔</div>
         
         <h3>Access Blocked</h3>
         <p>You are blocked for trade due to <b>${reason}</b></p>
-        <button onclick="this.closest('div').remove()">OK</button>
+        
+        <button id="blockOkBtn" class="block-btn">OK</button>
       </div>
     </div>
   `;
 
   document.body.appendChild(modal);
+
+  // Close button action
+  document.getElementById("blockOkBtn").onclick = () => {
+    modal.remove();
+  };
+
+  // Close when clicking outside
+  modal.querySelector(".block-overlay").addEventListener("click", (e) => {
+    if (e.target.classList.contains("block-overlay")) {
+      modal.remove();
+    }
+  });
 }
 
 function showTradingInfoDialog(sw, users_setting_did) {
