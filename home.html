@@ -609,6 +609,43 @@ function userOffline(us_did) {
   };
 }
 
+async function checkAllConditionForLive(
+  block_status,
+  trade_id,
+  users_setting_did,
+  reason,
+  wa_status
+) {
+  const sw = document.getElementById("liveSwitch");
+
+  // 🔹 1. WhatsApp Verification Required
+  if (wa_status === "false") {
+    showWhatsAppDialog(sw, users_setting_did);
+    return;
+  }
+
+  // 🔹 2. Trade ID Missing
+  else if (trade_id === "null" || trade_id === null || trade_id === "") {
+    alert("Please add your Trade ID first.");
+    sw.checked = false;
+    sw.disabled = false;
+    return;
+  }
+
+  // 🔹 3. User Blocked
+  else if (block_status === "true") {
+    showBlockDialog(reason);
+    sw.checked = false;
+    sw.disabled = false;
+    return;
+  }
+
+  // 🔹 4. All Conditions Passed
+  else {
+    showTradingInfoDialog(sw, users_setting_did);
+  }
+}
+
 // 🔥 RUN AFTER LOGIN
 auth.onAuthStateChanged((user) => {
   if (user) {
