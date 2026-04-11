@@ -1031,7 +1031,7 @@ sw.addEventListener("change", () => {
       if (snapshot.empty) {
         sw.checked = false;
         sw.disabled = false;
-        alert("Your request is pending ⚠️");
+        showCustomAlert({type: "success",title: "Success",message: "Your account verification  is process."});
         return;
       }
 
@@ -1092,7 +1092,7 @@ function userOffline(us_did) {
       .then(() => {
 
         sw.checked = false;
-        alert("Now you are offline ❌");
+        showCustomAlert({type: "success",title: "Success", message: "now you are offline"});
 
       })
       .catch((error) => {
@@ -1207,7 +1207,7 @@ async function checkAllConditionForLive(
     const code = codeInput.value.trim();
 
     if (code.length !== 6) {
-      alert("Enter valid 6-digit code");
+      showCustomAlert({type: "success",title: "Success",message: "Enter valid 6-digit code"});
       return;
     }
 
@@ -1243,7 +1243,7 @@ async function checkAllConditionForLive(
         sw.checked = true;
         sw.disabled = false;
       } else {
-        alert("Invalid code");
+        showCustomAlert({type: "success",title: "Success", message: "Invalid code."});
         submitBtn.disabled = false;
       }
 
@@ -1375,7 +1375,7 @@ function runLiveTransaction(sw, users_setting_did) {
 
                     // Success Toast
                     // showCustomToast("Now you are live", "info", 4000);
-                    showCustomAlert({type: "success",title: "Success",message: "Your data has been saved successfully!"});
+                    showCustomAlert({type: "success",title: "Success",message: "Now you are live."});
 
                     // location.reload();
                   
@@ -1449,7 +1449,7 @@ function showTradeIdDialog(sw) {
 
   // Read button
   document.getElementById("btnRead").onclick = () => {
-    alert("Here you can show Trade ID instructions.");
+    showCustomAlert({type: "success",title: "Success", message: "Here you can show trade ID instructions."});
     modal.remove();
     sw.checked = false;
     sw.disabled = false;
