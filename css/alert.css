@@ -1,24 +1,56 @@
-/* Simple Android-Style Toast */
+/* Top Toast Notification */
 .simple-toast {
     position: fixed;
+    top: 20px;
     left: 50%;
-    bottom: 30px;
-    transform: translateX(-50%) translateY(20px);
-    background: rgba(33, 33, 33, 0.95);
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 6px;
+    transform: translateX(-50%) translateY(-20px);
+    background: linear-gradient(135deg, #323232, #1f1f1f);
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 10px;
     font-size: 14px;
-    font-family: Arial, sans-serif;
-    white-space: nowrap;
+    font-family: "Segoe UI", Arial, sans-serif;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     z-index: 9999;
     opacity: 0;
-    transition: all 0.3s ease;
+    transition: all 0.35s ease;
     pointer-events: none;
+    min-width: 200px;
+    max-width: 90%;
+    text-align: center;
 }
 
 /* Show Animation */
 .simple-toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+}
+
+/* Toast Types */
+.simple-toast.success {
+    border-left: 5px solid #28a745;
+}
+
+.simple-toast.error {
+    border-left: 5px solid #dc3545;
+}
+
+.simple-toast.warning {
+    border-left: 5px solid #ffc107;
+    background: linear-gradient(135deg, #ffe082, #ffca28);
+    color: #000;
+}
+
+.simple-toast.info {
+    border-left: 5px solid #17a2b8;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .simple-toast {
+        width: 90%;
+        font-size: 13px;
+        padding: 10px 16px;
+        top: 15px;
+    }
 }
