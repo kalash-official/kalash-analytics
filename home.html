@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* ================= GLOBAL STYLES ================= */
+/* ================= GLOBAL STYLES ================ */
 * {
   margin: 0;
   padding: 0;
@@ -1031,14 +1031,12 @@ sw.addEventListener("change", () => {
       if (snapshot.empty) {
         sw.checked = false;
         sw.disabled = false;
-        //showCustomAlert({type: "success",title: "Success",message: "Your account verification  is process."});
+        showToast("Your account verification  is process.", 4000);
         return;
       }
 
       snapshot.forEach((doc) => {
-
         const data = doc.data();
-
         const block_status = data.block_status;
         const trade_id = data.trade_id;
         const reason = data.block_reason;
@@ -1092,16 +1090,13 @@ function userOffline(us_did) {
       .then(() => {
 
         sw.checked = false;
-        //showCustomAlert({type: "success",title: "Success", message: "now you are offline"});
-
+        showToast("now you are offline", 4000);
       })
-      .catch((error) => {
-
+       .catch((error) => {
         console.error(error);
         sureBtn.disabled = false;
         sw.checked = true;
         alert("Error");
-
       });
   };
 }
@@ -1207,7 +1202,7 @@ async function checkAllConditionForLive(
     const code = codeInput.value.trim();
 
     if (code.length !== 6) {
-      //showCustomAlert({type: "success",title: "Success",message: "Enter valid 6-digit code"});
+      showToast("Enter valid 6-digit code", 4000);
       return;
     }
 
@@ -1243,7 +1238,7 @@ async function checkAllConditionForLive(
         sw.checked = true;
         sw.disabled = false;
       } else {
-        //showCustomAlert({type: "success",title: "Success", message: "Invalid code."});
+        showToast("Invalid code.", 4000);
         submitBtn.disabled = false;
       }
 
@@ -1371,14 +1366,8 @@ function runLiveTransaction(sw, users_setting_did) {
                     // Custom login info function
                     if (typeof custom_logininfo === "function") {
                         custom_logininfo();
-                    }
-
-                    // Success Toast
-                    // showCustomToast("Now you are live", "info", 4000);
-                    //showCustomAlert({type: "success",title: "Success",message: "Now you are live."});
+                    }   
                     showToast("Now you are live.", 4000);
-                    // location.reload();
-                  
                 })
                 .catch((error) => {
                     sw.disabled = false;
@@ -1387,7 +1376,7 @@ function runLiveTransaction(sw, users_setting_did) {
                 });
 
             } else {
-                //showCustomToast("Company setting not found", "info", 4000);
+              showToast("Company setting not found.", 4000);
                 sw.disabled = false;
                 sw.checked = false;
             }
@@ -1398,31 +1387,6 @@ function runLiveTransaction(sw, users_setting_did) {
             alert("Error: " + error.message);
         });
 }
-
-// function showCustomToast(message, type = "info", duration = 4000) {
-//     const toast = document.createElement("div");
-//     toast.innerText = message;
-
-//     toast.style.position = "fixed";
-//     toast.style.bottom = "20px";
-//     toast.style.right = "20px";
-//     toast.style.padding = "12px 18px";
-//     toast.style.color = "#fff";
-//     toast.style.borderRadius = "8px";
-//     toast.style.fontSize = "14px";
-//     toast.style.zIndex = "10000";
-//     toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-//     toast.style.background =
-//         type === "info"
-//             ? "linear-gradient(135deg, #4CAF50, #2e7d32)"
-//             : "#ef4444";
-
-//     document.body.appendChild(toast);
-
-//     setTimeout(() => {
-//         toast.remove();
-//     }, duration);
-// }
 
 function showTradeIdDialog(sw) {
   const existingModal = document.getElementById("tradeIdModal");
@@ -1449,7 +1413,7 @@ function showTradeIdDialog(sw) {
 
   // Read button
   document.getElementById("btnRead").onclick = () => {
-   // showCustomAlert({type: "success",title: "Success", message: "Here you can show trade ID instructions."});
+    showToast("Here you can show trade ID instructions.", 4000);
     modal.remove();
     sw.checked = false;
     sw.disabled = false;
