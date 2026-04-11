@@ -1439,6 +1439,70 @@ function showTradeIdDialog(sw) {
   });
 }
 
+const validate = document.getElementById("validate");
+validate.addEventListener("click", () => {
+    db.collection("users_setting")
+        .doc(userSettingDocId)
+        .collection("trade_history")
+        .get()
+        .then((querySnapshot) => {
+            let hasPending = false;
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const result = data.result;
+
+                if (
+                    (
+                        result === "positive" &&
+                        (
+                            data.cancellaynaiwala_pay_status === "false" ||
+                            data.laynaiwala_pay_status === "false" ||
+                            data.own_pay_status === "false"
+                        )
+                    ) ||
+                    (
+                        result === "incomplete positive" &&
+                        data.own_pay_status === "false"
+                    )
+                ) {
+                    hasPending = true;
+                }
+            });
+
+            if (hasPending) {
+                // Custom Toast
+                ToastHelper.showCustomToast(
+                    "some pending in history",
+                    "info",
+                    null,
+                    4000
+                );
+            } else {
+                db.collection("users_setting")
+                    .doc(sus_did)
+                    .update({
+                        block_status: "false",
+                        block_reason: "null"
+                    })
+                    .then(() => {
+                        ToastHelper.showCustomToast(
+                            "validation complete",
+                            "info",
+                            null,
+                            4000
+                        );
+                    })
+                    .catch(() => {
+                        alert("error");
+                    });
+            }
+        })
+        .catch(() => {
+            alert("error");
+        });
+});
+
 // 🔥 RUN AFTER LOGIN
 auth.onAuthStateChanged((user) => {
   if (user) {
