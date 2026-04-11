@@ -1312,10 +1312,106 @@ function showTradingInfoDialog(sw, users_setting_did) {
 
 /* Equivalent to Android's runLiveTransaction() */
 function runLiveTransaction(sw, users_setting_did) {
-    if (sw) {
-        sw.checked = true;
-    }
-    console.log("Live Transaction Enabled for ID:", users_setting_did);
+    // Enable the switch
+    sw.disabled = false;
+
+    // Reference to company setting collection
+    db.collection("compnay_setting")
+        .limit(1)
+        .get()
+        .then((querySnapshot) => {
+
+            if (!querySnapshot.empty) {
+                const csRef = querySnapshot.docs[0].ref;
+
+                // Run Firestore Transaction
+                db.runTransaction((transaction) => {
+                    return transaction.get(csRef).then((csSnap) => {
+
+                        let currentSrno = csSnap.get("live_srno");
+
+                        if (currentSrno === null || currentSrno === undefined) {
+                            currentSrno = 0;
+                        }
+
+                        const newSrno = Number(currentSrno) + 1;
+
+                        // Data to update in users_setting
+                        const liveUserData = {
+                            live_srno: newSrno,
+                            live_status: "true",
+                            avail_trading_capacity: 1,
+                            time: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+
+                        const newTradeRef = db
+                            .collection("users_setting")
+                            .doc(users_setting_did);
+
+                        // Update user document
+                        transaction.update(newTradeRef, liveUserData);
+
+                        // Update company setting document
+                        transaction.update(csRef, {
+                            live_srno: newSrno
+                        });
+                    });
+                })
+                .then(() => {
+                    // Transaction Success
+                    sw.checked = true;
+                    sw.disabled = false;
+
+                    // Custom login info function
+                    if (typeof custom_logininfo === "function") {
+                        custom_logininfo();
+                    }
+
+                    // Success Toast
+                    showCustomToast("Now you are live", "info", 4000);
+                })
+                .catch((error) => {
+                    sw.disabled = false;
+                    sw.checked = false;
+                    alert("Transaction failed: " + error.message);
+                });
+
+            } else {
+                showCustomToast("Company setting not found", "info", 4000);
+                sw.disabled = false;
+                sw.checked = false;
+            }
+        })
+        .catch((error) => {
+            sw.disabled = false;
+            sw.checked = false;
+            alert("Error: " + error.message);
+        });
+}
+
+function showCustomToast(message, type = "info", duration = 4000) {
+    const toast = document.createElement("div");
+    toast.innerText = message;
+
+    toast.style.position = "fixed";
+    toast.style.bottom = "20px";
+    toast.style.right = "20px";
+    toast.style.padding = "12px 18px";
+    toast.style.color = "#fff";
+    toast.style.borderRadius = "8px";
+    toast.style.fontSize = "14px";
+    toast.style.zIndex = "10000";
+    toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+    toast.style.background =
+        type === "info"
+            ? "linear-gradient(135deg, #4CAF50, #2e7d32)"
+            : "#ef4444";
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, duration);
 }
 
 function showTradeIdDialog(sw) {
