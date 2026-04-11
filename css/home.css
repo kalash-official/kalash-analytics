@@ -323,3 +323,124 @@ input:checked + .slider::before {
     font-size: 20px;
   }
 }
+
+/* ================= WHATSAPP MODAL UI ================= */
+#waModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.wa-modal-content {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease;
+}
+
+/* Icon */
+.wa-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(37, 211, 102, 0.4);
+}
+
+/* Heading */
+.wa-modal-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+/* Paragraph */
+.wa-modal-content p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 18px;
+}
+
+/* Input */
+#waCodeInput {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 4px;
+  outline: none;
+  transition: 0.3s;
+}
+
+#waCodeInput:focus {
+  border-color: #25D366;
+  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
+}
+
+/* Buttons */
+.wa-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.wa-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+/* Cancel Button */
+.wa-btn-close {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.wa-btn-close:hover {
+  background: #e5e7eb;
+}
+
+/* Verify Button */
+.wa-btn-verify {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(37, 211, 102, 0.35);
+}
+
+.wa-btn-verify:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 211, 102, 0.45);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
