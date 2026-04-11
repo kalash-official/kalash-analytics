@@ -836,6 +836,55 @@ input:checked + .slider::before {
     font-size: 15px;
   }
 }
+/* Shimmer Effect */
+.shimmer {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Trade Cards */
+.trades-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.trade-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.trade-card:hover {
+  transform: translateY(-5px);
+}
+
+.trade-card h3 {
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.trade-card p {
+  font-size: 14px;
+  color: #4b5563;
+}
 </style>
 </head>
 
@@ -881,7 +930,20 @@ input:checked + .slider::before {
   <!-- CONTENT -->
   <div class="content">
 
-    <div id="home" class="page active"><h2>Home</h2></div>
+  <div id="home" class="page active">
+  <h2>Allotted Trades</h2>
+
+  <!-- Shimmer Loader -->
+  <div id="shimmerLayout" class="shimmer">Loading trades...</div>
+
+  <!-- Empty Layout -->
+  <div id="emptyLayout" style="display:none;">
+    <p>No allotted trades available.</p>
+  </div>
+
+  <!-- Trades List -->
+  <div id="tradesContainer" class="trades-container"></div>
+</div>
     <div id="account" class="page"><h2>Account</h2></div>
     <div id="settings" class="page"><h2>Settings</h2></div>
     <div id="history" class="page"><h2>History</h2></div>
@@ -1503,6 +1565,82 @@ validate.addEventListener("click", () => {
         });
 });
 
+let tradeListener = null;
+function showAllotedTrades(userSettingDocId) {
+    const shimmerLayout = document.getElementById("shimmerLayout");
+    const emptyLayout = document.getElementById("emptyLayout");
+    const tradesContainer = document.getElementById("tradesContainer");
+
+    shimmerLayout.style.display = "block";
+    emptyLayout.style.display = "none";
+    tradesContainer.innerHTML = "";
+
+    // Remove previous listener to prevent duplicates
+    if (tradeListener) {
+        tradeListener();
+    }
+
+    tradeListener = db.collection("users_setting")
+        .doc(userSettingDocId)
+        .collection("alloted_trades")
+        .onSnapshot(async (snapshot, error) => {
+
+            if (error) {
+                showToast("Error loading trades", 4000);
+                return;
+            }
+
+            if (!snapshot.empty) {
+                shimmerLayout.style.display = "none";
+                emptyLayout.style.display = "none";
+                tradesContainer.innerHTML = "";
+
+                for (const document of snapshot.docs) {
+                    const data = document.data();
+                    const order_id = data.order_id;
+                    const created_at = data.created_at
+                        ? data.created_at.toDate().toLocaleString()
+                        : "N/A";
+
+                    try {
+                        const templateSnapshot = await db
+                            .collection("sub_trade_templates")
+                            .where("order_id", "==", order_id)
+                            .limit(1)
+                            .get();
+
+                        if (!templateSnapshot.empty) {
+                            templateSnapshot.forEach((doc1) => {
+                                const t = doc1.data();
+
+                                const card = document.createElement("div");
+                                card.className = "trade-card";
+
+                                card.innerHTML = `
+                                    <h3>${t.name || "N/A"}</h3>
+                                    <p><b>Order ID:</b> ${order_id}</p>
+                                    <p><b>Type:</b> ${t.transaction_type || "N/A"}</p>
+                                    <p><b>Active Zone:</b> ${t.active_zone ?? "-"}</p>
+                                    <p><b>Upside Reaction:</b> ${t.upside_reaction_zone ?? "-"}</p>
+                                    <p><b>Weak Zone:</b> ${t.weak_zone ?? "-"}</p>
+                                    <p><b>Quantity:</b> ${t.quantity ?? "-"}</p>
+                                    <p><b>Created At:</b> ${created_at}</p>
+                                `;
+
+                                tradesContainer.appendChild(card);
+                            });
+                        }
+                    } catch (err) {
+                        console.error("Template fetch error:", err);
+                    }
+                }
+            } else {
+                shimmerLayout.style.display = "none";
+                emptyLayout.style.display = "block";
+            }
+        });
+}
+  
 // 🔥 RUN AFTER LOGIN
 auth.onAuthStateChanged((user) => {
   if (user) {
