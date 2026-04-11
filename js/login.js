@@ -1,58 +1,65 @@
-const phoneInput = document.querySelector("input");
-const btn = document.querySelector(".btn");
+const phoneInput = document.getElementById("phone");
+const btn = document.getElementById("sendOtpBtn");
 const loading = document.getElementById("loading");
 
-// Recaptcha
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-  size: 'normal'
-});
+let recaptchaVerifier;
+let confirmationResult;
 
-// Click
+// Initialize reCAPTCHA
+window.onload = function () {
+    recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+        "recaptcha-container",
+        {
+            size: "normal",
+            callback: function () {
+                console.log("reCAPTCHA verified");
+            },
+            "expired-callback": function () {
+                alert("reCAPTCHA expired. Please refresh.");
+            }
+        }
+    );
+
+    recaptchaVerifier.render();
+};
+
+// Send OTP
 btn.addEventListener("click", sendOtp);
 
 function sendOtp() {
-  let phone = phoneInput.value.trim();
+    const phone = phoneInput.value.trim();
 
-  if (phone === "" || phone.length < 10) {
-    alert("Enter valid phone");
-    return;
-  }
+    // Validate Indian phone number
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+        alert("Enter a valid 10-digit Indian phone number.");
+        return;
+    }
 
-  loading.style.display = "flex";
-  btn.disabled = true;
+    const fullPhone = "+91" + phone;
 
-  let fullPhone = "+91" + phone;
+    loading.style.display = "flex";
+    btn.disabled = true;
 
-  // firebase.auth().signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
-  //   .then((confirmationResult) => {
+    firebase.auth().signInWithPhoneNumber(fullPhone, recaptchaVerifier)
+        .then((result) => {
+            confirmationResult = result;
 
-  //    window.confirmationResult = confirmationResult;
-  //    window.confirmationResultGlobal = confirmationResult;
-  //    window.location.href = "otp.html";
-  //    sessionStorage.setItem("verificationId", confirmationResult.verificationId);
-      
-  //   })
-  //   .catch((error) => { 
-  //     alert(error.message);
-  //     loading.style.display = "none";
-  //     btn.disabled = false;
-  //   });
+            // Store verification ID
+            sessionStorage.setItem(
+                "verificationId",
+                result.verificationId
+            );
 
-  firebase.auth().signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
-  .then((confirmationResult) => {
+            sessionStorage.setItem("phone", fullPhone);
 
-    // 🔥 FIRST save karo
-    sessionStorage.setItem("verificationId", confirmationResult.verificationId);
+            // Redirect to OTP page
+            window.location.href = "otp.html";
+        })
+        .catch((error) => {
+            console.error("OTP Error:", error);
+            alert(error.message);
 
-    // optional (not needed now)
-    window.confirmationResult = confirmationResult;
-
-    // 🔥 THEN redirect
-    window.location.href = "otp.html";
-  })
-  .catch((error) => {
-    alert(error.message);
-    loading.style.display = "none";
-    btn.disabled = false;
-  });
+            loading.style.display = "none";
+            btn.disabled = false;
+        });
 }
