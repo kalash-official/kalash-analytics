@@ -1,4 +1,4 @@
-function showToast(message, duration = 3000) {
+function showToast(message, duration = 3000, type = "info") {
     // Remove existing toast if present
     const existingToast = document.querySelector(".simple-toast");
     if (existingToast) {
@@ -7,10 +7,10 @@ function showToast(message, duration = 3000) {
 
     // Create toast element
     const toast = document.createElement("div");
-    toast.className = "simple-toast";
+    toast.className = `simple-toast ${type}`;
     toast.textContent = message;
 
-    // Add to body
+    // Add toast to body
     document.body.appendChild(toast);
 
     // Show toast
