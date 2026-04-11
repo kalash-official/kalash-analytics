@@ -668,6 +668,113 @@ input:checked + .slider::before {
     opacity: 1;
   }
 }
+
+/* Overlay Background */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(5px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 15px;
+}
+
+/* Modal Box */
+.modal-container {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease-in-out;
+  text-align: center;
+}
+
+/* Title */
+.modal-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+/* Divider */
+.modal-divider {
+  width: 45px;
+  height: 4px;
+  background: #4CAF50;
+  margin: 0 auto 15px;
+  border-radius: 5px;
+}
+
+/* Content */
+.modal-content {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* Button */
+.modal-button {
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(135deg, #4CAF50, #2e7d32);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+
+.modal-button:hover {
+  background: linear-gradient(135deg, #43a047, #1b5e20);
+  transform: translateY(-2px);
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .modal-container {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-content {
+    font-size: 14px;
+  }
+
+  .modal-button {
+    height: 45px;
+    font-size: 15px;
+  }
+}
+
+  
 </style>
 </head>
 
@@ -737,6 +844,30 @@ input:checked + .slider::before {
     </div>
   </div>
 </div>
+
+<!-- Trading Info Modal -->
+<div id="tradingInfoModal" class="modal-overlay">
+  <div class="modal-container">
+    
+    <!-- Title -->
+    <h2 class="modal-title">Requirements</h2>
+    
+    <!-- Divider -->
+    <div class="modal-divider"></div>
+
+    <!-- Content -->
+    <p class="modal-content">
+      • Make sure your Demat and Trading account has enough balance to place trades without any issues.<br><br>
+      • Ensure that Equity, Futures & Options (F&O), and Commodities segments are activated in your account.<br><br>
+      • You should have basic knowledge of Buy, Sell, and Stop-Loss to manage your trades effectively.<br><br>
+      • Kindly go through the Kalash platform rules and guidelines before continuing.
+    </p>
+
+    <!-- Button -->
+    <button id="btnOk" class="modal-button">Got it</button>
+  </div>
+</div>
+  
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -1060,56 +1191,6 @@ async function checkAllConditionForLive(
     }
   };
 }
-
-
-
-// document.getElementById("submitWaCode").onclick = async () => {
-//     const code = document.getElementById("waCodeInput").value.trim();
-
-//     if (code.length !== 6) {
-//       alert("Enter valid 6-digit code");
-//       return;
-//     }
-
-//     try {
-//       const snapshot = await db.collection("compnay_setting").limit(1).get();
-
-//       if (snapshot.empty) {
-//         alert("Company setting not found");
-//         sw.checked = false;
-//         sw.disabled = false;
-//         return;
-//       }
-
-//       const doc = snapshot.docs[0];
-//       const wa_code = doc.data().wa_code;
-
-//       if (!wa_code) {
-//         alert("Invalid server data");
-//         return;
-//       }
-
-//       if (wa_code.toString() === code) {
-//         await db.collection("users_setting")
-//           .doc(users_setting_did)
-//           .update({ wa_status: "true" });
-
-//         alert("Code verified successfully");
-//         document.body.removeChild(modal);
-//         sw.checked = true;
-//         sw.disabled = false;
-//       } else {
-//         alert("Invalid code");
-//       }
-
-//     } catch (error) {
-//       console.error(error);
-//       alert("Error: " + error.message);
-//       sw.checked = false;
-//       sw.disabled = false;
-//     }
-// };
-
   
 function showBlockDialog(reason) {
   // Remove existing modal if already open
@@ -1152,23 +1233,29 @@ function showBlockDialog(reason) {
 }
 
 function showTradingInfoDialog(sw, users_setting_did) {
-  alert("You are now Live for trading.");
+    const modal = document.getElementById("tradingInfoModal");
+    const okBtn = document.getElementById("btnOk");
 
-  db.collection("users_setting")
-    .doc(users_setting_did)
-    .update({
-      live_status: "true"
-    })
-    .then(() => {
-      sw.checked = true;
-      sw.disabled = false;
-    })
-    .catch((error) => {
-      console.error(error);
-      sw.checked = false;
-      sw.disabled = false;
-      alert("Error enabling live status");
+    // Show modal
+    modal.style.display = "flex";
+
+    // Remove previous listeners to avoid duplication
+    const newOkBtn = okBtn.cloneNode(true);
+    okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+
+    // Handle OK button click
+    newOkBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+        runLiveTransaction(sw, users_setting_did);
     });
+}
+
+/* Equivalent to Android's runLiveTransaction() */
+function runLiveTransaction(sw, users_setting_did) {
+    if (sw) {
+        sw.checked = true;
+    }
+    console.log("Live Transaction Enabled for ID:", users_setting_did);
 }
 
 function showTradeIdDialog(sw) {
