@@ -1031,7 +1031,7 @@ sw.addEventListener("change", () => {
       if (snapshot.empty) {
         sw.checked = false;
         sw.disabled = false;
-        showCustomAlert({type: "success",title: "Success",message: "Your account verification  is process."});
+        //showCustomAlert({type: "success",title: "Success",message: "Your account verification  is process."});
         return;
       }
 
@@ -1092,7 +1092,7 @@ function userOffline(us_did) {
       .then(() => {
 
         sw.checked = false;
-        showCustomAlert({type: "success",title: "Success", message: "now you are offline"});
+        //showCustomAlert({type: "success",title: "Success", message: "now you are offline"});
 
       })
       .catch((error) => {
@@ -1207,7 +1207,7 @@ async function checkAllConditionForLive(
     const code = codeInput.value.trim();
 
     if (code.length !== 6) {
-      showCustomAlert({type: "success",title: "Success",message: "Enter valid 6-digit code"});
+      //showCustomAlert({type: "success",title: "Success",message: "Enter valid 6-digit code"});
       return;
     }
 
@@ -1243,7 +1243,7 @@ async function checkAllConditionForLive(
         sw.checked = true;
         sw.disabled = false;
       } else {
-        showCustomAlert({type: "success",title: "Success", message: "Invalid code."});
+        //showCustomAlert({type: "success",title: "Success", message: "Invalid code."});
         submitBtn.disabled = false;
       }
 
@@ -1387,7 +1387,7 @@ function runLiveTransaction(sw, users_setting_did) {
                 });
 
             } else {
-                showCustomToast("Company setting not found", "info", 4000);
+                //showCustomToast("Company setting not found", "info", 4000);
                 sw.disabled = false;
                 sw.checked = false;
             }
@@ -1399,30 +1399,30 @@ function runLiveTransaction(sw, users_setting_did) {
         });
 }
 
-function showCustomToast(message, type = "info", duration = 4000) {
-    const toast = document.createElement("div");
-    toast.innerText = message;
+// function showCustomToast(message, type = "info", duration = 4000) {
+//     const toast = document.createElement("div");
+//     toast.innerText = message;
 
-    toast.style.position = "fixed";
-    toast.style.bottom = "20px";
-    toast.style.right = "20px";
-    toast.style.padding = "12px 18px";
-    toast.style.color = "#fff";
-    toast.style.borderRadius = "8px";
-    toast.style.fontSize = "14px";
-    toast.style.zIndex = "10000";
-    toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-    toast.style.background =
-        type === "info"
-            ? "linear-gradient(135deg, #4CAF50, #2e7d32)"
-            : "#ef4444";
+//     toast.style.position = "fixed";
+//     toast.style.bottom = "20px";
+//     toast.style.right = "20px";
+//     toast.style.padding = "12px 18px";
+//     toast.style.color = "#fff";
+//     toast.style.borderRadius = "8px";
+//     toast.style.fontSize = "14px";
+//     toast.style.zIndex = "10000";
+//     toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+//     toast.style.background =
+//         type === "info"
+//             ? "linear-gradient(135deg, #4CAF50, #2e7d32)"
+//             : "#ef4444";
 
-    document.body.appendChild(toast);
+//     document.body.appendChild(toast);
 
-    setTimeout(() => {
-        toast.remove();
-    }, duration);
-}
+//     setTimeout(() => {
+//         toast.remove();
+//     }, duration);
+// }
 
 function showTradeIdDialog(sw) {
   const existingModal = document.getElementById("tradeIdModal");
@@ -1449,7 +1449,7 @@ function showTradeIdDialog(sw) {
 
   // Read button
   document.getElementById("btnRead").onclick = () => {
-    showCustomAlert({type: "success",title: "Success", message: "Here you can show trade ID instructions."});
+   // showCustomAlert({type: "success",title: "Success", message: "Here you can show trade ID instructions."});
     modal.remove();
     sw.checked = false;
     sw.disabled = false;
