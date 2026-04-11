@@ -1340,7 +1340,7 @@ function runLiveTransaction(sw, users_setting_did) {
                         const liveUserData = {
                             live_srno: newSrno,
                             live_status: "true",
-                            avail_trading_capacity: 1,
+                            // avail_trading_capacity: 1,
                             time: firebase.firestore.FieldValue.serverTimestamp()
                         };
 
@@ -1361,6 +1361,7 @@ function runLiveTransaction(sw, users_setting_did) {
                     // Transaction Success
                     sw.checked = true;
                     sw.disabled = false;
+                
 
                     // Custom login info function
                     if (typeof custom_logininfo === "function") {
@@ -1369,6 +1370,9 @@ function runLiveTransaction(sw, users_setting_did) {
 
                     // Success Toast
                     showCustomToast("Now you are live", "info", 4000);
+
+                    setTimeout(() => {location.reload();}, 4000);
+                  
                 })
                 .catch((error) => {
                     sw.disabled = false;
