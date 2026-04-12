@@ -2089,8 +2089,12 @@ function showTradeDialog(userSettingDocId) {
   });
 }
 
-document.getElementById("liveSwitch")
-  .addEventListener("change", unlockAudio);
+document.addEventListener("DOMContentLoaded", () => {
+  const liveSwitch = document.getElementById("liveSwitch");
+  if (liveSwitch) {
+    liveSwitch.addEventListener("change", unlockAudio);
+  }
+});
   
 function playTradeAlertSound() {
   const sound = document.getElementById("tradeAlertSound");
