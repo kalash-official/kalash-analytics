@@ -885,6 +885,96 @@ input:checked + .slider::before {
   font-size: 14px;
   color: #4b5563;
 }
+
+.trade-card-modern {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-left: 4px solid #2563eb;
+}
+
+.trade-card-modern:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+/* Rows */
+.trade-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+/* Text Styles */
+.trade-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.trade-active-zone {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.trade-weak-zone {
+  color: #ef4444;
+}
+
+.trade-reaction-zone {
+  color: #16a34a;
+}
+
+.trade-qty {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Divider */
+.trade-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 10px 0;
+}
+
+/* Footer */
+.trade-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+  background: #f9fafb;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+/* Disclaimer */
+.trade-disclaimer {
+  margin-top: 10px;
+  padding: 8px;
+  font-size: 12px;
+  text-align: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4CAF50, #2e7d32);
+  border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .trade-row {
+    font-size: 13px;
+  }
+
+  .trade-footer {
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-start;
+  }
+}
 </style>
 </head>
 
@@ -1628,15 +1718,38 @@ function showAllotedTrades(userSettingDocId) {
                             card.className = "trade-card";
 
                             card.innerHTML = `
-                                <h3>${t.name || "N/A"}</h3>
-                                <p><b>Order ID:</b> ${order_id}</p>
-                                <p><b>Type:</b> ${t.transaction_type || "N/A"}</p>
-                                <p><b>Active Zone:</b> ${t.active_zone ?? "-"}</p>
-                                <p><b>Upside Reaction:</b> ${t.upside_reaction_zone ?? "-"}</p>
-                                <p><b>Weak Zone:</b> ${t.weak_zone ?? "-"}</p>
-                                <p><b>Quantity:</b> ${t.quantity ?? "-"}</p>
-                                <p><b>Created At:</b> ${created_at}</p>
-                            `;
+    <div class="trade-card-modern">
+
+        <!-- Top Row -->
+        <div class="trade-row">
+            <span class="trade-active-zone">${t.active_zone ?? "-"}</span>
+            <span class="trade-name">${t.name || "N/A"}</span>
+        </div>
+
+        <!-- Middle Row -->
+        <div class="trade-row">
+            <span class="trade-weak-zone">${t.weak_zone ?? "-"}</span>
+            <span class="trade-reaction-zone">${t.upside_reaction_zone ?? "-"}</span>
+            <span class="trade-qty">Qty: ${t.quantity ?? "-"}</span>
+        </div>
+
+        <!-- Divider -->
+        <div class="trade-divider"></div>
+
+        <!-- Bottom Info -->
+        <div class="trade-footer">
+            <span class="trade-order-id">Order ID: ${order_id}</span>
+            <span class="trade-time">${created_at}</span>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="trade-disclaimer">
+            For educational purposes only. Not a SEBI registered advisor.
+            Markets involve risk.
+        </div>
+
+    </div>
+`;
 
                             tradesContainer.appendChild(card);
                             hasData = true;
