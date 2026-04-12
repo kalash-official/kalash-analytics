@@ -1722,14 +1722,14 @@ function showAllotedTrades(userSettingDocId) {
 
         <!-- Top Row -->
         <div class="trade-row">
-            <span class="trade-active-zone">${t.active_zone ?? "-"}</span>
+            <span class="trade-active-zone">Active zone: ${t.active_zone ?? "-"}</span>
             <span class="trade-name">${t.name || "N/A"}</span>
         </div>
 
         <!-- Middle Row -->
         <div class="trade-row">
-            <span class="trade-weak-zone">${t.weak_zone ?? "-"}</span>
-            <span class="trade-reaction-zone">${t.upside_reaction_zone ?? "-"}</span>
+            <span class="trade-weak-zone">Weak zone: ${t.weak_zone ?? "-"}</span>
+            <span class="trade-reaction-zone">Reaction zone: ${t.upside_reaction_zone ?? "-"}</span>
             <span class="trade-qty">Qty: ${t.quantity ?? "-"}</span>
         </div>
 
