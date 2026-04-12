@@ -2091,8 +2091,16 @@ function showTradeDialog(userSettingDocId) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const liveSwitch = document.getElementById("liveSwitch");
+
   if (liveSwitch) {
-    liveSwitch.addEventListener("change", unlockAudio);
+    liveSwitch.addEventListener("change", () => {
+      unlockAudio();
+    });
+  }
+
+  // Agar pehle unlock ho chuka hai to silently unlock karein
+  if (localStorage.getItem("audioUnlocked") === "true") {
+    unlockAudio();
   }
 });
   
@@ -2104,15 +2112,22 @@ function playTradeAlertSound() {
     return;
   }
 
+  // Agar locked hai to unlock karne ki koshish karein
   if (!audioUnlocked) {
+    unlockAudio();
     console.warn("Audio locked. Waiting for user interaction.");
     return;
   }
 
   sound.currentTime = 0;
+
   sound.play()
     .then(() => console.log("🔔 Trade alert sound played"))
-    .catch(error => console.warn("Playback failed:", error));
+    .catch(error => {
+      console.warn("Playback failed:", error);
+      localStorage.removeItem("audioUnlocked");
+      audioUnlocked = false;
+    });
 }
   
 // 🔥 RUN AFTER LOGIN
@@ -2188,6 +2203,7 @@ function unlockAudio() {
       audio.currentTime = 0;
       audio.muted = false;
       audioUnlocked = true;
+      localStorage.setItem("audioUnlocked", "true");
       console.log("🔓 Audio unlocked successfully");
     })
     .catch((error) => {
