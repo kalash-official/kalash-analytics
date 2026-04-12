@@ -1830,14 +1830,8 @@ function showAllotedTrades(userSettingDocId) {
 
 let tradeListener2 = null;
 let userListener2 = null;
-
-let tradeListener2 = null;
-let userListener2 = null;
-
 function checkTrade(userSettingDocId) {
-
     if (tradeListener2) tradeListener2();
-
     tradeListener2 = db.collection("all_alloted_trade")
         .where("status", "==", "open")
         .onSnapshot(async (snapshot, error) => {
