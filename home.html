@@ -1918,6 +1918,13 @@ function checkTrade(userSettingDocId) {
                             .where("order_id", "==", order_id)
                             .get();
 
+                      console.log("Sub Trade Snapshot Size:", subTradeSnapshot.size);
+
+                      if (subTradeSnapshot.empty) {
+                            console.warn("No sub_trade_templates found for order_id:", order_id);
+                            return;
+                         }
+                      
                         subTradeSnapshot.forEach((document) => {
                             const notes = document.data();
                             console.log("Sub Trade Data:", notes);
