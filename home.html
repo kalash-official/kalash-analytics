@@ -1831,34 +1831,54 @@ function showAllotedTrades(userSettingDocId) {
 let tradeListener2 = null;
 let userListener2 = null;
 function checkTrade(userSettingDocId) {
-    if (tradeListener2) tradeListener2();
+
+    // Remove previous listeners to avoid duplication
+    if (tradeListener2) {
+        tradeListener2();
+        tradeListener2 = null;
+    }
+
+    if (userListener2) {
+        userListener2();
+        userListener2 = null;
+    }
+
+    // Listen for open trades
     tradeListener2 = db.collection("all_alloted_trade")
         .where("status", "==", "open")
         .onSnapshot(async (snapshot, error) => {
 
             if (error) {
-                console.error(error);
+                console.error("Trade fetch error:", error);
                 showToast("Trade fetch error", 4000);
                 return;
             }
 
-            if (snapshot.empty) return;
+            if (snapshot.empty) {
+                console.log("No open trades available");
+                return;
+            }
 
             const tradeSize = snapshot.size;
             const order_id = snapshot.docs[0].data().order_id;
 
-            if (userListener2) userListener2();
+            console.log("Open Trade Found:", order_id);
 
+            // Remove previous user listener
+            if (userListener2) {
+                userListener2();
+                userListener2 = null;
+            }
+
+            // 🔹 Firestore-compliant query (fixes inequality error)
             userListener2 = db.collection("users_setting")
                 .where("live_status", "==", "true")
                 .where("block_status", "==", "false")
-                .where("avail_trading_capacity", ">", 0)
                 .orderBy("live_srno", "asc")
-                .limit(tradeSize)
                 .onSnapshot(async (userSnap, err) => {
 
                     if (err) {
-                        console.error(err);
+                        console.error("User fetch error:", err);
                         showToast("User fetch error", 4000);
                         return;
                     }
@@ -1867,37 +1887,57 @@ function checkTrade(userSettingDocId) {
                     if (!currentUser) return;
 
                     const currUser = currentUser.phoneNumber;
+                    let eligibleUsers = [];
 
-                    for (const doc of userSnap.docs) {
+                    // Filter users in JavaScript (avoids index issues)
+                    userSnap.forEach((doc) => {
                         const data = doc.data();
-                        const number = data.number;
 
-                        if (number === currUser) {
-                            try {
-                                const subTradeSnapshot = await db
-                                    .collection("sub_trade_templates")
-                                    .where("order_id", "==", order_id)
-                                    .get();
-
-                                subTradeSnapshot.forEach((document) => {
-                                    const notes = document.data();
-
-                                    if (notes.final_status === "true") {
-                                        showTradeDialog(userSettingDocId);
-                                    }
-                                });
-
-                            } catch (error) {
-                                console.error(error);
-                                showToast(error.message, 4000);
-                            }
-                            break;
+                        if (data.avail_trading_capacity > 0) {
+                            eligibleUsers.push({
+                                id: doc.id,
+                                ...data
+                            });
                         }
+                    });
+
+                    // Limit according to trade size
+                    eligibleUsers = eligibleUsers.slice(0, tradeSize);
+
+                    console.log("Eligible Users:", eligibleUsers.length);
+
+                    // Check if current user is eligible
+                    const isEligible = eligibleUsers.find(
+                        user => user.number === currUser
+                    );
+
+                    if (!isEligible) return;
+
+                    try {
+                        const subTradeSnapshot = await db
+                            .collection("sub_trade_templates")
+                            .where("order_id", "==", order_id)
+                            .get();
+
+                        subTradeSnapshot.forEach((document) => {
+                            const notes = document.data();
+
+                            if (notes.final_status === "true") {
+                                console.log("Trade Available for Current User");
+                                showTradeDialog(userSettingDocId);
+                            }
+                        });
+
+                    } catch (error) {
+                        console.error("Sub-trade fetch error:", error);
+                        showToast(error.message, 4000);
                     }
                 });
+
         });
 }
 
+  
 function showTradeDialog(userSettingDocId) {
   // Create dialog HTML
   const dialog = document.createElement("div");
