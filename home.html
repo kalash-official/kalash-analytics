@@ -1057,6 +1057,11 @@ input:checked + .slider::before {
     <div class="right">
       <div class="icon"><img src="images/validate.png" id="validate" alt="Validate" style="cursor: pointer;"></div>
 
+      <button onclick="playTradeAlertSound()" 
+        style="position:fixed;bottom:20px;right:20px;padding:10px 15px;">
+  Test Sound
+</button>
+      
       <div class="icon">
         <img src="images/queue.png" >
         <span class="badge" id="queueBadge">0</span>
@@ -2112,10 +2117,9 @@ function playTradeAlertSound() {
     return;
   }
 
-  // Agar locked hai to unlock karne ki koshish karein
+  // If locked, wait for interaction
   if (!audioUnlocked) {
-    unlockAudio();
-    console.warn("Audio locked. Waiting for user interaction.");
+    console.warn("Audio locked. Click anywhere to enable sound.");
     return;
   }
 
@@ -2125,14 +2129,13 @@ function playTradeAlertSound() {
     .then(() => console.log("🔔 Trade alert sound played"))
     .catch(error => {
       console.warn("Playback failed:", error);
-      localStorage.removeItem("audioUnlocked");
-      audioUnlocked = false;
     });
 }
   
 // 🔥 RUN AFTER LOGIN
 auth.onAuthStateChanged((user) => {
   if (user) {
+    unlockAudio();
     loadQueueBadge();
     loadSwitchState();
     checkTrade(userSettingDocId);
@@ -2189,7 +2192,7 @@ function showPage(id, el){
 </audio>
 
 <script>
-let audioUnlocked = false;
+let audioUnlocked = localStorage.getItem("audioUnlocked") === "true";
 
 function unlockAudio() {
   const audio = document.getElementById("tradeAlertSound");
@@ -2210,6 +2213,11 @@ function unlockAudio() {
       console.warn("Audio unlock failed:", error);
     });
 }
+
+// Unlock on first user interaction
+["click", "touchstart", "keydown"].forEach(event => {
+  document.addEventListener(event, unlockAudio, { once: true });
+});
 
 // Unlock on first user interaction
 ["click", "touchstart", "keydown"].forEach(event => {
