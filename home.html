@@ -1735,7 +1735,7 @@ function showAllotedTrades(userSettingDocId) {
                 return;
             }
 
-            console.log("Trades count:", snapshot.size);
+            //console.log("Trades count:", snapshot.size);
 
             if (!snapshot.empty) {
                 shimmerLayout.style.display = "none";
@@ -1748,7 +1748,7 @@ function showAllotedTrades(userSettingDocId) {
                     const data = docSnap.data();
 
                     const order_id = data.order_id;
-                    console.log("Checking order_id:", order_id, typeof order_id);
+                    //console.log("Checking order_id:", order_id, typeof order_id);
 
                     const created_at = data.created_at
                         ? data.created_at.toDate().toLocaleString()
@@ -1761,7 +1761,7 @@ function showAllotedTrades(userSettingDocId) {
                             .limit(1)
                             .get();
 
-                        console.log("Template found:", !templateSnapshot.empty);
+                        //console.log("Template found:", !templateSnapshot.empty);
 
                         if (!templateSnapshot.empty) {
                             const t = templateSnapshot.docs[0].data();
@@ -1831,33 +1831,29 @@ function showAllotedTrades(userSettingDocId) {
 let tradeListener2 = null;
 let userListener2 = null;
 
+let tradeListener2 = null;
+let userListener2 = null;
+
 function checkTrade(userSettingDocId) {
-    const db = firebase.firestore();
-    if (tradeListener2) {
-        tradeListener();
-    }
+
+    if (tradeListener2) tradeListener2();
 
     tradeListener2 = db.collection("all_alloted_trade")
         .where("status", "==", "open")
-        .onSnapshot(async (snapshot) => {
+        .onSnapshot(async (snapshot, error) => {
 
-            if (!snapshot) {
-                showToast("Trade fetch error");
+            if (error) {
+                console.error(error);
+                showToast("Trade fetch error", 4000);
                 return;
             }
 
-            if (snapshot.empty) {
-                showToast("No trade available");
-                return;
-            }
+            if (snapshot.empty) return;
 
             const tradeSize = snapshot.size;
             const order_id = snapshot.docs[0].data().order_id;
 
-            // Remove previous user listener
-            if (userListener2) {
-                userListener();
-            }
+            if (userListener2) userListener2();
 
             userListener2 = db.collection("users_setting")
                 .where("live_status", "==", "true")
@@ -1865,23 +1861,24 @@ function checkTrade(userSettingDocId) {
                 .where("avail_trading_capacity", ">", 0)
                 .orderBy("live_srno", "asc")
                 .limit(tradeSize)
-                .onSnapshot(async (userSnap) => {
+                .onSnapshot(async (userSnap, err) => {
 
-                    if (!userSnap) {
-                        showToast("User fetch error");
+                    if (err) {
+                        console.error(err);
+                        showToast("User fetch error", 4000);
                         return;
                     }
 
-                    const currentUser = firebase.auth().currentUser;
+                    const currentUser = auth.currentUser;
                     if (!currentUser) return;
 
                     const currUser = currentUser.phoneNumber;
 
-                    userSnap.forEach(async (doc) => {
+                    for (const doc of userSnap.docs) {
                         const data = doc.data();
                         const number = data.number;
 
-                        if (number && number === currUser) {
+                        if (number === currUser) {
                             try {
                                 const subTradeSnapshot = await db
                                     .collection("sub_trade_templates")
@@ -1890,23 +1887,20 @@ function checkTrade(userSettingDocId) {
 
                                 subTradeSnapshot.forEach((document) => {
                                     const notes = document.data();
-                                    const final_status = notes.final_status;
 
-                                    if (final_status === "true") {
-                                        showTradeDialog(us_did);
+                                    if (notes.final_status === "true") {
+                                        showTradeDialog(userSettingDocId);
                                     }
                                 });
 
                             } catch (error) {
-                                showToast(error.message);
+                                console.error(error);
+                                showToast(error.message, 4000);
                             }
+                            break;
                         }
-                    });
+                    }
                 });
-
-        }, (error) => {
-            showToast("Trade fetch error");
-            console.error(error);
         });
 }
 
@@ -2065,6 +2059,7 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     loadQueueBadge();
     loadSwitchState();
+    checkTrade(userSettingDocId);
 
     db.collection("users_setting")
       .where("number", "==", user.phoneNumber)
