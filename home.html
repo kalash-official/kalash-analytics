@@ -1830,6 +1830,7 @@ function showAllotedTrades(userSettingDocId) {
 
 let tradeListener2 = null;
 let userListener2 = null;
+let lastAlertedOrderId = null;
 function checkTrade(userSettingDocId) {
     if (tradeListener2) {
         tradeListener2();
@@ -1920,7 +1921,8 @@ function checkTrade(userSettingDocId) {
                         subTradeSnapshot.forEach((document) => {
                             const notes = document.data();
 
-                            if (notes.final_status === "true") {
+                            if (notes.final_status === "true" && lastAlertedOrderId !== order_id) {
+                                lastAlertedOrderId = order_id;
                                 console.log("Trade Available for Current User");
                                 playTradeAlertSound();
                                 showTradeDialog(userSettingDocId);
@@ -2087,14 +2089,26 @@ function showTradeDialog(userSettingDocId) {
   });
 }
 
+document.getElementById("liveSwitch")
+  .addEventListener("change", unlockAudio);
+  
 function playTradeAlertSound() {
   const sound = document.getElementById("tradeAlertSound");
-  if (sound) {
-    sound.currentTime = 0; // Restart sound if already playing
-    sound.play().catch(error => {
-      console.warn("Autoplay blocked by browser:", error);
-    });
+
+  if (!sound) {
+    console.warn("Alert sound element not found.");
+    return;
   }
+
+  if (!audioUnlocked) {
+    console.warn("Audio locked. Waiting for user interaction.");
+    return;
+  }
+
+  sound.currentTime = 0;
+  sound.play()
+    .then(() => console.log("🔔 Trade alert sound played"))
+    .catch(error => console.warn("Playback failed:", error));
 }
   
 // 🔥 RUN AFTER LOGIN
@@ -2146,40 +2160,41 @@ function showPage(id, el){
 }
 </script>
 
-<script>
-let audioUnlocked = false;
-
-function unlockAudio() {
-  const audio = document.getElementById("tradeAlertSound");
-  if (!audio) return;
-
-  // Play silently to unlock
-  audio.volume = 0;
-  audio.play()
-    .then(() => {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.volume = 1;
-      audioUnlocked = true;
-      console.log("🔓 Audio unlocked successfully"); 
-    })
-    .catch(() => {
-      console.warn("Audio unlock failed");
-    });
-}
-
-// Unlock on first interaction
-["click", "touchstart", "keydown"].forEach(event => {
-  document.addEventListener(event, unlockAudio, { once: true });
-});
-</script>
 
 <!-- Custom Alert Container -->
 <div id="customAlertContainer"></div>
 
 <!-- Trade Alert Sound -->
 <audio id="tradeAlertSound" preload="auto">
-<source src="sounds/alert_web.mp3" type="audio/mpeg">
+  <source src="sounds/alert_web.mp3" type="audio/mpeg">
 </audio>
+
+<script>
+let audioUnlocked = false;
+
+function unlockAudio() {
+  const audio = document.getElementById("tradeAlertSound");
+  if (!audio || audioUnlocked) return;
+
+  audio.muted = true;
+
+  audio.play()
+    .then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.muted = false;
+      audioUnlocked = true;
+      console.log("🔓 Audio unlocked successfully");
+    })
+    .catch((error) => {
+      console.warn("Audio unlock failed:", error);
+    });
+}
+
+// Unlock on first user interaction
+["click", "touchstart", "keydown"].forEach(event => {
+  document.addEventListener(event, unlockAudio, { once: true });
+});
+</script>
 </body>
 </html>
