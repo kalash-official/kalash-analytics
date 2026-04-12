@@ -1952,42 +1952,60 @@ let userListener2 = null;
 
 function checkTrade(userSettingDocId) {
 
-    // Listen for open trades
+    // Remove existing listeners to avoid duplication
+    if (tradeListener2) {
+        tradeListener2();
+        tradeListener2 = null;
+    }
+
+    if (userListener2) {
+        userListener2();
+        userListener2 = null;
+    }
+
+    // 🔹 Listen for open trades
     tradeListener2 = db.collection("all_alloted_trade")
         .where("status", "==", "open")
-        .onSnapshot((snapshot, e) => {
+        .onSnapshot((snapshot, error) => {
 
             // Trade fetch error
-            if (e || !snapshot) {
+            if (error || !snapshot) {
+                console.error("Trade fetch error:", error);
                 showToast("Trade fetch error", 4000);
                 return;
             }
 
             // No trade available
             if (snapshot.empty) {
-                showToast("No trade available", 4000);
+                console.log("No trade available");
                 return;
             }
 
             const tradeSize = snapshot.size;
             const order_id = snapshot.docs[0].data().order_id;
 
+            console.log("Open Trade Found:", order_id);
+
             // Remove previous user listener
             if (userListener2) {
                 userListener2();
+                userListener2 = null;
             }
 
-            // Listen for eligible users
+            // 🔹 Listen for eligible users
+            // Firestore rule: inequality field must be first in orderBy
             userListener = db.collection("users_setting")
                 .where("live_status", "==", "true")
                 .where("block_status", "==", "false")
                 .where("avail_trading_capacity", ">", 0)
+                .orderBy("avail_trading_capacity", "asc") // Required by Firestore
                 .orderBy("live_srno", "asc")
                 .limit(tradeSize)
                 .onSnapshot((userSnap, err) => {
 
                     // User fetch error
                     if (err || !userSnap) {
+                        console.error("User fetch error:", err);
                         showToast("User fetch error", 4000);
                         return;
                     }
@@ -1995,25 +2013,56 @@ function checkTrade(userSettingDocId) {
                     if (!auth.currentUser) return;
                     const currUser = auth.currentUser.phoneNumber;
 
+                    console.log("Eligible Users:", userSnap.size);
+
                     userSnap.forEach((doc) => {
-                        const number = doc.data().number;
+                        const data = doc.data();
+                        const number = data.number;
 
                         if (number && number === currUser) {
 
+                            console.log("Current user is eligible");
+
+                            // 🔹 Fetch sub trade templates
                             db.collection("sub_trade_templates")
                                 .where("order_id", "==", order_id)
                                 .get()
                                 .then((task) => {
+
+                                    if (task.empty) {
+                                        console.log("No sub trade template found");
+                                        return;
+                                    }
+
                                     task.forEach((document) => {
                                         const notes = document.data();
                                         const final_status = notes.final_status;
 
-                                        if (final_status === "true") {
+                                        console.log(
+                                            "Final Status:",
+                                            final_status,
+                                            typeof final_status
+                                        );
+
+                                        // Check final status
+                                        if (
+                                            final_status === "true" ||
+                                            final_status === true
+                                        ) {
+                                            console.log("Trade Available for Current User");
+
+                                            // Play alert sound (if function exists)
+                                            if (typeof playTradeAlertSound === "function") {
+                                                playTradeAlertSound();
+                                            }
+
+                                            // Show trade dialog
                                             showTradeDialog(userSettingDocId);
                                         }
                                     });
                                 })
                                 .catch((e1) => {
+                                    console.error("Sub-trade fetch error:", e1);
                                     showToast(e1.message, 4000);
                                 });
                         }
