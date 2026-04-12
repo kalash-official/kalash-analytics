@@ -1566,6 +1566,7 @@ validate.addEventListener("click", () => {
 });
 
 let tradeListener = null;
+
 function showAllotedTrades(userSettingDocId) {
     const shimmerLayout = document.getElementById("shimmerLayout");
     const emptyLayout = document.getElementById("emptyLayout");
@@ -1575,7 +1576,7 @@ function showAllotedTrades(userSettingDocId) {
     emptyLayout.style.display = "none";
     tradesContainer.innerHTML = "";
 
-    // Remove previous listener to prevent duplicates
+    // Remove previous listener
     if (tradeListener) {
         tradeListener();
     }
@@ -1586,18 +1587,27 @@ function showAllotedTrades(userSettingDocId) {
         .onSnapshot(async (snapshot, error) => {
 
             if (error) {
+                console.error(error);
                 showToast("Error loading trades", 4000);
+                shimmerLayout.style.display = "none";
                 return;
             }
+
+            console.log("Trades count:", snapshot.size);
 
             if (!snapshot.empty) {
                 shimmerLayout.style.display = "none";
                 emptyLayout.style.display = "none";
                 tradesContainer.innerHTML = "";
 
-                for (const document of snapshot.docs) {
-                    const data = document.data();
+                let hasData = false;
+
+                const promises = snapshot.docs.map(async (docSnap) => {
+                    const data = docSnap.data();
+
                     const order_id = data.order_id;
+                    console.log("Checking order_id:", order_id, typeof order_id);
+
                     const created_at = data.created_at
                         ? data.created_at.toDate().toLocaleString()
                         : "N/A";
@@ -1609,32 +1619,43 @@ function showAllotedTrades(userSettingDocId) {
                             .limit(1)
                             .get();
 
+                        console.log("Template found:", !templateSnapshot.empty);
+
                         if (!templateSnapshot.empty) {
-                            templateSnapshot.forEach((doc1) => {
-                                const t = doc1.data();
+                            const t = templateSnapshot.docs[0].data();
 
-                                const card = document.createElement("div");
-                                card.className = "trade-card";
+                            const card = document.createElement("div");
+                            card.className = "trade-card";
 
-                                card.innerHTML = `
-                                    <h3>${t.name || "N/A"}</h3>
-                                    <p><b>Order ID:</b> ${order_id}</p>
-                                    <p><b>Type:</b> ${t.transaction_type || "N/A"}</p>
-                                    <p><b>Active Zone:</b> ${t.active_zone ?? "-"}</p>
-                                    <p><b>Upside Reaction:</b> ${t.upside_reaction_zone ?? "-"}</p>
-                                    <p><b>Weak Zone:</b> ${t.weak_zone ?? "-"}</p>
-                                    <p><b>Quantity:</b> ${t.quantity ?? "-"}</p>
-                                    <p><b>Created At:</b> ${created_at}</p>
-                                `;
+                            card.innerHTML = `
+                                <h3>${t.name || "N/A"}</h3>
+                                <p><b>Order ID:</b> ${order_id}</p>
+                                <p><b>Type:</b> ${t.transaction_type || "N/A"}</p>
+                                <p><b>Active Zone:</b> ${t.active_zone ?? "-"}</p>
+                                <p><b>Upside Reaction:</b> ${t.upside_reaction_zone ?? "-"}</p>
+                                <p><b>Weak Zone:</b> ${t.weak_zone ?? "-"}</p>
+                                <p><b>Quantity:</b> ${t.quantity ?? "-"}</p>
+                                <p><b>Created At:</b> ${created_at}</p>
+                            `;
 
-                                tradesContainer.appendChild(card);
-                            });
+                            tradesContainer.appendChild(card);
+                            hasData = true;
                         }
+
                     } catch (err) {
                         console.error("Template fetch error:", err);
                     }
+                });
+
+                await Promise.all(promises);
+
+                // If no templates matched
+                if (!hasData) {
+                    emptyLayout.style.display = "block";
                 }
+
             } else {
+                console.log("No trades found");
                 shimmerLayout.style.display = "none";
                 emptyLayout.style.display = "block";
             }
