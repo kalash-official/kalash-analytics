@@ -1921,7 +1921,7 @@ function checkTrade(userSettingDocId) {
                         subTradeSnapshot.forEach((document) => {
                             const notes = document.data();
 
-                            if (notes.final_status === "true" && lastAlertedOrderId !== order_id) {
+                            if (notes.final_status === "true") {
                                 lastAlertedOrderId = order_id;
                                 console.log("Trade Available for Current User");
                                 playTradeAlertSound();
