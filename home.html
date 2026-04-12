@@ -1667,6 +1667,29 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     loadQueueBadge();
     loadSwitchState();
+
+    db.collection("users_setting")
+      .where("number", "==", user.phoneNumber)
+      .limit(1)
+      .get()
+      .then((snapshot) => {
+        if (!snapshot.empty) {
+          const docId = snapshot.docs[0].id;
+          console.log("UserSettingDocId:", docId);
+
+          // 🔥 Automatically load trades on page load
+          showAllotedTrades(docId);
+        } else {
+          document.getElementById("shimmerLayout").style.display = "none";
+          document.getElementById("emptyLayout").style.display = "block";
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user setting:", error);
+      });
+
+    
+    
   }
 });
 </script>
