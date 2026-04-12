@@ -2146,6 +2146,34 @@ function showPage(id, el){
 }
 </script>
 
+<script>
+let audioUnlocked = false;
+
+function unlockAudio() {
+  const audio = document.getElementById("tradeAlertSound");
+  if (!audio) return;
+
+  // Play silently to unlock
+  audio.volume = 0;
+  audio.play()
+    .then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = 1;
+      audioUnlocked = true;
+      console.log("🔓 Audio unlocked successfully");
+    })
+    .catch(() => {
+      console.warn("Audio unlock failed");
+    });
+}
+
+// Unlock on first interaction
+["click", "touchstart", "keydown"].forEach(event => {
+  document.addEventListener(event, unlockAudio, { once: true });
+});
+</script>
+
 <!-- Custom Alert Container -->
 <div id="customAlertContainer"></div>
 
