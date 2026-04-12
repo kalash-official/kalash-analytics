@@ -1831,7 +1831,7 @@ function showAllotedTrades(userSettingDocId) {
 let tradeListener2 = null;
 let userListener2 = null;
 
-function checkTrade(us_did) {
+function checkTrade(userSettingDocId) {
     const db = firebase.firestore();
     if (tradeListener2) {
         tradeListener();
@@ -1910,7 +1910,7 @@ function checkTrade(us_did) {
         });
 }
 
-function showTradeDialog(us_did) {
+function showTradeDialog(userSettingDocId) {
   // Create dialog HTML
   const dialog = document.createElement("div");
   dialog.className = "trade-dialog-overlay";
@@ -1992,7 +1992,7 @@ function showTradeDialog(us_did) {
         }
 
         // User settings
-        const userSettingRef = doc(db, "users_setting", us_did);
+        const userSettingRef = doc(db, "users_setting", userSettingDocId);
         const userSnap = await transaction.get(userSettingRef);
 
         const capacity = userSnap.data().avail_trading_capacity;
@@ -2009,7 +2009,7 @@ function showTradeDialog(us_did) {
 
         // Create user trade record
         const userTradeRef = doc(
-          collection(db, "users_setting", us_did, "alloted_trades")
+          collection(db, "users_setting", userSettingDocId, "alloted_trades")
         );
 
         transaction.set(userTradeRef, {
@@ -2023,7 +2023,7 @@ function showTradeDialog(us_did) {
 
         // Update order
         transaction.update(orderRef, {
-          us_did: us_did,
+          us_did: userSettingDocId,
           at_did: at_did,
           number: userId,
           status: "close",
