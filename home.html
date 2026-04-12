@@ -2089,20 +2089,20 @@ function showTradeDialog(userSettingDocId) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const liveSwitch = document.getElementById("liveSwitch");
+// document.addEventListener("DOMContentLoaded", () => {
+//   const liveSwitch = document.getElementById("liveSwitch");
 
-  if (liveSwitch) {
-    liveSwitch.addEventListener("change", () => {
-      unlockAudio();
-    });
-  }
+//   if (liveSwitch) {
+//     liveSwitch.addEventListener("change", () => {
+//       unlockAudio();
+//     });
+//   }
 
-  // Agar pehle unlock ho chuka hai to silently unlock karein
-  if (localStorage.getItem("audioUnlocked") === "true") {
-    unlockAudio();
-  }
-});
+//   // Agar pehle unlock ho chuka hai to silently unlock karein
+//   if (localStorage.getItem("audioUnlocked") === "true") {
+//     unlockAudio();
+//   }
+// });
   
 function playTradeAlertSound() {
   const sound = document.getElementById("tradeAlertSound");
