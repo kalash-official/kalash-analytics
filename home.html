@@ -1828,16 +1828,16 @@ function showAllotedTrades(userSettingDocId) {
 }
 
 
-let tradeListener = null;
-let userListener = null;
+let tradeListener2 = null;
+let userListener2 = null;
 
 function checkTrade(us_did) {
     const db = firebase.firestore();
-    if (tradeListener) {
+    if (tradeListener2) {
         tradeListener();
     }
 
-    tradeListener = db.collection("all_alloted_trade")
+    tradeListener2 = db.collection("all_alloted_trade")
         .where("status", "==", "open")
         .onSnapshot(async (snapshot) => {
 
@@ -1855,11 +1855,11 @@ function checkTrade(us_did) {
             const order_id = snapshot.docs[0].data().order_id;
 
             // Remove previous user listener
-            if (userListener) {
+            if (userListener2) {
                 userListener();
             }
 
-            userListener = db.collection("users_setting")
+            userListener2 = db.collection("users_setting")
                 .where("live_status", "==", "true")
                 .where("block_status", "==", "false")
                 .where("avail_trading_capacity", ">", 0)
