@@ -1831,8 +1831,6 @@ function showAllotedTrades(userSettingDocId) {
 let tradeListener2 = null;
 let userListener2 = null;
 function checkTrade(userSettingDocId) {
-
-    // Remove previous listeners to avoid duplication
     if (tradeListener2) {
         tradeListener2();
         tradeListener2 = null;
@@ -1924,6 +1922,7 @@ function checkTrade(userSettingDocId) {
 
                             if (notes.final_status === "true") {
                                 console.log("Trade Available for Current User");
+                                playTradeAlertSound();
                                 showTradeDialog(userSettingDocId);
                             }
                         });
@@ -2087,6 +2086,16 @@ function showTradeDialog(userSettingDocId) {
     dialog.remove();
   });
 }
+
+function playTradeAlertSound() {
+  const sound = document.getElementById("tradeAlertSound");
+  if (sound) {
+    sound.currentTime = 0; // Restart sound if already playing
+    sound.play().catch(error => {
+      console.warn("Autoplay blocked by browser:", error);
+    });
+  }
+}
   
 // 🔥 RUN AFTER LOGIN
 auth.onAuthStateChanged((user) => {
@@ -2114,9 +2123,6 @@ auth.onAuthStateChanged((user) => {
       .catch((error) => {
         console.error("Error fetching user setting:", error);
       });
-
-    
-    
   }
 });
 </script>
@@ -2142,5 +2148,10 @@ function showPage(id, el){
 
 <!-- Custom Alert Container -->
 <div id="customAlertContainer"></div>
+
+<!-- Trade Alert Sound -->
+<audio id="tradeAlertSound" preload="auto">
+<source src="sounds/alert.mp3" type="audio/mpeg">
+</audio>
 </body>
 </html>
