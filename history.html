@@ -225,13 +225,13 @@ body {
 <!-- Firebase Script -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {updateDoc, getFirestore, collection, getDocs, doc, getDoc, query, where, orderBy, limit, runTransaction, deleteDoc} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
   authDomain: "kalash2-2bf90.firebaseapp.com",
   projectId: "kalash2-2bf90",
-  storageBucket: "kalash2-2bf90.appspot.com",
+  storageBucket: "kalash2-2bf90.firebasestorage.app",
   messagingSenderId: "462798382911",
   appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
 };
@@ -239,11 +239,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const list = document.getElementById("list");
-
 const usDid = localStorage.getItem("us_did");
+const selfNumber = localStorage.getItem("number");
 
 async function loadTrades() {
   try {
+    // 🔥 Query with ascending date order
     const q = query(
       collection(db, "users_setting", usDid, "trade_history"),
       orderBy("date", "desc")
@@ -252,58 +253,910 @@ async function loadTrades() {
     const snap = await getDocs(q);
 
     if (snap.empty) {
-      list.innerHTML = "<p style='text-align:center;'>No trades found</p>";
+      list.innerHTML = "<p style='text-align:center;color:#777;'>No trades found</p>";
       return;
     }
 
-    list.innerHTML = "";
+    list.innerHTML = ""; // clear old data
 
     snap.forEach(docSnap => {
       const d = docSnap.data();
       const his_did = docSnap.id;
+      let html = "";
+
+      // 🔀 same logic (no change)
+      if (d.result === "positive") {
+        html = buildCardPositive(d, his_did, usDid, selfNumber);
+      } 
+      else if (d.result === "negative" || d.result === "incomplete negative") {
+        html = buildCardNegative(d, his_did);
+      } 
+      else if (d.result === "cancel") {
+        html = buildCardCancel(d, his_did);
+      } 
+      else if (d.result === "incomplete positive") {
+        html = buildCardIncompletePositive(d, his_did);
+      } 
+      else {
+        html = buildCardDefault(d, his_did);
+      }
 
       const card = document.createElement("div");
       card.className = "card";
-
-      card.innerHTML = `
-        <div class="row">
-          <div class="company">${d.name || "Company"}</div>
-          <div class="top-right ${d.result === "positive" ? "green" : "red"}">
-            ${d.result || "---"}
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row">
-          <div class="muted">Entry: ${d.active_zone || "---"}</div>
-          <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row">
-          <div class="label">Profit / Loss</div>
-          <div class="profit">
-            ${d.quantity && d.active_zone && d.upside_reaction_zone
-              ? (d.quantity * (d.upside_reaction_zone - d.active_zone)).toFixed(2)
-              : "---"}
-          </div>
-        </div>
-
-        <div class="uid">UID: ${his_did}</div>
-      `;
+      card.innerHTML = html;
 
       list.appendChild(card);
     });
 
   } catch (error) {
     console.error("Error loading trades:", error);
-    list.innerHTML = "<p style='color:red;text-align:center;'>Error loading trades</p>";
+    list.innerHTML = "<p style='text-align:center;color:red;'>Error loading trades</p>";
   }
 }
 
+/* POSITIVE */
+function buildCardPositive(d, his_did, usDid, selfNumber) {
+  return `
+    <div class="row row-center">
+      <div class="date-center">${formatDateTime(d.date)}</div>
+    </div>
+    
+    <div class="row">
+      <div class="company">${d.name || "Company"}</div>
+      <div class="top-right green">${d.result || "---"}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="muted">Entry: ${d.active_zone || "---"}</div>
+      <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="label">Profit</div>
+      <div class="profit green">
+        ${d.quantity && d.active_zone && d.upside_reaction_zone ? d.quantity * (d.upside_reaction_zone - d.active_zone) : "---"}
+      </div>
+    </div>
+
+    <div class="dist"><div>Profit Distribution</div></div>
+
+    <div class="profiles">
+
+    <!-- SELF -->
+      <div class="profile">
+        <div class="avatar">
+          <img src="profile.png">
+        </div>
+
+        <div class="amount">${( 0.4 * ((Number(d.upside_reaction_zone) - Number(d.active_zone)) * Number(d.quantity))).toFixed(2)}</div>
+        <div class="status">SELF</div>
+      </div>
+
+      <!-- LAYNAIWALA -->
+      <div class="profile" style="display: ${d.laynaiwalaUsdid === "cancell" ? "none" : "inline"}">
+        <div class="avatar">
+          <img src="profile.png">
+          <span class="badge" style="display:${d.laynaiwala_pay_status === "true" ? "inline" : "none"}">✔</span>
+        </div>
+
+        ${d.laynaiwalaAmount && d.laynaiwalaAmount !== "null"
+          ? `<div class="amount">${d.laynaiwalaAmount}</div>` : ``}
+
+        ${d.laynaiwalaUsdid === "null"
+          ? `<button class="find-partner-btn"onclick="handleFindPartner('${usDid}', '${his_did}', '${selfNumber}', this)"> Find Partner </button>`
+          : `<div class="status">Partner alloted</div>`}
+
+       ${d.laynaiwalaUsdid !== "null" && d.laynaiwala_pay_status !== "true"
+        ? `<button class="find-partner-btn" onclick="openVerifyPopup('${d}', 'negative', '${usDid}', '${his_did}')"> Verify Payment </button>`: ``}
+
+        ${d.laynaiwalaNumber && d.laynaiwalaNumber !== "null"
+          ? (() => {
+              const phone = d.laynaiwalaNumber.replace(/[^0-9]/g, "");
+              const message = encodeURIComponent(
+                `Hello, I have made the payment of ${d.laynaiwalaAmount || ""}. Please share the PIN so that my account can be unblocked. Thank you.`
+              );
+              return `
+                <a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank">${d.laynaiwalaNumber}</a>
+              `;
+            })()
+          : ``}
+      </div>
+
+      <!-- CANCEL LAYNAIWALA -->
+      <div class="profile" style="display: ${d.cancellaynaiwalaUsdid === "cancell" ? "none" : "inline"}">
+        <div class="avatar">
+          <img src="profile.png">
+          <span class="badge" style="display:${d.cancellaynaiwala_pay_status === "true" ? "inline" : "none"}">✔</span>
+        </div>
+
+        ${d.cancellaynaiwalaAmount && d.cancellaynaiwalaAmount !== "null"
+          ? `<div class="amount">${d.cancellaynaiwalaAmount}</div>` : ``}
+
+        ${d.cancellaynaiwalaUsdid === "null"
+          ? `<button class="find-partner-btn"onclick="handleFindPartnerCancel('${usDid}', '${his_did}', '${selfNumber}', this)"> Find Partner </button>`
+          : `<div class="status">Partner alloted</div>`}
+
+        ${d.cancellaynaiwalaUsdid !== "null" && d.cancellaynaiwala_pay_status !== "true"
+          ? `<button class="find-partner-btn" onclick="openVerifyPopup('${d}', 'cancel', '${usDid}', '${his_did}')">Verify Payment</button>`
+          : ``}
+
+        ${d.cancellaynaiwalaNumber && d.cancellaynaiwalaNumber !== "null"
+          ? (() => {
+              const phone = d.cancellaynaiwalaNumber.replace(/[^0-9]/g, "");
+              const message = encodeURIComponent(
+                `Hello, I have made the payment of ${d.cancellaynaiwalaAmount || ""}. Please share the PIN so that my account can be unblocked. Thank you.`
+              );
+              return `
+                <a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank"> ${d.cancellaynaiwalaNumber}</a>
+              `;
+            })()
+          : ``}
+      </div>
+
+      <!-- OWN -->
+      <div class="profile">
+        <div class="avatar">
+          <img src="profile.png">
+          <span class="badge" style="display:${d.own_pay_status === "true" ? "inline" : "none"}">✔</span>
+        </div>
+
+        ${d.own_amount && d.own_amount !== "null" ? `<div class="amount">${d.own_amount}</div>` : ``}
+
+        ${d.own_amount === 0 ? `<button class="find-partner-btn" onclick="handleFindPartnerOwner('${usDid}', '${his_did}', '${selfNumber}', this,  '${d}')">Find Partner</button>` : `<div class="status">Partner alloted</div>`}
+
+        ${d.own_pay_status === "false" && d.own_amount > 0 ? `<button class="find-partner-btn" onclick="makePayment('${usDid}', '${his_did}', '${selfNumber}', this)"> Make Payment ${d.own_amount} </button>` : ``}
+          
+      </div>
+    </div>
+
+    <div class="hint">Tap on number to chat directly with your partner</div>
+    <div class="uid">UID: ${his_did}</div>
+  `;
+}
+
+
+/* NEGATIVE */
+function buildCardNegative(d, his_did) {
+  const firstAmt = Number(d.daynaiwalaFirstAmount || 0);
+  const secondAmt = Number(d.daynaiwalaSecondAmount || 0);
+
+  return `
+     <div class="row row-center">
+      <div class="date-center">${formatDateTime(d.date)}</div>
+    </div>
+    
+    <div class="row">
+      <div class="company">${d.name || "Company"}</div>
+      <div class="top-right red">${d.result || "---"}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="muted">Entry: ${d.active_zone || "---"}</div>
+      <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="label">Loss (with included all charges)</div>
+      <div class="profit red"> ${firstAmt + secondAmt}</div>
+    </div>
+
+    <div class="dist"><div>Loss Distribution</div></div>
+
+    <div class="profiles">
+
+      <div class="profile">
+        <div class="avatar">
+          <span class="pin">PIN : ${d.otp_first}</span>
+          <img src="profile.png">
+          <span class="badge" style="display:${d.paymentStatusFirst === "false" ? "none" : "inline"}">✔</span>
+        </div>
+        <div class="amount"> ${d.daynaiwalaFirstAmount || "---"}</div>
+        <div class="status">${String(d.daynaiwalaFirstUsdid) === "null" ? "Pending" : "Partner alloted"}</div>
+        ${d.daynaiwalaFirstNumber === "null" ? `<div class="wa_number">--</div>` 
+         : (() => {
+           const phone = d.daynaiwalaFirstNumber.replace(/[^0-9]/g,'');
+           const amount = d.daynaiwalaFirstAmount || '';
+           const message = encodeURIComponent(`Hello, please make the payment of ${d.daynaiwalaFirstAmount}. Once the payment is completed, I will share the PIN with you. Thank you.`);
+           return `<a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank">${d.daynaiwalaFirstNumber} </a> `;
+          })()}
+      </div>
+
+      <div class="profile">
+        <div class="avatar">
+          <span class="pin">PIN :  ${d.otp_second}</span>
+          <img src="profile.png">
+          <span class="badge" style="display:${d.paymentStatusSecond === "false" ? "none" : "inline"}">✔</span>
+        </div>
+        <div class="amount">${d.daynaiwalaSecondAmount || "---"}</div>
+        <div class="status">${String(d.daynaiwalaSecondUsdid) === "null" ? "Pending" : "Partner alloted"}</div>
+       ${d.daynaiwalaSecondNumber === "null" ? `<div class="wa_number">--</div>` 
+       : (() => {
+                const phone = d.daynaiwalaSecondNumber.replace(/[^0-9]/g,'');
+                const amount = d.daynaiwalaSecondAmount || '';
+                const message = encodeURIComponent( `Hello, please make the payment of ₹${amount}. Once the payment is completed, I will share the PIN with you. Thank you.` );
+                return ` <a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank">${d.daynaiwalaSecondNumber} </a>`;
+              })()}
+        </div>
+      </div>
+
+    <div class="hint">Tap on number to chat directly with your partner</div>
+    <div class="uid">UID: ${his_did}</div>
+  `;
+}
+
+
+/* CANCEL */
+function buildCardCancel(d, his_did) {
+  const Amt = Number(d.cancel_charge || 0);
+
+  return `
+     <div class="row row-center">
+      <div class="date-center">${formatDateTime(d.date)}</div>
+    </div>
+    
+    <div class="row">
+      <div class="company">${d.name || "Company"}</div>
+      <div class="top-right red">${d.result || "---"}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="muted">Entry: ${d.active_zone || "---"}</div>
+      <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="label">Loss (with included compensation)</div>
+      <div class="profit red"> ${Amt}</div>
+    </div>
+
+    <div class="dist"><div>Loss Distribution</div></div>
+
+    <div class="profiles">
+      <div class="profile">
+        <div class="avatar">
+          <span class="pin">PIN : ${d.otp}</span>
+          <img src="profile.png">
+          <span class="badge" style="display:${d.paystatus === "false" ? "none" : "inline"}">✔</span>
+        </div>
+        <div class="amount"> ${Amt || "---"}</div>
+        <div class="status">${String(d.daynaiwalaUsdid) === "null" ? "Pending" : "Partner alloted"}</div>
+        ${d.daynaiwalaNumber === "null" ? `<div class="wa_number">--</div>` 
+        : (() => {
+                const phone = d.daynaiwalaNumber.replace(/[^0-9]/g,'');
+                const amount = Amt || '';
+                const message = encodeURIComponent( `Hello, please make the payment of ${d.Amt}. Once the payment is completed, I will share the PIN with you. Thank you.`);
+                return ` <a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank"> ${d.daynaiwalaNumber}</a>`;
+           })()}
+      </div>
+    </div>
+
+    <div class="hint">Tap on number to chat directly with your partner</div>
+    <div class="uid">UID: ${his_did}</div>
+  `;
+}
+
+function formatDateTime(value) {
+  if (!value) return "--";
+  let d;
+  if (typeof value === "object" && value.seconds) {
+    d = new Date(value.seconds * 1000);
+  }
+ 
+  else if (!isNaN(value)) {
+    d = new Date(Number(value));
+  }
+ 
+  else if (typeof value === "string") {
+    // Fix "YYYY-MM-DD HH:mm:ss" → ISO
+    const fixed = value.replace(" ", "T");
+    d = new Date(fixed);
+  }
+
+  if (!d || isNaN(d.getTime())) return "--";
+  return d.toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  });
+}
+
+/* INCOMPLETEPOSITIVE */
+function buildCardIncompletePositive(d, his_did) {
+  return `
+    <div class="row row-center">
+      <div class="date-center">${formatDateTime(d.date)}</div>
+    </div>
+
+    <div class="row">
+      <div class="company">${d.name || "Company"}</div>
+      <div class="top-right green">${d.result || "---"}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="muted">Entry: ${d.active_zone || "---"}</div>
+      <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="label">Profit</div>
+      <div class="profit green">
+        ${d.quantity && d.active_zone && d.upside_reaction_zone ? d.quantity * (d.upside_reaction_zone - d.active_zone) : "---"}
+      </div>
+    </div>
+
+    <div class="dist"><div>Profit Distribution</div></div>
+
+    <div class="profiles">
+
+      <!-- SELF -->
+      <div class="profile">
+        <div class="avatar">
+          <img src="profile.png">
+        </div>
+        <div class="amount">${d.self_amount}</div>
+        <div class="status">SELF</div>
+      </div>
+
+      <!-- OWN -->
+      <div class="profile">
+        <div class="avatar">
+          <img src="profile.png">
+          <span class="badge" style="display:${d.own_pay_status === "true" ? "inline" : "none"}">✔</span>
+        </div>
+
+        ${d.own_amount && d.own_amount !== "null" ? `<div class="amount">${d.own_amount}</div>` : ``}
+        ${d.own_pay_status === "false"? `<button class="find-partner-btn" onclick="makePayment('${usDid}', '${his_did}', '${selfNumber}', this)">Make Payment ${d.own_amount}</button>`: ``}
+      </div>
+
+    </div>
+    <div class="uid">UID: ${his_did}</div>
+  `;
+}
+
 loadTrades();
+
+window.handleFindPartner = async function (usDid, his_did, selfNumber, btn) {
+  btn.disabled = true;
+  try {
+    // 1️⃣ SELF TRADE REF
+    const selfRef = doc(db, "users_setting", usDid, "trade_history", his_did);
+    const selfSnap = await getDoc(selfRef);
+
+    if (!selfSnap.exists()) {
+      alert("Trade not found");
+      return;
+    }
+
+    const selfData = selfSnap.data();
+
+    // 2️⃣ CHECK ALREADY ALLOTTED
+    if (selfData.laynaiwalaUsdid && selfData.laynaiwalaUsdid !== "null") {
+      alert("Partner already allotted");
+      location.reload();
+      return;
+    }
+
+    // 3️⃣ FIND AVAILABLE PARTNER
+    const q = query(
+      collection(db, "negative_trade"),
+      where("is_taken", "==", false),
+      where("temp_name", "==", selfData.temp_name),
+      orderBy("date", "asc"),
+      limit(1)
+    );
+
+    const snap = await getDocs(q);
+
+   if (snap.empty) {
+     btn.disabled = false; // optional but important
+     await updateDoc(selfRef, {
+       laynaiwalaAmount: 0,
+       laynaiwalaNumber: "cancell",
+       laynaiwalaUsdid: "cancell",
+       laynaiwalaThdid: "cancell",   // ✅ fixed quote
+       laynaiwalaPartyType: "cancell",
+       laynaiwala_pay_status: "cancell"
+     });
+
+     alert("No partner available");
+     return;
+    }
+
+    const partnerDoc = snap.docs[0];
+    const partnerRef = partnerDoc.ref;
+
+    // 4️⃣ TRANSACTION
+    await runTransaction(db, async (transaction) => {
+      const freshPartner = await transaction.get(partnerRef);
+
+      if (freshPartner.get("is_taken") === true) {
+        throw "ALREADY_TAKEN";
+      }
+
+      const {
+        th_did,
+        us_did,
+        party_type,
+        number,
+        div_amount
+      } = freshPartner.data();
+
+      const partnerTradeRef = doc(
+        db,
+        "users_setting",
+        us_did,
+        "trade_history",
+        th_did
+      );
+
+      const partnerTradeSnap = await transaction.get(partnerTradeRef);
+      if (!partnerTradeSnap.exists()) {
+        throw "TRADE_NOT_FOUND";
+      }
+
+      // MARK PARTNER TAKEN
+      transaction.update(partnerRef, { is_taken: true });
+
+      // UPDATE PARTNER TRADE
+      const updatePartner = {};
+      if (party_type === "first") {
+        updatePartner.daynaiwalaFirstAmount = div_amount;
+        updatePartner.daynaiwalaFirstNumber = selfNumber;
+        updatePartner.daynaiwalaFirstUsdid = usDid;
+        updatePartner.daynaiwalaFirstTHdid = his_did;
+      } else {
+        updatePartner.daynaiwalaSecondAmount = div_amount;
+        updatePartner.daynaiwalaSecondNumber = selfNumber;
+        updatePartner.daynaiwalaSecondUsdid = usDid;
+        updatePartner.daynaiwalaSecondTHdid = his_did;
+      }
+
+      transaction.update(partnerTradeRef, updatePartner);
+
+      // UPDATE SELF TRADE
+      transaction.update(selfRef, {
+        laynaiwalaAmount: div_amount,
+        laynaiwalaNumber: number,
+        laynaiwalaUsdid: us_did,
+        laynaiwalaThdid: th_did,
+        laynaiwalaPartyType: party_type
+      });
+
+      // DELETE NEGATIVE_TRADE DOC
+      transaction.delete(partnerRef);
+    });
+
+    // 5️⃣ SUCCESS
+    alert("Partner allotted successfully");
+    location.reload();
+
+  } catch (e) {
+    if (e === "ALREADY_TAKEN") {
+      alert("Partner already taken, retrying...");
+      location.reload();
+    } else {
+      console.error(e);
+      alert("Operation failed, no data changed");
+    }
+  }
+};
+
+
+window.handleFindPartnerCancel = async function (usDid, his_did, selfNumber, btn) {
+  btn.disabled = true;
+  try {
+    // 1️⃣ SELF TRADE REF
+    const selfRef = doc(db, "users_setting", usDid, "trade_history", his_did);
+    const selfSnap = await getDoc(selfRef);
+
+    if (!selfSnap.exists()) {
+      alert("Trade not found");
+      return;
+    }
+
+    const selfData = selfSnap.data();
+
+    // 2️⃣ CHECK ALREADY ALLOTTED
+    if (selfData.cancellaynaiwalaUsdid && selfData.cancellaynaiwalaUsdid !== "null") {
+      alert("Partner already allotted");
+      location.reload();
+      return;
+    }
+
+    // 3️⃣ FIND AVAILABLE PARTNER
+    const q = query(
+      collection(db, "cancel_trade"),
+      where("is_taken", "==", false),
+      where("temp_name", "==", selfData.temp_name),
+      orderBy("date", "asc"),
+      limit(1)
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+  btn.disabled = false; // 🔥 important
+
+  await updateDoc(selfRef, {
+    cancellaynaiwalaAmount: 0,
+    cancellaynaiwalaNumber: "cancell",
+    cancellaynaiwalaUsdid: "cancell",
+    cancellaynaiwalaThdid: "cancell",
+    cancellaynaiwala_pay_status: "true"
+  });
+
+  alert("No partner available");
+  return;
+}
+
+    const partnerDoc = snap.docs[0];
+    const partnerRef = partnerDoc.ref;
+
+    // 4️⃣ TRANSACTION
+    await runTransaction(db, async (transaction) => {
+      const freshPartner = await transaction.get(partnerRef);
+
+      if (freshPartner.get("is_taken") === true) {
+        throw "ALREADY_TAKEN";
+      }
+
+      const {
+        th_did,
+        us_did,
+        number,
+        cancel_charge
+      } = freshPartner.data();
+
+      const partnerTradeRef = doc(
+        db,
+        "users_setting",
+        us_did,
+        "trade_history",
+        th_did
+      );
+
+      const partnerTradeSnap = await transaction.get(partnerTradeRef);
+      if (!partnerTradeSnap.exists()) {
+        throw "TRADE_NOT_FOUND";
+      }
+
+      // MARK PARTNER TAKEN
+      transaction.update(partnerRef, { is_taken: true });
+
+      // UPDATE PARTNER TRADE
+      const updatePartner = {};
+      updatePartner.daynaiwalaNumber = selfNumber;
+      updatePartner.daynaiwalaUsdid = usDid;
+      updatePartner.daynaiwalaTHdid = his_did;
+      transaction.update(partnerTradeRef, updatePartner);
+
+      // UPDATE SELF TRADE
+      transaction.update(selfRef, {
+        cancellaynaiwalaAmount: cancel_charge,
+        cancellaynaiwalaNumber: number,
+        cancellaynaiwalaUsdid: us_did,
+        cancellaynaiwalaThdid: th_did
+      });
+
+      // DELETE NEGATIVE_TRADE DOC
+      transaction.delete(partnerRef);
+    });
+
+    // 5️⃣ SUCCESS
+    alert("Partner allotted successfully");
+    location.reload();
+
+  } catch (e) {
+    if (e === "ALREADY_TAKEN") {
+      alert("Partner already taken, retrying...");
+      location.reload();
+    } else {
+      console.error(e);
+      alert("Operation failed, no data changed");
+    }
+  }
+};
+
+window.handleFindPartnerOwner = async function (usDid, his_did, selfNumber, btn, d) {
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = "Please wait...";
+    btn.style.opacity = "0.7";
+  }
+
+  try {
+    // 1️⃣ SELF TRADE REF
+    const selfRef = doc(db, "users_setting", usDid, "trade_history", his_did);
+    const selfSnap = await getDoc(selfRef);
+
+    if (!selfSnap.exists()) {
+      alert("Trade not found");
+      return;
+    }
+
+    const d = selfSnap.data();
+
+    // 2️⃣ CHECK PARTNERS ALLOTTED OR NOT
+    const laynaiwalaMissing = !d.laynaiwalaUsdid || d.laynaiwalaUsdid === "null";
+    const cancelMissing = !d.cancellaynaiwalaUsdid || d.cancellaynaiwalaUsdid === "null";
+
+    if (laynaiwalaMissing || cancelMissing) {
+      alert("Maybe one or both partners are not allotted");
+      return;
+    }
+
+    // 3️⃣ CHECK OWN AMOUNT
+    const ownAmount = Number(d.own_amount || 0);
+
+    if (ownAmount !== 0) {
+      alert("Already allotted");
+      return;
+    }
+
+    // 4️⃣ CALCULATION 
+    const active_zone = Number(d.active_zone);
+    const upside_reaction_zone = Number(d.upside_reaction_zone);
+    const quantity = Number(d.quantity);
+
+    const laynaiwalaAmount = Number(d.laynaiwalaAmount || 0);
+    const cancellaynaiwalaAmount = Number(d.cancellaynaiwalaAmount || 0);
+
+    const capture_point = upside_reaction_zone - active_zone;
+    const total_prof = capture_point * quantity;
+    const sixty_per = 0.6 * total_prof;
+
+    const own_am = sixty_per - (laynaiwalaAmount + cancellaynaiwalaAmount);
+
+    // round to 2 decimals (HALF_UP)
+    const roundedOwnAmount = Math.round((own_am + Number.EPSILON) * 100) / 100;
+
+    // 5️⃣ UPDATE FIRESTORE
+    await updateDoc(selfRef, {
+      own_amount: roundedOwnAmount
+    });
+
+    alert("Owner amount updated successfully");
+    location.reload();
+
+  } catch (e) {
+    console.error(e);
+    alert("Operation failed");
+    //location.reload();
+  }
+};
+
+
+  
+let self_usDid = null;
+let self_his_did = null;
+let gtype_nc = null;
+window.openVerifyPopup = function (d, type_nc, usDid, his_did) {
+  self_usDid = usDid;
+  self_his_did = his_did;
+  gtype_nc = type_nc;
+  
+  document.getElementById("verifyPin").value = "";
+  document.getElementById("verifyPopup").style.display = "flex";
+};
+
+window.closeVerifyPopup = function () {
+  document.getElementById("verifyPopup").style.display = "none";
+};
+
+window.submitVerifyPin = async function () {
+  if(gtype_nc === "negative") {
+  const pin = document.getElementById("verifyPin").value.trim();
+
+  if (pin.length !== 6) {
+    alert("Please enter a valid 6 digit PIN");
+    return;
+  }
+
+  try {
+    /* 1️⃣ SELF TRADE REF */
+    const selfRef = doc(
+      db,
+      "users_setting",
+      self_usDid,
+      "trade_history",
+      self_his_did
+    );
+
+    const selfSnap = await getDoc(selfRef);
+
+    if (!selfSnap.exists()) {
+      alert("Trade not found");
+      return;
+    }
+
+    const selfData = selfSnap.data();
+
+    /* 2️⃣ ALREADY VERIFIED CHECK */
+    if (selfData.laynaiwala_pay_status === "true") {
+      alert("Payment already verified");
+      return;
+    }
+
+    /* 3️⃣ LAYNAIWALA TRADE REF */
+    const {
+      laynaiwalaUsdid,
+      laynaiwalaThdid,
+      laynaiwalaPartyType
+    } = selfData;
+
+    if (!laynaiwalaUsdid || !laynaiwalaThdid) {
+      alert("Partner data missing");
+      return;
+    }
+
+    const laynaiwalaRef = doc(
+      db,
+      "users_setting",
+      laynaiwalaUsdid,
+      "trade_history",
+      laynaiwalaThdid
+    );
+
+    const laynaiwalaSnap = await getDoc(laynaiwalaRef);
+
+    if (!laynaiwalaSnap.exists()) {
+      alert("Partner trade not found");
+      return;
+    }
+
+    const laynaiwalaData = laynaiwalaSnap.data();
+
+    /* 4️⃣ OTP FIELD SELECT */
+    const otp =
+      laynaiwalaPartyType === "first"
+        ? laynaiwalaData.otp_first
+        : laynaiwalaData.otp_second;
+
+    if (!otp) {
+      alert("PIN not generated yet");
+      return;
+    }
+
+    /* 5️⃣ PIN MATCH */
+    if (Number(pin) !== Number(otp)) {
+      alert("Wrong PIN");
+      return;
+    }
+
+    /* 6️⃣ UPDATE BOTH DOCUMENTS */
+    await updateDoc(laynaiwalaRef, {
+      [laynaiwalaPartyType === "first"
+        ? "paymentStatusFirst"
+        : "paymentStatusSecond"]: "true"
+    });
+
+    await updateDoc(selfRef, {
+      laynaiwala_pay_status: "true"
+    });
+
+    alert("Payment verified successfully");
+    closeVerifyPopup();
+    location.reload();
+
+  } catch (e) {
+    console.error(e);
+    alert("Verification failed");
+  }
+  } else if(gtype_nc === "cancel") {
+     const pin = document.getElementById("verifyPin").value.trim();
+
+  if (pin.length !== 6) {
+    alert("Please enter a valid 6 digit PIN");
+    return;
+  }
+
+  try {
+    /* 1️⃣ SELF TRADE REF */
+    const selfRef = doc(
+      db,
+      "users_setting",
+      self_usDid,
+      "trade_history",
+      self_his_did
+    );
+
+    const selfSnap = await getDoc(selfRef);
+
+    if (!selfSnap.exists()) {
+      alert("Trade not found");
+      return;
+    }
+
+    const selfData = selfSnap.data();
+
+    /* 2️⃣ ALREADY VERIFIED CHECK */
+    if (selfData.cancellaynaiwala_pay_status === "true") {
+      alert("Payment already verified");
+      return;
+    }
+
+    /* 3️⃣ LAYNAIWALA TRADE REF */
+    const {
+      cancellaynaiwalaUsdid,
+      cancellaynaiwalaThdid,
+    } = selfData;
+
+    if (!cancellaynaiwalaUsdid || !cancellaynaiwalaThdid) {
+      alert("Partner data missing");
+      return;
+    }
+
+    const laynaiwalaRef = doc(
+      db,
+      "users_setting",
+      cancellaynaiwalaUsdid,
+      "trade_history",
+      cancellaynaiwalaThdid
+    );
+
+    const laynaiwalaSnap = await getDoc(laynaiwalaRef);
+
+    if (!laynaiwalaSnap.exists()) {
+      alert("Partner trade not found");
+      return;
+    }
+
+    const laynaiwalaData = laynaiwalaSnap.data();
+
+    /* 4️⃣ OTP FIELD SELECT */
+    const otp =laynaiwalaData.otp;
+
+    if (!otp) {
+      alert("PIN not generated yet");
+      return;
+    }
+
+    /* 5️⃣ PIN MATCH */
+    if (Number(pin) !== Number(otp)) {
+      alert("Wrong PIN");
+      return;
+    }
+
+    /* 6️⃣ UPDATE BOTH DOCUMENTS */
+    await updateDoc(laynaiwalaRef, { paystatus : "true"});
+
+    await updateDoc(selfRef, { cancellaynaiwala_pay_status: "true"});
+
+    alert("Payment verified successfully");
+    closeVerifyPopup();
+    location.reload();
+
+  } catch (e) {
+    console.error(e);
+    alert("Verification failed");
+  }
+  }
+};
+
+
+
+
+
 </script>
 
 <!-- Sidebar Script -->
