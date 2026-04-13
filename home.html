@@ -1992,42 +1992,41 @@ function checkTrade(userSettingDocId) {
     try {
       const userId = user.phoneNumber;
 
-      const orderCol = collection(db, "all_alloted_trade");
-      const companyCol = collection(db, "compnay_setting");
+      const orderCol = db.collection("all_alloted_trade");
+      const companyCol = db.collection("compnay_setting");
 
       // Fetch company setting
-      const companyQuery = await getDocs(query(companyCol, limit(1)));
+      const companyQuery = await db.collection("compnay_setting").limit(1).get();
 
       if (companyQuery.empty) {
-        alert("Company setting missing");
-        stopTradeAlertSound();
-        acceptBtn.disabled = false;
-        return;
-      }
+         alert("Company setting missing");
+         stopTradeAlertSound();
+         acceptBtn.disabled = false;
+         return;
+       }
 
       const companyRef = companyQuery.docs[0].ref;
 
       // Fetch open order
-      const orderQuery = await getDocs(
-        query(
-          orderCol,
-          where("status", "==", "open"),
-          orderBy("date", "asc"),
-          limit(1)
-        )
-      );
+      const orderQuery = await db
+         .collection("all_alloted_trade")
+         .where("status", "==", "open")
+         .orderBy("date", "asc")
+         .limit(1)
+         .get();
 
-      if (orderQuery.empty) {
-        acceptBtn.disabled = false;
-        stopTradeAlertSound();
-        return;
-      }
+
+       if (orderQuery.empty) {
+          acceptBtn.disabled = false;
+          stopTradeAlertSound();
+          return;
+       }
 
       const orderDoc = orderQuery.docs[0];
       const orderRef = orderDoc.ref;
 
       // ================= FIRESTORE TRANSACTION =================
-      await runTransaction(db, async (transaction) => {
+      await db.runTransaction(async (transaction) => {
         const freshOrder = await transaction.get(orderRef);
 
         if (!freshOrder.exists()) {
@@ -2080,7 +2079,7 @@ function checkTrade(userSettingDocId) {
           at_did: at_did,
           number: userId,
           status: "close",
-          date: serverTimestamp()
+          date: firebase.firestore.FieldValue.serverTimestamp()
         });
 
         // Update user settings
