@@ -2115,18 +2115,8 @@ function checkTrade(userSettingDocId) {
 
 
 function showTradeDialog(userSettingDocId) {
-  // 🔔 Browser Notification
-  showBrowserNotification();
-
-  // 🔊 Custom Sound
-  if (typeof playTradeAlertSound === "function") {
-    playTradeAlertSound();
-  }
-
-  // 📳 Mobile Vibration
-  if ("vibrate" in navigator) {
-    navigator.vibrate([300, 150, 300]);
-  }
+  // 🔔 Alert Trigger
+  triggerTradeAlert();
 
   // Dialog Create
   const dialog = document.createElement("div");
@@ -2154,13 +2144,12 @@ function showBrowserNotification() {
       body: "A new trade has been assigned to you.",
       icon: "images/validate.png",
       badge: "images/validate.png",
-      vibrate: [200, 100, 200],
       tag: "trade-alert",
-      requireInteraction: true
+      requireInteraction: true,
+      silent: false // System sound enable karega
     });
 
-    // Notification par click karne par tab open ho
-    notification.onclick = function () {
+    notification.onclick = () => {
       window.focus();
       notification.close();
     };
@@ -2169,7 +2158,7 @@ function showBrowserNotification() {
 
 function requestNotificationPermission() {
   if (!("Notification" in window)) {
-    console.warn("This browser does not support notifications.");
+    console.warn("Browser notifications support nahi karta.");
     return;
   }
 
@@ -2202,6 +2191,16 @@ function playTradeAlertSound() {
     .catch(error => {
       console.warn("Playback failed:", error);
     });
+}
+
+function triggerTradeAlert() {
+  // Browser Notification
+  showBrowserNotification();
+
+  // Custom Sound
+  if (typeof playTradeAlertSound === "function") {
+    playTradeAlertSound();
+  }
 }
   
 // 🔥 RUN AFTER LOGIN
