@@ -2,30 +2,124 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trade History</title>
 
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
-body {
-  font-family: "Inter", Arial, sans-serif;
-  background: #f4f6f8;
-  padding: 20px;
+/* ================= GENERAL STYLES ================= */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
 }
 
+body {
+  background: #f4f6f8;
+}
+
+/* ================= LAYOUT ================= */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  width: 240px;
+  background: #111827;
+  color: #fff;
+  position: fixed;
+  height: 100%;
+  left: 0;
+  top: 0;
+  transition: 0.3s;
+  z-index: 1000;
+}
+
+.sidebar-header {
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  background: #0f172a;
+  border-bottom: 1px solid #1f2937;
+}
+
+.sidebar-menu {
+  list-style: none;
+}
+
+.sidebar-menu li {
+  border-bottom: 1px solid #1f2937;
+}
+
+.sidebar-menu a {
+  display: block;
+  padding: 14px 20px;
+  color: #e5e7eb;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu .active a {
+  background: #22c55e;
+  color: #fff;
+}
+
+/* ================= MAIN CONTENT ================= */
+.main {
+  margin-left: 240px;
+  width: 100%;
+}
+
+/* ================= TOPBAR ================= */
+.topbar {
+  height: 60px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.menu-toggle {
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.topbar h1 {
+  font-size: 18px;
+  color: #111827;
+}
+
+.content {
+  padding: 20px;
+}
+
+/* ================= TRADE CARD STYLES ================= */
 .list {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 100%;
 }
 
 .card {
   background: #ffffff;
   border-radius: 18px;
   padding: 18px;
-  width: 100%;
   max-width: 420px;
-  margin: 0 auto;
+  margin: auto;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
@@ -33,13 +127,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
 }
 
 .company {
   font-size: 17px;
   font-weight: 700;
-  color: #1f2937;
 }
 
 .top-right {
@@ -51,7 +143,6 @@ body {
 
 .green { color: #16a34a; background: #e7f8ee; }
 .red { color: #dc2626; background: #fdeaea; }
-.gray { color: #6b7280; background: #f1f5f9; }
 
 .divider {
   height: 1px;
@@ -65,7 +156,6 @@ body {
 }
 
 .label {
-  color: #374151;
   font-size: 13px;
   font-weight: 600;
 }
@@ -75,341 +165,73 @@ body {
   font-weight: 700;
 }
 
-.dist {
-  margin-top: 14px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.profiles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 12px;
-  padding: 14px;
-  background: #f9fafb;
-  border-radius: 14px;
-  justify-content: center;
-}
-
-.profile {
-  flex: 1 1 120px;
-  max-width: 150px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.profile > * {
-  margin-top: 6px;
-}
-
-.profile > *:first-child {
-  margin-top: 0;
-}
-
-.avatar {
-  position: relative;
-  display: inline-block;
-  padding-top: 14px;
-  margin-bottom: 4px;
-}
-
-.avatar img {
-  width: clamp(44px, 12vw, 54px);
-  height: clamp(44px, 12vw, 54px);
-  border-radius: 50%;
-  border: 2px solid #e5e7eb;
-}
-
-.pin {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #d1fae5;
-  color: #065f46;
-  font-size: clamp(8px, 2vw, 9px);
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-weight: 600;
-  border: 1px solid #6ee7b7;
-  white-space: nowrap;
-}
-
-.badge {
-  position: absolute;
-  bottom: -6px;
-  right: -6px;
-  background: #16a34a;
-  color: #fff;
-  border-radius: 50%;
-  padding: 2px 5px;
-  font-size: 10px;
-  border: 2px solid #fff;
-  display: none;
-}
-
-.amount {
-  font-size: 13px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.status {
-  font-size: 11px;
-  color: #6b7280;
-}
-
-.find-partner-btn {
-  padding: 4px 10px;
-  border-radius: 6px;
-  border: none;
-  background: linear-gradient(135deg, #4CAF50, #2E7D32);
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  transition: all 0.12s ease;
-}
-
-.find-partner-btn:hover {
-  transform: translateY(-0.5px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-}
-
-.find-partner-btn:active {
-  transform: scale(0.96);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.wa-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  font-size: 11px;
-  color: #16a34a;
-  text-decoration: none;
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-.wa-link:hover {
-  text-decoration: underline;
-  opacity: 0.9;
-}
-
-.wa-icon {
-  width: 12px;
-  height: 12px;
-}
-
-.wa_number {
-  font-size: 11px;
-  color: #4b5563;
-}
-
-.hint {
-  margin-top: 14px;
-  text-align: center;
-  color: #6b7280;
-  font-size: 11px;
-}
-
 .uid {
   margin-top: 10px;
   color: #9ca3af;
-  font-weight: 500;
   font-size: 11px;
   text-align: center;
 }
 
-/* Mobile */
-@media (max-width: 600px) {
-  body { padding: 6px; }
-  .card { max-width: 100%; border-radius: 14px; }
-  .company { font-size: 15px; }
-  .top-right { font-size: 11px; padding: 3px 8px; }
-  .profiles { padding: 10px; gap: 8px; }
-  .amount { font-size: 12px; }
-  .status, .wa_number { font-size: 10px; }
-  .hint, .uid { font-size: 10px; }
-}
-
-/* Very small phones */
-@media (max-width: 360px) {
-  body { padding: 4px; }
-  .card { padding: 12px; }
-  .company { font-size: 14px; }
-  .profit { font-size: 13px; }
-}
-
-/* Large screens */
-@media (min-width: 900px) {
-  .card { max-width: 460px; }
-}
-
-.popup-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 16px; /* safe margin on small phones */
-}
-
-.popup-box {
-  width: 100%;
-  max-width: 340px;
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px 18px 20px;
-  position: relative;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-/* Close button – finger friendly */
-.popup-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: #374151;
-  cursor: pointer;
-}
-
-/* Title */
-.popup-box h3 {
-  margin: 8px 0 18px;
-  font-size: 15px;
-  font-weight: 700;
-  color: #111827;
-}
-
-/* PIN input – mobile friendly */
-.popup-box input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 14px 12px;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 6px;
-  text-align: center;
-  border-radius: 14px;
-  border: 1.5px solid #d1d5db;
-  outline: none;
-}
-
-.popup-box input::placeholder {
-  letter-spacing: 4px;
-  color: #9ca3af;
-}
-
-.popup-box input:focus {
-  border-color: #22c55e;
-  box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
-}
-
-/* Submit button – thumb friendly */
-.submit-btn {
-  width: 100%;
-  margin-top: 20px;
-  padding: 14px;
-  border-radius: 14px;
-  border: none;
-  background: linear-gradient(135deg, #22c55e, #15803d);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* Small phones (≤360px) */
-@media (max-width: 360px) {
-  .popup-box {
-    max-width: 100%;
-    padding: 20px 16px;
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .sidebar {
+    left: -240px;
   }
 
-  .popup-box input {
-    font-size: 16px;
-    letter-spacing: 5px;
+  .sidebar.active {
+    left: 0;
   }
 
-  .submit-btn {
-    padding: 13px;
+  .main {
+    margin-left: 0;
   }
 }
-
-  .card-wrapper {
-  position: relative;
-}
-
-.date-chip {
-  position: absolute;
-  top: -10px;
-  right: 12px;
-  background: #ffffff;
-  color: #374151;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 6px 10px;
-  border-radius: 999px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-  z-index: 5;
-  cursor: pointer;
-  user-select: none;
-}
-
-.date-chip:active {
-  transform: scale(0.96);
-}
-
-.row-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.date-center {
-  font-size: 13px;
-  font-weight: 500;
-  color: #666;
-}
-
-
-
-
-
-
 </style>
 </head>
 
 <body>
-<div class="list" id="list"></div>
 
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">Kalash</div>
+    <ul class="sidebar-menu">
+      <li><a href="home.html">🏠 Home</a></li>
+      <li class="active"><a href="history.html">📜 Trade History</a></li>
+      <li><a href="profile.html">👤 Profile</a></li>
+      <li><a href="settings.html">⚙ Settings</a></li>
+      <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <h1>Trade History</h1>
+    </header>
+
+    <!-- Page Content -->
+    <div class="content">
+      <div class="list" id="list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Firebase Script -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {updateDoc, getFirestore, collection, getDocs, doc, getDoc, query, where, orderBy, limit, runTransaction, deleteDoc} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
   authDomain: "kalash2-2bf90.firebaseapp.com",
   projectId: "kalash2-2bf90",
-  storageBucket: "kalash2-2bf90.firebasestorage.app",
+  storageBucket: "kalash2-2bf90.appspot.com",
   messagingSenderId: "462798382911",
   appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
 };
@@ -417,12 +239,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const list = document.getElementById("list");
+
 const usDid = localStorage.getItem("us_did");
-const selfNumber = localStorage.getItem("number");
 
 async function loadTrades() {
   try {
-    // 🔥 Query with ascending date order
     const q = query(
       collection(db, "users_setting", usDid, "trade_history"),
       orderBy("date", "desc")
@@ -431,937 +252,71 @@ async function loadTrades() {
     const snap = await getDocs(q);
 
     if (snap.empty) {
-      list.innerHTML = "<p style='text-align:center;color:#777;'>No trades found</p>";
+      list.innerHTML = "<p style='text-align:center;'>No trades found</p>";
       return;
     }
 
-    list.innerHTML = ""; // clear old data
+    list.innerHTML = "";
 
     snap.forEach(docSnap => {
       const d = docSnap.data();
       const his_did = docSnap.id;
-      let html = "";
-
-      // 🔀 same logic (no change)
-      if (d.result === "positive") {
-        html = buildCardPositive(d, his_did, usDid, selfNumber);
-      } 
-      else if (d.result === "negative" || d.result === "incomplete negative") {
-        html = buildCardNegative(d, his_did);
-      } 
-      else if (d.result === "cancel") {
-        html = buildCardCancel(d, his_did);
-      } 
-      else if (d.result === "incomplete positive") {
-        html = buildCardIncompletePositive(d, his_did);
-      } 
-      else {
-        html = buildCardDefault(d, his_did);
-      }
 
       const card = document.createElement("div");
       card.className = "card";
-      card.innerHTML = html;
+
+      card.innerHTML = `
+        <div class="row">
+          <div class="company">${d.name || "Company"}</div>
+          <div class="top-right ${d.result === "positive" ? "green" : "red"}">
+            ${d.result || "---"}
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="muted">Entry: ${d.active_zone || "---"}</div>
+          <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="label">Profit / Loss</div>
+          <div class="profit">
+            ${d.quantity && d.active_zone && d.upside_reaction_zone
+              ? (d.quantity * (d.upside_reaction_zone - d.active_zone)).toFixed(2)
+              : "---"}
+          </div>
+        </div>
+
+        <div class="uid">UID: ${his_did}</div>
+      `;
 
       list.appendChild(card);
     });
 
   } catch (error) {
     console.error("Error loading trades:", error);
-    list.innerHTML = "<p style='text-align:center;color:red;'>Error loading trades</p>";
+    list.innerHTML = "<p style='color:red;text-align:center;'>Error loading trades</p>";
   }
-}
-
-/* POSITIVE */
-function buildCardPositive(d, his_did, usDid, selfNumber) {
-  return `
-    <div class="row row-center">
-      <div class="date-center">${formatDateTime(d.date)}</div>
-    </div>
-    
-    <div class="row">
-      <div class="company">${d.name || "Company"}</div>
-      <div class="top-right green">${d.result || "---"}</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row">
-      <div class="muted">Entry: ${d.active_zone || "---"}</div>
-      <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row">
-      <div class="label">Profit</div>
-      <div class="profit green">
-        ${d.quantity && d.active_zone && d.upside_reaction_zone ? d.quantity * (d.upside_reaction_zone - d.active_zone) : "---"}
-      </div>
-    </div>
-
-    <div class="dist"><div>Profit Distribution</div></div>
-
-    <div class="profiles">
-
-    <!-- SELF -->
-      <div class="profile">
-        <div class="avatar">
-          <img src="profile.png">
-        </div>
-
-        <div class="amount">${( 0.4 * ((Number(d.upside_reaction_zone) - Number(d.active_zone)) * Number(d.quantity))).toFixed(2)}</div>
-        <div class="status">SELF</div>
-      </div>
-
-      <!-- LAYNAIWALA -->
-      <div class="profile" style="display: ${d.laynaiwalaUsdid === "cancell" ? "none" : "inline"}">
-        <div class="avatar">
-          <img src="profile.png">
-          <span class="badge" style="display:${d.laynaiwala_pay_status === "true" ? "inline" : "none"}">✔</span>
-        </div>
-
-        ${d.laynaiwalaAmount && d.laynaiwalaAmount !== "null"
-          ? `<div class="amount">${d.laynaiwalaAmount}</div>` : ``}
-
-        ${d.laynaiwalaUsdid === "null"
-          ? `<button class="find-partner-btn"onclick="handleFindPartner('${usDid}', '${his_did}', '${selfNumber}', this)"> Find Partner </button>`
-          : `<div class="status">Partner alloted</div>`}
-
-       ${d.laynaiwalaUsdid !== "null" && d.laynaiwala_pay_status !== "true"
-        ? `<button class="find-partner-btn" onclick="openVerifyPopup('${d}', 'negative', '${usDid}', '${his_did}')"> Verify Payment </button>`: ``}
-
-        ${d.laynaiwalaNumber && d.laynaiwalaNumber !== "null"
-          ? (() => {
-              const phone = d.laynaiwalaNumber.replace(/[^0-9]/g, "");
-              const message = encodeURIComponent(
-                `Hello, I have made the payment of ${d.laynaiwalaAmount || ""}. Please share the PIN so that my account can be unblocked. Thank you.`
-              );
-              return `
-                <a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank">${d.laynaiwalaNumber}</a>
-              `;
-            })()
-          : ``}
-      </div>
-
-      <!-- CANCEL LAYNAIWALA -->
-      <div class="profile" style="display: ${d.cancellaynaiwalaUsdid === "cancell" ? "none" : "inline"}">
-        <div class="avatar">
-          <img src="profile.png">
-          <span class="badge" style="display:${d.cancellaynaiwala_pay_status === "true" ? "inline" : "none"}">✔</span>
-        </div>
-
-        ${d.cancellaynaiwalaAmount && d.cancellaynaiwalaAmount !== "null"
-          ? `<div class="amount">${d.cancellaynaiwalaAmount}</div>` : ``}
-
-        ${d.cancellaynaiwalaUsdid === "null"
-          ? `<button class="find-partner-btn"onclick="handleFindPartnerCancel('${usDid}', '${his_did}', '${selfNumber}', this)"> Find Partner </button>`
-          : `<div class="status">Partner alloted</div>`}
-
-        ${d.cancellaynaiwalaUsdid !== "null" && d.cancellaynaiwala_pay_status !== "true"
-          ? `<button class="find-partner-btn" onclick="openVerifyPopup('${d}', 'cancel', '${usDid}', '${his_did}')">Verify Payment</button>`
-          : ``}
-
-        ${d.cancellaynaiwalaNumber && d.cancellaynaiwalaNumber !== "null"
-          ? (() => {
-              const phone = d.cancellaynaiwalaNumber.replace(/[^0-9]/g, "");
-              const message = encodeURIComponent(
-                `Hello, I have made the payment of ${d.cancellaynaiwalaAmount || ""}. Please share the PIN so that my account can be unblocked. Thank you.`
-              );
-              return `
-                <a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank"> ${d.cancellaynaiwalaNumber}</a>
-              `;
-            })()
-          : ``}
-      </div>
-
-      <!-- OWN -->
-      <div class="profile">
-        <div class="avatar">
-          <img src="profile.png">
-          <span class="badge" style="display:${d.own_pay_status === "true" ? "inline" : "none"}">✔</span>
-        </div>
-
-        ${d.own_amount && d.own_amount !== "null" ? `<div class="amount">${d.own_amount}</div>` : ``}
-
-        ${d.own_amount === 0 ? `<button class="find-partner-btn" onclick="handleFindPartnerOwner('${usDid}', '${his_did}', '${selfNumber}', this,  '${d}')">Find Partner</button>` : `<div class="status">Partner alloted</div>`}
-
-        ${d.own_pay_status === "false" && d.own_amount > 0 ? `<button class="find-partner-btn" onclick="makePayment('${usDid}', '${his_did}', '${selfNumber}', this)"> Make Payment ${d.own_amount} </button>` : ``}
-          
-      </div>
-    </div>
-
-    <div class="hint">Tap on number to chat directly with your partner</div>
-    <div class="uid">UID: ${his_did}</div>
-  `;
-}
-
-
-/* NEGATIVE */
-function buildCardNegative(d, his_did) {
-  const firstAmt = Number(d.daynaiwalaFirstAmount || 0);
-  const secondAmt = Number(d.daynaiwalaSecondAmount || 0);
-
-  return `
-     <div class="row row-center">
-      <div class="date-center">${formatDateTime(d.date)}</div>
-    </div>
-    
-    <div class="row">
-      <div class="company">${d.name || "Company"}</div>
-      <div class="top-right red">${d.result || "---"}</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row">
-      <div class="muted">Entry: ${d.active_zone || "---"}</div>
-      <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row">
-      <div class="label">Loss (with included all charges)</div>
-      <div class="profit red"> ${firstAmt + secondAmt}</div>
-    </div>
-
-    <div class="dist"><div>Loss Distribution</div></div>
-
-    <div class="profiles">
-
-      <div class="profile">
-        <div class="avatar">
-          <span class="pin">PIN : ${d.otp_first}</span>
-          <img src="profile.png">
-          <span class="badge" style="display:${d.paymentStatusFirst === "false" ? "none" : "inline"}">✔</span>
-        </div>
-        <div class="amount"> ${d.daynaiwalaFirstAmount || "---"}</div>
-        <div class="status">${String(d.daynaiwalaFirstUsdid) === "null" ? "Pending" : "Partner alloted"}</div>
-        ${d.daynaiwalaFirstNumber === "null" ? `<div class="wa_number">--</div>` 
-         : (() => {
-           const phone = d.daynaiwalaFirstNumber.replace(/[^0-9]/g,'');
-           const amount = d.daynaiwalaFirstAmount || '';
-           const message = encodeURIComponent(`Hello, please make the payment of ${d.daynaiwalaFirstAmount}. Once the payment is completed, I will share the PIN with you. Thank you.`);
-           return `<a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank">${d.daynaiwalaFirstNumber} </a> `;
-          })()}
-      </div>
-
-      <div class="profile">
-        <div class="avatar">
-          <span class="pin">PIN :  ${d.otp_second}</span>
-          <img src="profile.png">
-          <span class="badge" style="display:${d.paymentStatusSecond === "false" ? "none" : "inline"}">✔</span>
-        </div>
-        <div class="amount">${d.daynaiwalaSecondAmount || "---"}</div>
-        <div class="status">${String(d.daynaiwalaSecondUsdid) === "null" ? "Pending" : "Partner alloted"}</div>
-       ${d.daynaiwalaSecondNumber === "null" ? `<div class="wa_number">--</div>` 
-       : (() => {
-                const phone = d.daynaiwalaSecondNumber.replace(/[^0-9]/g,'');
-                const amount = d.daynaiwalaSecondAmount || '';
-                const message = encodeURIComponent( `Hello, please make the payment of ₹${amount}. Once the payment is completed, I will share the PIN with you. Thank you.` );
-                return ` <a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank">${d.daynaiwalaSecondNumber} </a>`;
-              })()}
-        </div>
-      </div>
-
-    <div class="hint">Tap on number to chat directly with your partner</div>
-    <div class="uid">UID: ${his_did}</div>
-  `;
-}
-
-
-/* CANCEL */
-function buildCardCancel(d, his_did) {
-  const Amt = Number(d.cancel_charge || 0);
-
-  return `
-     <div class="row row-center">
-      <div class="date-center">${formatDateTime(d.date)}</div>
-    </div>
-    
-    <div class="row">
-      <div class="company">${d.name || "Company"}</div>
-      <div class="top-right red">${d.result || "---"}</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row">
-      <div class="muted">Entry: ${d.active_zone || "---"}</div>
-      <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row">
-      <div class="label">Loss (with included compensation)</div>
-      <div class="profit red"> ${Amt}</div>
-    </div>
-
-    <div class="dist"><div>Loss Distribution</div></div>
-
-    <div class="profiles">
-      <div class="profile">
-        <div class="avatar">
-          <span class="pin">PIN : ${d.otp}</span>
-          <img src="profile.png">
-          <span class="badge" style="display:${d.paystatus === "false" ? "none" : "inline"}">✔</span>
-        </div>
-        <div class="amount"> ${Amt || "---"}</div>
-        <div class="status">${String(d.daynaiwalaUsdid) === "null" ? "Pending" : "Partner alloted"}</div>
-        ${d.daynaiwalaNumber === "null" ? `<div class="wa_number">--</div>` 
-        : (() => {
-                const phone = d.daynaiwalaNumber.replace(/[^0-9]/g,'');
-                const amount = Amt || '';
-                const message = encodeURIComponent( `Hello, please make the payment of ${d.Amt}. Once the payment is completed, I will share the PIN with you. Thank you.`);
-                return ` <a class="wa-link" href="https://wa.me/${phone}?text=${message}" target="_blank"> ${d.daynaiwalaNumber}</a>`;
-           })()}
-      </div>
-    </div>
-
-    <div class="hint">Tap on number to chat directly with your partner</div>
-    <div class="uid">UID: ${his_did}</div>
-  `;
-}
-
-function formatDateTime(value) {
-  if (!value) return "--";
-  let d;
-  if (typeof value === "object" && value.seconds) {
-    d = new Date(value.seconds * 1000);
-  }
- 
-  else if (!isNaN(value)) {
-    d = new Date(Number(value));
-  }
- 
-  else if (typeof value === "string") {
-    // Fix "YYYY-MM-DD HH:mm:ss" → ISO
-    const fixed = value.replace(" ", "T");
-    d = new Date(fixed);
-  }
-
-  if (!d || isNaN(d.getTime())) return "--";
-  return d.toLocaleString("en-GB", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false
-  });
-}
-
-/* INCOMPLETEPOSITIVE */
-function buildCardIncompletePositive(d, his_did) {
-  return `
-    <div class="row row-center">
-      <div class="date-center">${formatDateTime(d.date)}</div>
-    </div>
-
-    <div class="row">
-      <div class="company">${d.name || "Company"}</div>
-      <div class="top-right green">${d.result || "---"}</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row">
-      <div class="muted">Entry: ${d.active_zone || "---"}</div>
-      <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row">
-      <div class="label">Profit</div>
-      <div class="profit green">
-        ${d.quantity && d.active_zone && d.upside_reaction_zone ? d.quantity * (d.upside_reaction_zone - d.active_zone) : "---"}
-      </div>
-    </div>
-
-    <div class="dist"><div>Profit Distribution</div></div>
-
-    <div class="profiles">
-
-      <!-- SELF -->
-      <div class="profile">
-        <div class="avatar">
-          <img src="profile.png">
-        </div>
-        <div class="amount">${d.self_amount}</div>
-        <div class="status">SELF</div>
-      </div>
-
-      <!-- OWN -->
-      <div class="profile">
-        <div class="avatar">
-          <img src="profile.png">
-          <span class="badge" style="display:${d.own_pay_status === "true" ? "inline" : "none"}">✔</span>
-        </div>
-
-        ${d.own_amount && d.own_amount !== "null" ? `<div class="amount">${d.own_amount}</div>` : ``}
-        ${d.own_pay_status === "false"? `<button class="find-partner-btn" onclick="makePayment('${usDid}', '${his_did}', '${selfNumber}', this)">Make Payment ${d.own_amount}</button>`: ``}
-      </div>
-
-    </div>
-    <div class="uid">UID: ${his_did}</div>
-  `;
 }
 
 loadTrades();
-
-window.handleFindPartner = async function (usDid, his_did, selfNumber, btn) {
-  btn.disabled = true;
-  try {
-    // 1️⃣ SELF TRADE REF
-    const selfRef = doc(db, "users_setting", usDid, "trade_history", his_did);
-    const selfSnap = await getDoc(selfRef);
-
-    if (!selfSnap.exists()) {
-      alert("Trade not found");
-      return;
-    }
-
-    const selfData = selfSnap.data();
-
-    // 2️⃣ CHECK ALREADY ALLOTTED
-    if (selfData.laynaiwalaUsdid && selfData.laynaiwalaUsdid !== "null") {
-      alert("Partner already allotted");
-      location.reload();
-      return;
-    }
-
-    // 3️⃣ FIND AVAILABLE PARTNER
-    const q = query(
-      collection(db, "negative_trade"),
-      where("is_taken", "==", false),
-      where("temp_name", "==", selfData.temp_name),
-      orderBy("date", "asc"),
-      limit(1)
-    );
-
-    const snap = await getDocs(q);
-
-   if (snap.empty) {
-     btn.disabled = false; // optional but important
-     await updateDoc(selfRef, {
-       laynaiwalaAmount: 0,
-       laynaiwalaNumber: "cancell",
-       laynaiwalaUsdid: "cancell",
-       laynaiwalaThdid: "cancell",   // ✅ fixed quote
-       laynaiwalaPartyType: "cancell",
-       laynaiwala_pay_status: "cancell"
-     });
-
-     alert("No partner available");
-     return;
-    }
-
-    const partnerDoc = snap.docs[0];
-    const partnerRef = partnerDoc.ref;
-
-    // 4️⃣ TRANSACTION
-    await runTransaction(db, async (transaction) => {
-      const freshPartner = await transaction.get(partnerRef);
-
-      if (freshPartner.get("is_taken") === true) {
-        throw "ALREADY_TAKEN";
-      }
-
-      const {
-        th_did,
-        us_did,
-        party_type,
-        number,
-        div_amount
-      } = freshPartner.data();
-
-      const partnerTradeRef = doc(
-        db,
-        "users_setting",
-        us_did,
-        "trade_history",
-        th_did
-      );
-
-      const partnerTradeSnap = await transaction.get(partnerTradeRef);
-      if (!partnerTradeSnap.exists()) {
-        throw "TRADE_NOT_FOUND";
-      }
-
-      // MARK PARTNER TAKEN
-      transaction.update(partnerRef, { is_taken: true });
-
-      // UPDATE PARTNER TRADE
-      const updatePartner = {};
-      if (party_type === "first") {
-        updatePartner.daynaiwalaFirstAmount = div_amount;
-        updatePartner.daynaiwalaFirstNumber = selfNumber;
-        updatePartner.daynaiwalaFirstUsdid = usDid;
-        updatePartner.daynaiwalaFirstTHdid = his_did;
-      } else {
-        updatePartner.daynaiwalaSecondAmount = div_amount;
-        updatePartner.daynaiwalaSecondNumber = selfNumber;
-        updatePartner.daynaiwalaSecondUsdid = usDid;
-        updatePartner.daynaiwalaSecondTHdid = his_did;
-      }
-
-      transaction.update(partnerTradeRef, updatePartner);
-
-      // UPDATE SELF TRADE
-      transaction.update(selfRef, {
-        laynaiwalaAmount: div_amount,
-        laynaiwalaNumber: number,
-        laynaiwalaUsdid: us_did,
-        laynaiwalaThdid: th_did,
-        laynaiwalaPartyType: party_type
-      });
-
-      // DELETE NEGATIVE_TRADE DOC
-      transaction.delete(partnerRef);
-    });
-
-    // 5️⃣ SUCCESS
-    alert("Partner allotted successfully");
-    location.reload();
-
-  } catch (e) {
-    if (e === "ALREADY_TAKEN") {
-      alert("Partner already taken, retrying...");
-      location.reload();
-    } else {
-      console.error(e);
-      alert("Operation failed, no data changed");
-    }
-  }
-};
-
-
-window.handleFindPartnerCancel = async function (usDid, his_did, selfNumber, btn) {
-  btn.disabled = true;
-  try {
-    // 1️⃣ SELF TRADE REF
-    const selfRef = doc(db, "users_setting", usDid, "trade_history", his_did);
-    const selfSnap = await getDoc(selfRef);
-
-    if (!selfSnap.exists()) {
-      alert("Trade not found");
-      return;
-    }
-
-    const selfData = selfSnap.data();
-
-    // 2️⃣ CHECK ALREADY ALLOTTED
-    if (selfData.cancellaynaiwalaUsdid && selfData.cancellaynaiwalaUsdid !== "null") {
-      alert("Partner already allotted");
-      location.reload();
-      return;
-    }
-
-    // 3️⃣ FIND AVAILABLE PARTNER
-    const q = query(
-      collection(db, "cancel_trade"),
-      where("is_taken", "==", false),
-      where("temp_name", "==", selfData.temp_name),
-      orderBy("date", "asc"),
-      limit(1)
-    );
-
-    const snap = await getDocs(q);
-
-    if (snap.empty) {
-  btn.disabled = false; // 🔥 important
-
-  await updateDoc(selfRef, {
-    cancellaynaiwalaAmount: 0,
-    cancellaynaiwalaNumber: "cancell",
-    cancellaynaiwalaUsdid: "cancell",
-    cancellaynaiwalaThdid: "cancell",
-    cancellaynaiwala_pay_status: "true"
-  });
-
-  alert("No partner available");
-  return;
-}
-
-    const partnerDoc = snap.docs[0];
-    const partnerRef = partnerDoc.ref;
-
-    // 4️⃣ TRANSACTION
-    await runTransaction(db, async (transaction) => {
-      const freshPartner = await transaction.get(partnerRef);
-
-      if (freshPartner.get("is_taken") === true) {
-        throw "ALREADY_TAKEN";
-      }
-
-      const {
-        th_did,
-        us_did,
-        number,
-        cancel_charge
-      } = freshPartner.data();
-
-      const partnerTradeRef = doc(
-        db,
-        "users_setting",
-        us_did,
-        "trade_history",
-        th_did
-      );
-
-      const partnerTradeSnap = await transaction.get(partnerTradeRef);
-      if (!partnerTradeSnap.exists()) {
-        throw "TRADE_NOT_FOUND";
-      }
-
-      // MARK PARTNER TAKEN
-      transaction.update(partnerRef, { is_taken: true });
-
-      // UPDATE PARTNER TRADE
-      const updatePartner = {};
-      updatePartner.daynaiwalaNumber = selfNumber;
-      updatePartner.daynaiwalaUsdid = usDid;
-      updatePartner.daynaiwalaTHdid = his_did;
-      transaction.update(partnerTradeRef, updatePartner);
-
-      // UPDATE SELF TRADE
-      transaction.update(selfRef, {
-        cancellaynaiwalaAmount: cancel_charge,
-        cancellaynaiwalaNumber: number,
-        cancellaynaiwalaUsdid: us_did,
-        cancellaynaiwalaThdid: th_did
-      });
-
-      // DELETE NEGATIVE_TRADE DOC
-      transaction.delete(partnerRef);
-    });
-
-    // 5️⃣ SUCCESS
-    alert("Partner allotted successfully");
-    location.reload();
-
-  } catch (e) {
-    if (e === "ALREADY_TAKEN") {
-      alert("Partner already taken, retrying...");
-      location.reload();
-    } else {
-      console.error(e);
-      alert("Operation failed, no data changed");
-    }
-  }
-};
-
-window.handleFindPartnerOwner = async function (usDid, his_did, selfNumber, btn, d) {
-  if (btn) {
-    btn.disabled = true;
-    btn.innerText = "Please wait...";
-    btn.style.opacity = "0.7";
-  }
-
-  try {
-    // 1️⃣ SELF TRADE REF
-    const selfRef = doc(db, "users_setting", usDid, "trade_history", his_did);
-    const selfSnap = await getDoc(selfRef);
-
-    if (!selfSnap.exists()) {
-      alert("Trade not found");
-      return;
-    }
-
-    const d = selfSnap.data();
-
-    // 2️⃣ CHECK PARTNERS ALLOTTED OR NOT
-    const laynaiwalaMissing = !d.laynaiwalaUsdid || d.laynaiwalaUsdid === "null";
-    const cancelMissing = !d.cancellaynaiwalaUsdid || d.cancellaynaiwalaUsdid === "null";
-
-    if (laynaiwalaMissing || cancelMissing) {
-      alert("Maybe one or both partners are not allotted");
-      return;
-    }
-
-    // 3️⃣ CHECK OWN AMOUNT
-    const ownAmount = Number(d.own_amount || 0);
-
-    if (ownAmount !== 0) {
-      alert("Already allotted");
-      return;
-    }
-
-    // 4️⃣ CALCULATION 
-    const active_zone = Number(d.active_zone);
-    const upside_reaction_zone = Number(d.upside_reaction_zone);
-    const quantity = Number(d.quantity);
-
-    const laynaiwalaAmount = Number(d.laynaiwalaAmount || 0);
-    const cancellaynaiwalaAmount = Number(d.cancellaynaiwalaAmount || 0);
-
-    const capture_point = upside_reaction_zone - active_zone;
-    const total_prof = capture_point * quantity;
-    const sixty_per = 0.6 * total_prof;
-
-    const own_am = sixty_per - (laynaiwalaAmount + cancellaynaiwalaAmount);
-
-    // round to 2 decimals (HALF_UP)
-    const roundedOwnAmount = Math.round((own_am + Number.EPSILON) * 100) / 100;
-
-    // 5️⃣ UPDATE FIRESTORE
-    await updateDoc(selfRef, {
-      own_amount: roundedOwnAmount
-    });
-
-    alert("Owner amount updated successfully");
-    location.reload();
-
-  } catch (e) {
-    console.error(e);
-    alert("Operation failed");
-    //location.reload();
-  }
-};
-
-
-  
-let self_usDid = null;
-let self_his_did = null;
-let gtype_nc = null;
-window.openVerifyPopup = function (d, type_nc, usDid, his_did) {
-  self_usDid = usDid;
-  self_his_did = his_did;
-  gtype_nc = type_nc;
-  
-  document.getElementById("verifyPin").value = "";
-  document.getElementById("verifyPopup").style.display = "flex";
-};
-
-window.closeVerifyPopup = function () {
-  document.getElementById("verifyPopup").style.display = "none";
-};
-
-window.submitVerifyPin = async function () {
-  if(gtype_nc === "negative") {
-  const pin = document.getElementById("verifyPin").value.trim();
-
-  if (pin.length !== 6) {
-    alert("Please enter a valid 6 digit PIN");
-    return;
-  }
-
-  try {
-    /* 1️⃣ SELF TRADE REF */
-    const selfRef = doc(
-      db,
-      "users_setting",
-      self_usDid,
-      "trade_history",
-      self_his_did
-    );
-
-    const selfSnap = await getDoc(selfRef);
-
-    if (!selfSnap.exists()) {
-      alert("Trade not found");
-      return;
-    }
-
-    const selfData = selfSnap.data();
-
-    /* 2️⃣ ALREADY VERIFIED CHECK */
-    if (selfData.laynaiwala_pay_status === "true") {
-      alert("Payment already verified");
-      return;
-    }
-
-    /* 3️⃣ LAYNAIWALA TRADE REF */
-    const {
-      laynaiwalaUsdid,
-      laynaiwalaThdid,
-      laynaiwalaPartyType
-    } = selfData;
-
-    if (!laynaiwalaUsdid || !laynaiwalaThdid) {
-      alert("Partner data missing");
-      return;
-    }
-
-    const laynaiwalaRef = doc(
-      db,
-      "users_setting",
-      laynaiwalaUsdid,
-      "trade_history",
-      laynaiwalaThdid
-    );
-
-    const laynaiwalaSnap = await getDoc(laynaiwalaRef);
-
-    if (!laynaiwalaSnap.exists()) {
-      alert("Partner trade not found");
-      return;
-    }
-
-    const laynaiwalaData = laynaiwalaSnap.data();
-
-    /* 4️⃣ OTP FIELD SELECT */
-    const otp =
-      laynaiwalaPartyType === "first"
-        ? laynaiwalaData.otp_first
-        : laynaiwalaData.otp_second;
-
-    if (!otp) {
-      alert("PIN not generated yet");
-      return;
-    }
-
-    /* 5️⃣ PIN MATCH */
-    if (Number(pin) !== Number(otp)) {
-      alert("Wrong PIN");
-      return;
-    }
-
-    /* 6️⃣ UPDATE BOTH DOCUMENTS */
-    await updateDoc(laynaiwalaRef, {
-      [laynaiwalaPartyType === "first"
-        ? "paymentStatusFirst"
-        : "paymentStatusSecond"]: "true"
-    });
-
-    await updateDoc(selfRef, {
-      laynaiwala_pay_status: "true"
-    });
-
-    alert("Payment verified successfully");
-    closeVerifyPopup();
-    location.reload();
-
-  } catch (e) {
-    console.error(e);
-    alert("Verification failed");
-  }
-  } else if(gtype_nc === "cancel") {
-     const pin = document.getElementById("verifyPin").value.trim();
-
-  if (pin.length !== 6) {
-    alert("Please enter a valid 6 digit PIN");
-    return;
-  }
-
-  try {
-    /* 1️⃣ SELF TRADE REF */
-    const selfRef = doc(
-      db,
-      "users_setting",
-      self_usDid,
-      "trade_history",
-      self_his_did
-    );
-
-    const selfSnap = await getDoc(selfRef);
-
-    if (!selfSnap.exists()) {
-      alert("Trade not found");
-      return;
-    }
-
-    const selfData = selfSnap.data();
-
-    /* 2️⃣ ALREADY VERIFIED CHECK */
-    if (selfData.cancellaynaiwala_pay_status === "true") {
-      alert("Payment already verified");
-      return;
-    }
-
-    /* 3️⃣ LAYNAIWALA TRADE REF */
-    const {
-      cancellaynaiwalaUsdid,
-      cancellaynaiwalaThdid,
-    } = selfData;
-
-    if (!cancellaynaiwalaUsdid || !cancellaynaiwalaThdid) {
-      alert("Partner data missing");
-      return;
-    }
-
-    const laynaiwalaRef = doc(
-      db,
-      "users_setting",
-      cancellaynaiwalaUsdid,
-      "trade_history",
-      cancellaynaiwalaThdid
-    );
-
-    const laynaiwalaSnap = await getDoc(laynaiwalaRef);
-
-    if (!laynaiwalaSnap.exists()) {
-      alert("Partner trade not found");
-      return;
-    }
-
-    const laynaiwalaData = laynaiwalaSnap.data();
-
-    /* 4️⃣ OTP FIELD SELECT */
-    const otp =laynaiwalaData.otp;
-
-    if (!otp) {
-      alert("PIN not generated yet");
-      return;
-    }
-
-    /* 5️⃣ PIN MATCH */
-    if (Number(pin) !== Number(otp)) {
-      alert("Wrong PIN");
-      return;
-    }
-
-    /* 6️⃣ UPDATE BOTH DOCUMENTS */
-    await updateDoc(laynaiwalaRef, { paystatus : "true"});
-
-    await updateDoc(selfRef, { cancellaynaiwala_pay_status: "true"});
-
-    alert("Payment verified successfully");
-    closeVerifyPopup();
-    location.reload();
-
-  } catch (e) {
-    console.error(e);
-    alert("Verification failed");
-  }
-  }
-};
-
-
-
-
-
 </script>
 
+<!-- Sidebar Script -->
+<script>
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("active");
+}
 
-<!-- Verify Payment Popup -->
-<div id="verifyPopup" class="popup-overlay">
-  <div class="popup-box">
-
-    <!-- Close Icon -->
-    <div class="popup-close" onclick="closeVerifyPopup()">✕</div>
-
-    <h3>Enter 6 Digit PIN</h3>
-
-    <input
-      type="text"
-      id="verifyPin"
-      maxlength="6"
-      placeholder="••••••"
-      inputmode="numeric"
-      oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-    />
-
-    <button class="submit-btn" onclick="submitVerifyPin()">
-      Verify
-    </button>
-  </div>
-</div>
-
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+</script>
 
 </body>
 </html>
