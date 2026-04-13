@@ -2043,7 +2043,7 @@ function checkTrade(userSettingDocId) {
         }
 
         // User settings
-        const userSettingRef = doc(db, "users_setting", userSettingDocId);
+        const userSettingRef = db.collection("users_setting").doc(userSettingDocId);
         const userSnap = await transaction.get(userSettingRef);
 
         const capacity = userSnap.data().avail_trading_capacity;
@@ -2060,9 +2060,7 @@ function checkTrade(userSettingDocId) {
         const newSrno = srno + 1;
 
         // Create user trade record
-        const userTradeRef = doc(
-          collection(db, "users_setting", userSettingDocId, "alloted_trades")
-        );
+        const userTradeRef = db.collection("users_setting").doc(userSettingDocId).collection("alloted_trades").doc();
 
         transaction.set(userTradeRef, {
           created_at: serverTimestamp(),
