@@ -1958,160 +1958,160 @@ function checkTrade(userSettingDocId) {
 }
 
   
-// function showTradeDialog(userSettingDocId) {
-//   showBrowserNotification(); // System notification sound
+ function showTradeDialog(userSettingDocId) {
+  triggerTradeAlert();
 
-//   if (typeof playTradeAlertSound === "function") {
-//     playTradeAlertSound(); // Custom sound
-//   }
-//   // Create dialog HTML
-//   const dialog = document.createElement("div");
-//   dialog.className = "trade-dialog-overlay";
+  if (typeof playTradeAlertSound === "function") {
+    playTradeAlertSound(); // Custom sound
+  }
+  // Create dialog HTML
+  const dialog = document.createElement("div");
+  dialog.className = "trade-dialog-overlay";
 
-//   dialog.innerHTML = `
-//     <div class="trade-dialog">
-//       <h3>New Trade Available</h3>
-//       <div class="dialog-buttons">
-//         <button id="acceptBtn">Accept</button>
-//         <button id="rejectBtn" class="reject">Reject</button>
-//       </div>
-//     </div>
-//   `;
+  dialog.innerHTML = `
+    <div class="trade-dialog">
+      <h3>New Trade Available</h3>
+      <div class="dialog-buttons">
+        <button id="acceptBtn">Accept</button>
+        <button id="rejectBtn" class="reject">Reject</button>
+      </div>
+    </div>
+  `;
 
-//   document.body.appendChild(dialog);
+  document.body.appendChild(dialog);
 
-//   const acceptBtn = dialog.querySelector("#acceptBtn");
-//   const rejectBtn = dialog.querySelector("#rejectBtn");
+  const acceptBtn = dialog.querySelector("#acceptBtn");
+  const rejectBtn = dialog.querySelector("#rejectBtn");
 
-//   // ================= ACCEPT BUTTON =================
-//   acceptBtn.addEventListener("click", async () => {
-//     const user = auth.currentUser;
+  // ================= ACCEPT BUTTON =================
+  acceptBtn.addEventListener("click", async () => {
+    const user = auth.currentUser;
 
-//     if (!user) {
-//       alert("User not authenticated");
-//       return;
-//     }
+    if (!user) {
+      alert("User not authenticated");
+      return;
+    }
 
-//     acceptBtn.disabled = true;
+    acceptBtn.disabled = true;
 
-//     try {
-//       const userId = user.phoneNumber;
+    try {
+      const userId = user.phoneNumber;
 
-//       const orderCol = collection(db, "all_alloted_trade");
-//       const companyCol = collection(db, "compnay_setting");
+      const orderCol = collection(db, "all_alloted_trade");
+      const companyCol = collection(db, "compnay_setting");
 
-//       // Fetch company setting
-//       const companyQuery = await getDocs(query(companyCol, limit(1)));
+      // Fetch company setting
+      const companyQuery = await getDocs(query(companyCol, limit(1)));
 
-//       if (companyQuery.empty) {
-//         alert("Company setting missing");
-//         acceptBtn.disabled = false;
-//         return;
-//       }
+      if (companyQuery.empty) {
+        alert("Company setting missing");
+        acceptBtn.disabled = false;
+        return;
+      }
 
-//       const companyRef = companyQuery.docs[0].ref;
+      const companyRef = companyQuery.docs[0].ref;
 
-//       // Fetch open order
-//       const orderQuery = await getDocs(
-//         query(
-//           orderCol,
-//           where("status", "==", "open"),
-//           orderBy("date", "asc"),
-//           limit(1)
-//         )
-//       );
+      // Fetch open order
+      const orderQuery = await getDocs(
+        query(
+          orderCol,
+          where("status", "==", "open"),
+          orderBy("date", "asc"),
+          limit(1)
+        )
+      );
 
-//       if (orderQuery.empty) {
-//         acceptBtn.disabled = false;
-//         return;
-//       }
+      if (orderQuery.empty) {
+        acceptBtn.disabled = false;
+        return;
+      }
 
-//       const orderDoc = orderQuery.docs[0];
-//       const orderRef = orderDoc.ref;
+      const orderDoc = orderQuery.docs[0];
+      const orderRef = orderDoc.ref;
 
-//       // ================= FIRESTORE TRANSACTION =================
-//       await runTransaction(db, async (transaction) => {
-//         const freshOrder = await transaction.get(orderRef);
+      // ================= FIRESTORE TRANSACTION =================
+      await runTransaction(db, async (transaction) => {
+        const freshOrder = await transaction.get(orderRef);
 
-//         if (!freshOrder.exists()) {
-//           throw new Error("Order not found");
-//         }
+        if (!freshOrder.exists()) {
+          throw new Error("Order not found");
+        }
 
-//         const status = freshOrder.data().status;
-//         const order_id = freshOrder.data().order_id;
+        const status = freshOrder.data().status;
+        const order_id = freshOrder.data().order_id;
 
-//         if (status !== "open") {
-//           throw new Error("Order already taken");
-//         }
+        if (status !== "open") {
+          throw new Error("Order already taken");
+        }
 
-//         // User settings
-//         const userSettingRef = doc(db, "users_setting", userSettingDocId);
-//         const userSnap = await transaction.get(userSettingRef);
+        // User settings
+        const userSettingRef = doc(db, "users_setting", userSettingDocId);
+        const userSnap = await transaction.get(userSettingRef);
 
-//         const capacity = userSnap.data().avail_trading_capacity;
+        const capacity = userSnap.data().avail_trading_capacity;
 
-//         if (!capacity || capacity <= 0) {
-//           throw new Error("Trading capacity finished");
-//         }
+        if (!capacity || capacity <= 0) {
+          throw new Error("Trading capacity finished");
+        }
 
-//         // Company settings
-//         const companySnap = await transaction.get(companyRef);
-//         let srno = companySnap.data().live_srno || 0;
+        // Company settings
+        const companySnap = await transaction.get(companyRef);
+        let srno = companySnap.data().live_srno || 0;
 
-//         const newSrno = srno + 1;
+        const newSrno = srno + 1;
 
-//         // Create user trade record
-//         const userTradeRef = doc(
-//           collection(db, "users_setting", userSettingDocId, "alloted_trades")
-//         );
+        // Create user trade record
+        const userTradeRef = doc(
+          collection(db, "users_setting", userSettingDocId, "alloted_trades")
+        );
 
-//         transaction.set(userTradeRef, {
-//           created_at: serverTimestamp(),
-//           is_read: false,
-//           number: userId,
-//           order_id: order_id
-//         });
+        transaction.set(userTradeRef, {
+          created_at: serverTimestamp(),
+          is_read: false,
+          number: userId,
+          order_id: order_id
+        });
 
-//         const at_did = userTradeRef.id;
+        const at_did = userTradeRef.id;
 
-//         // Update order
-//         transaction.update(orderRef, {
-//           us_did: userSettingDocId,
-//           at_did: at_did,
-//           number: userId,
-//           status: "close",
-//           date: serverTimestamp()
-//         });
+        // Update order
+        transaction.update(orderRef, {
+          us_did: userSettingDocId,
+          at_did: at_did,
+          number: userId,
+          status: "close",
+          date: serverTimestamp()
+        });
 
-//         // Update user settings
-//         transaction.update(userSettingRef, {
-//           avail_trading_capacity: capacity - 1,
-//           live_srno: newSrno
-//         });
+        // Update user settings
+        transaction.update(userSettingRef, {
+          avail_trading_capacity: capacity - 1,
+          live_srno: newSrno
+        });
 
-//         // Update company settings
-//         transaction.update(companyRef, {
-//           live_srno: newSrno
-//         });
-//       });
+        // Update company settings
+        transaction.update(companyRef, {
+          live_srno: newSrno
+        });
+      });
 
-//       alert("Order received successfully");
-//       dialog.remove();
+      alert("Order received successfully");
+      dialog.remove();
 
-//     } catch (error) {
-//       console.error(error);
-//       alert(error.message);
-//     } finally {
-//       acceptBtn.disabled = false;
-//     }
-//   });
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      acceptBtn.disabled = false;
+    }
+  });
 
-//   // ================= REJECT BUTTON =================
-//   rejectBtn.addEventListener("click", () => {
-//     alert("Rejected");
-//     dialog.remove();
-//   });
-// }
+  // ================= REJECT BUTTON =================
+  rejectBtn.addEventListener("click", () => {
+    alert("Rejected");
+    dialog.remove();
+  });
+}
 
 
 function showTradeDialog(userSettingDocId) {
