@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -508,7 +507,7 @@ function buildCardPositive(d, his_did, usDid, selfNumber) {
     <!-- SELF -->
       <div class="profile">
         <div class="avatar">
-          <img src="profile.png">
+          <img src="images/profile.png">
         </div>
 
         <div class="amount">${( 0.4 * ((Number(d.upside_reaction_zone) - Number(d.active_zone)) * Number(d.quantity))).toFixed(2)}</div>
@@ -518,7 +517,7 @@ function buildCardPositive(d, his_did, usDid, selfNumber) {
       <!-- LAYNAIWALA -->
       <div class="profile" style="display: ${d.laynaiwalaUsdid === "cancell" ? "none" : "inline"}">
         <div class="avatar">
-          <img src="profile.png">
+          <img src="images/profile.png">
           <span class="badge" style="display:${d.laynaiwala_pay_status === "true" ? "inline" : "none"}">✔</span>
         </div>
 
@@ -548,7 +547,7 @@ function buildCardPositive(d, his_did, usDid, selfNumber) {
       <!-- CANCEL LAYNAIWALA -->
       <div class="profile" style="display: ${d.cancellaynaiwalaUsdid === "cancell" ? "none" : "inline"}">
         <div class="avatar">
-          <img src="profile.png">
+          <img src="images/profile.png">
           <span class="badge" style="display:${d.cancellaynaiwala_pay_status === "true" ? "inline" : "none"}">✔</span>
         </div>
 
@@ -579,7 +578,7 @@ function buildCardPositive(d, his_did, usDid, selfNumber) {
       <!-- OWN -->
       <div class="profile">
         <div class="avatar">
-          <img src="profile.png">
+          <img src="images/profile.png">
           <span class="badge" style="display:${d.own_pay_status === "true" ? "inline" : "none"}">✔</span>
         </div>
 
@@ -634,7 +633,7 @@ function buildCardNegative(d, his_did) {
       <div class="profile">
         <div class="avatar">
           <span class="pin">PIN : ${d.otp_first}</span>
-          <img src="profile.png">
+          <img src="images/profile.png">
           <span class="badge" style="display:${d.paymentStatusFirst === "false" ? "none" : "inline"}">✔</span>
         </div>
         <div class="amount"> ${d.daynaiwalaFirstAmount || "---"}</div>
@@ -651,7 +650,7 @@ function buildCardNegative(d, his_did) {
       <div class="profile">
         <div class="avatar">
           <span class="pin">PIN :  ${d.otp_second}</span>
-          <img src="profile.png">
+          <img src="images/profile.png">
           <span class="badge" style="display:${d.paymentStatusSecond === "false" ? "none" : "inline"}">✔</span>
         </div>
         <div class="amount">${d.daynaiwalaSecondAmount || "---"}</div>
@@ -706,7 +705,7 @@ function buildCardCancel(d, his_did) {
       <div class="profile">
         <div class="avatar">
           <span class="pin">PIN : ${d.otp}</span>
-          <img src="profile.png">
+          <img src="images/profile.png">
           <span class="badge" style="display:${d.paystatus === "false" ? "none" : "inline"}">✔</span>
         </div>
         <div class="amount"> ${Amt || "---"}</div>
@@ -790,7 +789,7 @@ function buildCardIncompletePositive(d, his_did) {
       <!-- SELF -->
       <div class="profile">
         <div class="avatar">
-          <img src="profile.png">
+          <img src="images/profile.png">
         </div>
         <div class="amount">${d.self_amount}</div>
         <div class="status">SELF</div>
@@ -799,7 +798,7 @@ function buildCardIncompletePositive(d, his_did) {
       <!-- OWN -->
       <div class="profile">
         <div class="avatar">
-          <img src="profile.png">
+          <img src="images/profile.png">
           <span class="badge" style="display:${d.own_pay_status === "true" ? "inline" : "none"}">✔</span>
         </div>
 
