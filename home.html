@@ -1056,12 +1056,6 @@ input:checked + .slider::before {
 
     <div class="right">
       <div class="icon"><img src="images/validate.png" id="validate" alt="Validate" style="cursor: pointer;"></div>
-
-      <button onclick="playTradeAlertSound()" 
-        style="position:fixed;bottom:20px;right:20px;padding:10px 15px;">
-  Test Sound
-</button>
-      
       <div class="icon">
         <img src="images/queue.png" >
         <span class="badge" id="queueBadge">0</span>
@@ -1093,7 +1087,7 @@ input:checked + .slider::before {
 </div>
     <div id="account" class="page"><h2>Account</h2></div>
     <div id="settings" class="page"><h2>Settings</h2></div>
-    <div id="history" class="page"><h2>History</h2></div>
+    <div id="history" onclick="window.location.href='history.html'" class="page"><h2>History</h2></div>
     <div id="faq" class="page"><h2>FAQ</h2></div>
     <div id="support" class="page"><h2>Support</h2></div>
 
