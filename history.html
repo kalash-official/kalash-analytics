@@ -1159,6 +1159,30 @@ window.submitVerifyPin = async function () {
 
 </script>
 
+<!-- Verify Payment Popup -->
+<div id="verifyPopup" class="popup-overlay">
+  <div class="popup-box">
+
+    <!-- Close Icon -->
+    <div class="popup-close" onclick="closeVerifyPopup()">✕</div>
+
+    <h3>Enter 6 Digit PIN</h3>
+
+    <input
+      type="text"
+      id="verifyPin"
+      maxlength="6"
+      placeholder="••••••"
+      inputmode="numeric"
+      oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+    />
+
+    <button class="submit-btn" onclick="submitVerifyPin()">
+      Verify
+    </button>
+  </div>
+</div>
+
 <!-- Sidebar Script -->
 <script>
 function toggleSidebar() {
