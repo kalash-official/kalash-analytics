@@ -2195,8 +2195,6 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     unlockAudio();
     loadQueueBadge();
-    loadSwitchState();
-    checkTrade(userSettingDocId);
     requestNotificationPermission();
 
     db.collection("users_setting")
@@ -2209,7 +2207,9 @@ auth.onAuthStateChanged((user) => {
           console.log("UserSettingDocId:", docId);
 
           // 🔥 Automatically load trades on page load
+          loadSwitchState();
           showAllotedTrades(docId);
+          checkTrade(docId);
         } else {
           document.getElementById("shimmerLayout").style.display = "none";
           document.getElementById("emptyLayout").style.display = "block";
