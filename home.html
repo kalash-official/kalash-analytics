@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Modern Dashboard</title>
-<!-- <link rel="stylesheet" href="css/home.css"> -->
+<!-- <link rel="stylesheet" href="css/home.css"> --> 
 <link rel="stylesheet" href="css/alert.css">
 <script src="js/alert.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -2063,7 +2063,7 @@ function checkTrade(userSettingDocId) {
         const userTradeRef = db.collection("users_setting").doc(userSettingDocId).collection("alloted_trades").doc();
 
         transaction.set(userTradeRef, {
-          created_at: serverTimestamp(),
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
           is_read: false,
           number: userId,
           order_id: order_id
