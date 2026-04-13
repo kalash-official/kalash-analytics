@@ -1959,6 +1959,11 @@ function checkTrade(userSettingDocId) {
 
   
 function showTradeDialog(userSettingDocId) {
+  showBrowserNotification(); // System notification sound
+
+  if (typeof playTradeAlertSound === "function") {
+    playTradeAlertSound(); // Custom sound
+  }
   // Create dialog HTML
   const dialog = document.createElement("div");
   dialog.className = "trade-dialog-overlay";
@@ -2108,6 +2113,25 @@ function showTradeDialog(userSettingDocId) {
   });
 }
 
+
+function showBrowserNotification() {
+  if (!("Notification" in window)) {
+    console.warn("This browser does not support notifications.");
+    return;
+  }
+
+  // Permission lena
+  Notification.requestPermission().then(permission => {
+    if (permission === "granted") {
+      new Notification("New Trade Available", {
+        body: "You have received a new trade.",
+        icon: "images/validate.png",
+        badge: "images/validate.png",
+        vibrate: [200, 100, 200]
+      });
+    }
+  });
+}
   
 function playTradeAlertSound() {
   const sound = document.getElementById("tradeAlertSound");
