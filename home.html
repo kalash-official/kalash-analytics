@@ -1989,6 +1989,7 @@ function checkTrade(userSettingDocId) {
 
     if (!user) {
       alert("User not authenticated");
+      stopTradeAlertSound();
       return;
     }
 
@@ -2005,6 +2006,7 @@ function checkTrade(userSettingDocId) {
 
       if (companyQuery.empty) {
         alert("Company setting missing");
+        stopTradeAlertSound();
         acceptBtn.disabled = false;
         return;
       }
@@ -2023,6 +2025,7 @@ function checkTrade(userSettingDocId) {
 
       if (orderQuery.empty) {
         acceptBtn.disabled = false;
+        stopTradeAlertSound();
         return;
       }
 
@@ -2035,6 +2038,7 @@ function checkTrade(userSettingDocId) {
 
         if (!freshOrder.exists()) {
           throw new Error("Order not found");
+          stopTradeAlertSound();
         }
 
         const status = freshOrder.data().status;
@@ -2042,6 +2046,7 @@ function checkTrade(userSettingDocId) {
 
         if (status !== "open") {
           throw new Error("Order already taken");
+          stopTradeAlertSound();
         }
 
         // User settings
@@ -2052,6 +2057,7 @@ function checkTrade(userSettingDocId) {
 
         if (!capacity || capacity <= 0) {
           throw new Error("Trading capacity finished");
+          stopTradeAlertSound();
         }
 
         // Company settings
@@ -2096,6 +2102,7 @@ function checkTrade(userSettingDocId) {
       });
 
       alert("Order received successfully");
+      stopTradeAlertSound();
       dialog.remove();
 
     } catch (error) {
@@ -2109,6 +2116,7 @@ function checkTrade(userSettingDocId) {
   // ================= REJECT BUTTON =================
   rejectBtn.addEventListener("click", () => {
     alert("Rejected");
+    stopTradeAlertSound();
     dialog.remove();
   });
 }
@@ -2169,6 +2177,16 @@ function playTradeAlertSound() {
     .catch(error => {
       console.warn("Playback failed:", error);
     });
+}
+
+function stopTradeAlertSound() {
+  const sound = document.getElementById("tradeAlertSound");
+
+  if (sound) {
+    sound.pause();
+    sound.currentTime = 0; // Reset sound
+    console.log("🔕 Trade alert sound stopped");
+  }
 }
 
 function triggerTradeAlert() {
