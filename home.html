@@ -1960,7 +1960,7 @@ function checkTrade(userSettingDocId) {
   
  function showTradeDialog(userSettingDocId) {
   triggerTradeAlert();
-
+ 
   if (typeof playTradeAlertSound === "function") {
     playTradeAlertSound(); // Custom sound
   }
@@ -2111,28 +2111,6 @@ function checkTrade(userSettingDocId) {
     alert("Rejected");
     dialog.remove();
   });
-}
-
-
-function showTradeDialog(userSettingDocId) {
-  // 🔔 Alert Trigger
-  triggerTradeAlert();
-
-  // Dialog Create
-  const dialog = document.createElement("div");
-  dialog.className = "trade-dialog-overlay";
-
-  dialog.innerHTML = `
-    <div class="trade-dialog">
-      <h3>New Trade Available</h3>
-      <div class="dialog-buttons">
-        <button id="acceptBtn">Accept</button>
-        <button id="rejectBtn">Reject</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(dialog);
 }
 
 
