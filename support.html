@@ -326,7 +326,8 @@ body {
 <!-- Floating Action Button -->
 <button class="fab" onclick="createTicket()">＋</button>
 
-<script>
+<script type="module">
+// Firebase Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -338,96 +339,28 @@ import {
   getAuth
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// Firebase Configuration
+// Firebase Configuration (Same as your project)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-}
+  apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
+  authDomain: "kalash2-2bf90.firebaseapp.com",
+  projectId: "kalash2-2bf90",
+  storageBucket: "kalash2-2bf90.firebasestorage.app",
+  messagingSenderId: "462798382911",
+  appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-  
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("active");
+
+// Generate 6-digit PIN (Equivalent to ThreadLocalRandom)
+function generatePin() {
+  return Math.floor(100000 + Math.random() * 900000);
 }
 
-function logout() {
-  localStorage.clear();
-  window.location.href = "login.html";
-}
-
-// Simulated Ticket Loader
-function loadTickets() {
-  const shimmer = document.getElementById("shimmer-container");
-  const ticketsDiv = document.getElementById("tickets");
-  const emptyState = document.getElementById("empty-state");
-
-  shimmer.style.display = "block";
-  ticketsDiv.style.display = "none";
-  emptyState.style.display = "none";
-
-  setTimeout(() => {
-    shimmer.style.display = "none";
-
-    const tickets = JSON.parse(localStorage.getItem("supportTickets")) || [];
-    ticketsDiv.innerHTML = "";
-
-    if (tickets.length === 0) {
-      emptyState.style.display = "block";
-    } else {
-      ticketsDiv.style.display = "block";
-      tickets.reverse().forEach(ticket => {
-        ticketsDiv.innerHTML += `
-          <div class="ticket-card">
-            <div class="ticket-title">${ticket.category}</div>
-            <div class="ticket-status">Status: ${ticket.status}</div>
-            <div style="font-size:12px;color:#6b7280;">
-              PIN: ${ticket.pin}
-            </div>
-          </div>
-        `;
-      });
-    }
-  }, 800);
-}
-
-// Open Modal
-function createTicket() {
-  document.getElementById("ticketModal").style.display = "flex";
-}
-
-// Close Modal
-function closeTicketModal() {
-  document.getElementById("ticketModal").style.display = "none";
-}
-
-// Submit Ticket
-function submitTicket() {
-  const category = document.getElementById("category").value.trim();
-  const problem = document.getElementById("problem").value.trim();
-
-  if (!category || !problem) {
-    alert("Please fill all fields.");
-    return;
-  }
-
-  const ticket = {
-    category: category,
-    problem: problem,
-    status: "pending",
-    pin: Math.floor(100000 + Math.random() * 900000),
-    number: localStorage.getItem("number") || "unknown",
-    created_at: new Date().toISOString()
-  };
-
-  // Save locally (Replace with Firebase later)
-  window.submitTicketToFirebase = async function () {
+// Make function globally accessible
+window.submitTicketToFirebase = async function () {
   const category = document.getElementById("category").value.trim();
   const problem = document.getElementById("problem").value.trim();
 
@@ -437,19 +370,24 @@ function submitTicket() {
   }
 
   try {
+    // Get user number from Firebase Auth or LocalStorage
     const user = auth.currentUser;
+    const number =
+      user?.phoneNumber ||
+      localStorage.getItem("number") ||
+      "unknown";
 
-    // Create ticket object
+    // Create ticket object (Same as Android HashMap)
     const ticketMap = {
       category: category,
       problem: problem,
       create_time: serverTimestamp(),
-      pin: Math.floor(100000 + Math.random() * 900000), // 6-digit PIN
+      pin: generatePin(),
       status: "pending",
-      number: user?.phoneNumber || "unknown"
+      number: number
     };
 
-    // Add to Firestore
+    // Add document to Firestore
     await addDoc(collection(db, "tickets"), ticketMap);
 
     // Success Message
@@ -458,36 +396,21 @@ function submitTicket() {
     // Reset Form
     document.getElementById("category").value = "";
     document.getElementById("problem").value = "";
-    document.getElementById("ticketModal").style.display = "none";
 
-    // Reload Tickets
-    loadTickets();
+    // Close Modal
+    const modal = document.getElementById("ticketModal");
+    if (modal) modal.style.display = "none";
+
+    // Reload Tickets List
+    if (typeof loadTickets === "function") {
+      loadTickets();
+    }
 
   } catch (error) {
+    console.error("Error creating ticket:", error);
     alert("Error: " + error.message);
-    console.error("Firestore Error:", error);
   }
 };
-
-
-
-  
-  let tickets = JSON.parse(localStorage.getItem("supportTickets")) || [];
-  tickets.push(ticket);
-  localStorage.setItem("supportTickets", JSON.stringify(tickets));
-
-  alert("Your ticket has been created successfully!");
-
-  closeTicketModal();
-  document.getElementById("category").value = "";
-  document.getElementById("problem").value = "";
-
-  loadTickets();
-}
-
-
-// Load tickets on page start
-window.onload = loadTickets;
 </script>
 
 <!-- Create Ticket Bottom Sheet -->
