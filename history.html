@@ -109,19 +109,31 @@ body {
 }
 
 /* ================= TRADE CARD STYLES ================= */
+/* Container */
 .list {
+  width: 100%;
+  max-width: 1400px; /* Limits width on very large screens */
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
+/* Full-width Cards */
 .card {
+  width: 100%;
+  max-width: 100%; /* Removes previous restriction */
+  margin: 0;
+  padding: 20px;
   background: #ffffff;
   border-radius: 18px;
-  padding: 18px;
-  max-width: 420px;
-  margin: auto;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: all 0.25s ease-in-out;
+}
+/* Hover Effect */
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
 }
 
 .row {
@@ -185,6 +197,43 @@ body {
 
   .main {
     margin-left: 0;
+  }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+  .content {
+    padding: 16px;
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 768px) {
+  .content {
+    padding: 12px;
+  }
+
+  .card {
+    border-radius: 14px;
+    padding: 16px;
+  }
+}
+
+/* Small Phones */
+@media (max-width: 480px) {
+  .content {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+}
+
+/* Large Screens */
+@media (min-width: 1400px) {
+  .list {
+    max-width: 1600px;
   }
 }
 
