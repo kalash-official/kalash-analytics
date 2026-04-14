@@ -327,6 +327,32 @@ body {
 <button class="fab" onclick="createTicket()">＋</button>
 
 <script>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+}
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+  
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("active");
 }
@@ -401,6 +427,51 @@ function submitTicket() {
   };
 
   // Save locally (Replace with Firebase later)
+  window.submitTicketToFirebase = async function () {
+  const category = document.getElementById("category").value.trim();
+  const problem = document.getElementById("problem").value.trim();
+
+  if (!category || !problem) {
+    alert("Please fill all fields.");
+    return;
+  }
+
+  try {
+    const user = auth.currentUser;
+
+    // Create ticket object
+    const ticketMap = {
+      category: category,
+      problem: problem,
+      create_time: serverTimestamp(),
+      pin: Math.floor(100000 + Math.random() * 900000), // 6-digit PIN
+      status: "pending",
+      number: user?.phoneNumber || "unknown"
+    };
+
+    // Add to Firestore
+    await addDoc(collection(db, "tickets"), ticketMap);
+
+    // Success Message
+    alert("We will solve your problem or contact you shortly.");
+
+    // Reset Form
+    document.getElementById("category").value = "";
+    document.getElementById("problem").value = "";
+    document.getElementById("ticketModal").style.display = "none";
+
+    // Reload Tickets
+    loadTickets();
+
+  } catch (error) {
+    alert("Error: " + error.message);
+    console.error("Firestore Error:", error);
+  }
+};
+
+
+
+  
   let tickets = JSON.parse(localStorage.getItem("supportTickets")) || [];
   tickets.push(ticket);
   localStorage.setItem("supportTickets", JSON.stringify(tickets));
