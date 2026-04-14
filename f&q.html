@@ -213,7 +213,7 @@ body {
     <ul class="sidebar-menu">
       <li><a href="home.html">🏠 Home</a></li>
       <li><a href="history.html">📜 Trade History</a></li>
-      <li class="active"><a href="faq.html">❓ FAQ</a></li>
+      <li class="active"><a href="f&q.html">❓ F&Q</a></li>
       <li><a href="support.html">📞 Support</a></li>
       <li><a href="#" onclick="logout()">🚪 Logout</a></li>
     </ul>
@@ -324,5 +324,98 @@ document.querySelectorAll(".faq-question").forEach(button => {
 });
 </script>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  where
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// 🔹 Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
+  authDomain: "kalash2-2bf90.firebaseapp.com",
+  projectId: "kalash2-2bf90",
+  storageBucket: "kalash2-2bf90.firebasestorage.app",
+  messagingSenderId: "462798382911",
+  appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
+};
+
+// 🔹 Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔹 Toggle Sidebar
+window.toggleSidebar = function () {
+  document.getElementById("sidebar").classList.toggle("active");
+};
+
+// 🔹 Logout Function
+window.logout = function () {
+  localStorage.clear();
+  window.location.href = "login.html";
+};
+
+// 🔹 Load FAQs from Firestore
+async function loadFAQs() {
+  const faqContainer = document.getElementById("faq-container");
+  faqContainer.innerHTML = "<p>Loading FAQs...</p>";
+
+  try {
+    const q = query(
+      collection(db, "questions"),
+      where("status", "==", true),
+      orderBy("order", "asc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    faqContainer.innerHTML = "";
+
+    if (querySnapshot.empty) {
+      faqContainer.innerHTML = "<p>No FAQs available.</p>";
+      return;
+    }
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+
+      const faqItem = document.createElement("div");
+      faqItem.className = "faq-item";
+
+      faqItem.innerHTML = `
+        <button class="faq-question">
+          ${data.question}
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          ${data.answer}
+        </div>
+      `;
+
+      faqContainer.appendChild(faqItem);
+    });
+
+    // Enable Accordion Functionality
+    document.querySelectorAll(".faq-question").forEach(button => {
+      button.addEventListener("click", () => {
+        const item = button.parentElement;
+        item.classList.toggle("active");
+      });
+    });
+
+  } catch (error) {
+    console.error("Error loading FAQs:", error);
+    faqContainer.innerHTML = `<p>Error loading FAQs: ${error.message}</p>`;
+  }
+}
+
+// 🔹 Load FAQs on Page Load
+window.onload = loadFAQs;
+</script>
+  
 </body>
 </html>
