@@ -228,6 +228,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin-top: 10px; /* Provides space for PIN badge */
   margin-bottom: 4px;
 }
 
@@ -260,17 +261,22 @@ body {
   z-index: 2;
 }
 
+/* PIN Badge - Properly Positioned Above Avatar */
 .pin {
   position: absolute;
-  top: 0;
+  top: -10px; /* Moves the badge above the image */
   left: 50%;
   transform: translateX(-50%);
   background: #d1fae5;
   color: #065f46;
   font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
   font-weight: 600;
+  border: 1px solid #6ee7b7;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 3;
 }
 
 .amount {
@@ -427,6 +433,15 @@ body {
 
   .profile {
     flex: 1 1 45%;
+  }
+  .pin {
+    font-size: 9px;
+    padding: 2px 6px;
+    top: -8px;
+  }
+
+  .avatar {
+    margin-top: 8px;
   }
 }
 
