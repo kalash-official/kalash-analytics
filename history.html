@@ -55,7 +55,6 @@ body {
   padding: 14px 20px;
   color: #e5e7eb;
   text-decoration: none;
-  transition: 0.2s;
 }
 
 .sidebar-menu a:hover,
@@ -73,11 +72,11 @@ body {
 /* ================= TOPBAR ================= */
 .topbar {
   height: 60px;
-  background: #ffffff;
+  background: #fff;
   display: flex;
   align-items: center;
   padding: 0 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   position: sticky;
   top: 0;
   z-index: 999;
@@ -104,40 +103,29 @@ body {
 
 /* ================= MODERN CARD ================= */
 .card {
-  position: relative;
   width: 100%;
   max-width: 520px;
-  background: #ffffff;
+  background: #fff;
   border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
   transition: 0.3s;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 18px 35px rgba(0,0,0,0.12);
 }
 
-/* Date Badge */
-.date-chip {
-  position: absolute;
-  top: -12px;
-  right: 16px;
-  background: linear-gradient(135deg, #22c55e, #15803d);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 999px;
-}
-
-/* Header */
 .row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.row-center {
+  justify-content: center;
 }
 
 .company {
@@ -146,28 +134,34 @@ body {
   color: #111827;
 }
 
-/* Result Badge */
+.date-center {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
 .top-right {
   font-size: 12px;
   font-weight: 600;
   padding: 5px 12px;
   border-radius: 999px;
-  text-transform: capitalize;
 }
 
 .green {
-  color: #065f46;
   background: #d1fae5;
+  color: #065f46;
 }
 
 .red {
-  color: #7f1d1d;
   background: #fee2e2;
+  color: #7f1d1d;
 }
 
 .gray {
-  color: #374151;
   background: #e5e7eb;
+  color: #374151;
 }
 
 .divider {
@@ -182,7 +176,6 @@ body {
 }
 
 .label {
-  font-size: 14px;
   font-weight: 600;
 }
 
@@ -192,12 +185,12 @@ body {
 }
 
 .dist {
-  margin-top: 14px;
   font-size: 15px;
   font-weight: 700;
+  margin-top: 12px;
 }
 
-/* ================= PROFILES ================= */
+/* Profiles */
 .profiles {
   display: flex;
   flex-wrap: wrap;
@@ -215,21 +208,19 @@ body {
   text-align: center;
   padding: 10px;
   border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .avatar img {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  border: 2px solid #e5e7eb;
 }
 
 .amount {
   font-size: 14px;
   font-weight: 600;
-  margin-top: 6px;
 }
 
 .status {
@@ -238,7 +229,7 @@ body {
 }
 
 .find-partner-btn {
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   border: none;
   background: linear-gradient(135deg, #22c55e, #15803d);
@@ -253,12 +244,8 @@ body {
   text-decoration: none;
 }
 
-.wa-link:hover {
-  text-decoration: underline;
-}
-
 .hint {
-  margin-top: 12px;
+  margin-top: 10px;
   text-align: center;
   font-size: 11px;
   color: #6b7280;
@@ -271,27 +258,47 @@ body {
   color: #9ca3af;
 }
 
-/* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
-  .sidebar {
-    left: -240px;
-  }
-  .sidebar.active {
-    left: 0;
-  }
-  .main {
-    margin-left: 0;
-  }
+/* Popup */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
-@media (max-width: 480px) {
-  .row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .top-right {
-    align-self: flex-end;
-  }
+.popup-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  width: 300px;
+  text-align: center;
+}
+
+.popup-box input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.submit-btn {
+  margin-top: 12px;
+  padding: 12px;
+  border: none;
+  background: #22c55e;
+  color: #fff;
+  border-radius: 10px;
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{left:-240px;}
+  .sidebar.active{left:0;}
+  .main{margin-left:0;}
 }
 </style>
 </head>
@@ -300,39 +307,44 @@ body {
 
 <div class="layout">
 
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">Kalash</div>
-    <ul class="sidebar-menu">
-      <li><a href="home.html">🏠 Home</a></li>
-      <li class="active"><a href="history.html">📜 Trade History</a></li>
-      <li><a href="profile.html">👤 Profile</a></li>
-      <li><a href="settings.html">⚙ Settings</a></li>
-      <li><a href="#" onclick="logout()">🚪 Logout</a></li>
-    </ul>
-  </aside>
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">Kalash</div>
+  <ul class="sidebar-menu">
+    <li><a href="home.html">🏠 Home</a></li>
+    <li class="active"><a href="history.html">📜 Trade History</a></li>
+    <li><a href="profile.html">👤 Profile</a></li>
+    <li><a href="settings.html">⚙ Settings</a></li>
+    <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+  </ul>
+</aside>
 
-  <!-- Main -->
-  <div class="main">
+<!-- Main -->
+<div class="main">
+  <header class="topbar">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h2>Trade History</h2>
+  </header>
 
-    <!-- Topbar -->
-    <header class="topbar">
-      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-      <h1>Trade History</h1>
-    </header>
+  <div class="content">
+    <div class="list" id="list"></div>
+  </div>
+</div>
+</div>
 
-    <!-- Content -->
-    <div class="content">
-      <div class="list" id="list"></div>
-    </div>
-
+<!-- Verify Popup -->
+<div id="verifyPopup" class="popup-overlay">
+  <div class="popup-box">
+    <h3>Enter 6 Digit PIN</h3>
+    <input id="verifyPin" maxlength="6">
+    <button class="submit-btn" onclick="submitVerifyPin()">Verify</button>
   </div>
 </div>
 
-<!-- Firebase Script -->
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } 
+import { getFirestore, collection, getDocs, doc, getDoc, query, where, orderBy, limit, runTransaction, updateDoc }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -344,10 +356,8 @@ const firebaseConfig = {
   appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const list = document.getElementById("list");
 const usDid = localStorage.getItem("us_did");
 
@@ -359,68 +369,47 @@ async function loadTrades() {
   );
 
   const snap = await getDocs(q);
-
-  if (snap.empty) {
-    list.innerHTML = "<p>No trades found</p>";
-    return;
-  }
-
   list.innerHTML = "";
 
   snap.forEach(docSnap => {
     const d = docSnap.data();
-    const his_did = docSnap.id;
-    list.innerHTML += buildModernCard(d, his_did);
+    const id = docSnap.id;
+    list.innerHTML += buildCard(d, id);
   });
 }
 
-/* Modern Card Builder */
-function buildModernCard(d, his_did) {
+/* Build Card */
+function buildCard(d, id) {
   const profit = d.quantity && d.active_zone && d.upside_reaction_zone
-    ? (d.quantity * (d.upside_reaction_zone - d.active_zone)).toFixed(2)
+    ? d.quantity * (d.upside_reaction_zone - d.active_zone)
     : "---";
-
-  const isProfit = profit !== "---" && Number(profit) >= 0;
-  const resultClass = isProfit ? "green" : "red";
 
   return `
     <div class="card">
-      <div class="date-chip">${formatDateTime(d.date)}</div>
+      <div class="row row-center">
+        <div class="date-center">${formatDateTime(d.date)}</div>
+      </div>
 
       <div class="row">
-        <div class="company">${d.name || "Company"}</div>
-        <div class="top-right ${resultClass}">
-          ${d.result || "N/A"}
-        </div>
+        <div class="company">${d.name}</div>
+        <div class="top-right ${d.result === 'positive' ? 'green':'red'}">${d.result}</div>
       </div>
 
       <div class="divider"></div>
 
       <div class="row">
-        <div class="muted">Entry: ${d.active_zone || "---"}</div>
-        <div class="muted">Exit: ${d.upside_reaction_zone || "---"}</div>
+        <div class="muted">Entry: ${d.active_zone}</div>
+        <div class="muted">Exit: ${d.upside_reaction_zone}</div>
       </div>
 
       <div class="divider"></div>
 
       <div class="row">
         <div class="label">Profit</div>
-        <div class="profit ${resultClass}">${profit}</div>
+        <div class="profit">${profit}</div>
       </div>
 
-      <div class="dist">Distribution</div>
-
-      <div class="profiles">
-        <div class="profile">
-          <div class="avatar">
-            <img src="images/profile.png">
-          </div>
-          <div class="amount">${profit}</div>
-          <div class="status">SELF</div>
-        </div>
-      </div>
-
-      <div class="uid">UID: ${his_did}</div>
+      <div class="uid">UID: ${id}</div>
     </div>
   `;
 }
@@ -428,10 +417,7 @@ function buildModernCard(d, his_did) {
 /* Date Formatter */
 function formatDateTime(value) {
   if (!value) return "--";
-  let d = value.seconds
-    ? new Date(value.seconds * 1000)
-    : new Date(value);
-
+  let d = value.seconds ? new Date(value.seconds * 1000) : new Date(value);
   return d.toLocaleString("en-GB", {
     day: "2-digit",
     month: "short",
