@@ -368,7 +368,6 @@ async function loadFAQs() {
   try {
     const q = query(
       collection(db, "questions"),
-      where("status", "==", true),
       orderBy("order", "asc")
     );
 
@@ -388,11 +387,11 @@ async function loadFAQs() {
 
       faqItem.innerHTML = `
         <button class="faq-question">
-          ${data.question}
+          ${data.que}
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
-          ${data.answer}
+          ${data.ans}
         </div>
       `;
 
