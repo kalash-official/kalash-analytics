@@ -236,58 +236,8 @@ body {
         <p>Find answers to common questions below.</p>
       </div>
 
-      <div class="faq-container">
-
-        <div class="faq-item">
-          <button class="faq-question">
-            How do I create an account?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            Sign up using your mobile number and verify it with the OTP.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            How can I reset my password?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            Click on "Forgot Password" on the login page and follow the instructions.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            How do I place a trade?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            Navigate to the Home page, select an active trade, and confirm your order.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            How can I contact support?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            Visit the Support page and create a support ticket.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            How long does verification take?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            Account verification usually takes between 24–48 hours.
-          </div>
-        </div>
-
+      <div class="faq-container" id="faq-container">
+          <p id="loading">Loading FAQs...</p>
       </div>
 
       <!-- Contact Support -->
@@ -367,8 +317,7 @@ async function loadFAQs() {
 
   try {
     const q = query(
-      collection(db, "questions"),
-      orderBy("order", "asc")
+      collection(db, "questions")
     );
 
     const querySnapshot = await getDocs(q);
