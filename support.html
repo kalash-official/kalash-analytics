@@ -349,30 +349,27 @@ function loadTickets() {
   setTimeout(() => {
     shimmer.style.display = "none";
 
-    // Change to [] to show empty state
-    const tickets = [
-      { title: "Payment Issue", status: "Open" },
-      { title: "Login Problem", status: "Resolved" }
-    ];
-
+    const tickets = JSON.parse(localStorage.getItem("supportTickets")) || [];
     ticketsDiv.innerHTML = "";
 
     if (tickets.length === 0) {
       emptyState.style.display = "block";
     } else {
       ticketsDiv.style.display = "block";
-      tickets.forEach(ticket => {
+      tickets.reverse().forEach(ticket => {
         ticketsDiv.innerHTML += `
           <div class="ticket-card">
-            <div class="ticket-title">${ticket.title}</div>
-            <div class="ticket-status">${ticket.status}</div>
+            <div class="ticket-title">${ticket.category}</div>
+            <div class="ticket-status">Status: ${ticket.status}</div>
+            <div style="font-size:12px;color:#6b7280;">
+              PIN: ${ticket.pin}
+            </div>
           </div>
         `;
       });
     }
-  }, 1200);
+  }, 800);
 }
-
 
 // Open Modal
 function createTicket() {
