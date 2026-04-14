@@ -340,7 +340,7 @@ body {
     <ul class="sidebar-menu">
       <li><a href="home.html">🏠 Home</a></li>
       <li><a href="history.html">📜 Trade History</a></li>
-      <li><a onclick="window.location.href='f&Q.html'">❓ F&Q</a></li>
+      <li><a onclick="window.location.href='f&q.html'">❓ F&Q</a></li>
       <li class="active"><a onclick="window.location.href='support.html'">📞 Support</a></li>
       <li><a href="#" onclick="logout()">🚪 Logout</a></li>
     </ul>
@@ -482,20 +482,7 @@ window.loadTickets = async function () {
         });
       }
 
-      // Status Badge Styling
-      let statusClass = "status-pending";
-      let statusText = "Pending";
-
-      if (ticket.status) {
-        const status = ticket.status.toLowerCase();
-        if (status === "resolved") {
-          statusClass = "status-resolved";
-          statusText = "Resolved";
-        } else if (status === "rejected") {
-          statusClass = "status-rejected";
-          statusText = "Rejected";
-        }
-      }
+    
 
       // Create Ticket Card
       const card = `
@@ -510,13 +497,13 @@ window.loadTickets = async function () {
             <span class="ticket-category">
               Category: ${ticket.category || "N/A"}
             </span>
-            <span class="status-badge ${statusClass}">
-              ${statusText}
+            <span class="status-badge ">
+              ${ticket.problem}
             </span>
           </div>
 
           <div class="ticket-problem">
-            ${ticket.problem || "No description provided."}
+            ${ticket.status || "No description provided."}
           </div>
 
         </div>
