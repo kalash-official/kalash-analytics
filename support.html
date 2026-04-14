@@ -90,24 +90,81 @@ body {
   padding: 20px;
 }
 
-/* Ticket Cards */
+/* Modern Ticket Card (Android CardView Style) */
 .ticket-card {
-  background: #fff;
+  background: #ffffff;
+  border-radius: 20px;
   padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Header Row */
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* PIN Badge */
+.pin-badge {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px 12px;
   border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.ticket-title {
-  font-size: 16px;
+/* Ticket Date */
+.ticket-date {
+  font-size: 13px;
   font-weight: 600;
+  color: #111827;
 }
 
-.ticket-status {
+/* Category & Status Row */
+.ticket-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* Category Text */
+.ticket-category {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Status Badges */
+.status-badge {
   font-size: 12px;
-  color: #16a34a;
-  margin-top: 4px;
+  font-weight: bold;
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.status-pending {
+  background: #f59e0b;
+}
+
+.status-resolved {
+  background: #16a34a;
+}
+
+.status-rejected {
+  background: #dc2626;
+}
+
+/* Problem Description */
+.ticket-problem {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #6b7280;
 }
 
 /* Shimmer Loader */
@@ -374,39 +431,110 @@ window.closeTicketModal = function () {
   document.getElementById("ticketModal").style.display = "none";
 };
 
-// 🔹 Load Tickets (Local Display)
-window.loadTickets = function () {
+window.loadTickets = async function () {
   const shimmer = document.getElementById("shimmer-container");
   const ticketsDiv = document.getElementById("tickets");
   const emptyState = document.getElementById("empty-state");
 
+  // Show loading shimmer
   shimmer.style.display = "block";
   ticketsDiv.style.display = "none";
   emptyState.style.display = "none";
 
-  setTimeout(() => {
-    shimmer.style.display = "none";
+  try {
+    // Import Firestore functions dynamically
+    const {
+      collection,
+      getDocs,
+      query,
+      orderBy
+    } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
 
-    const tickets = JSON.parse(localStorage.getItem("supportTickets")) || [];
+    // Fetch tickets ordered by latest time
+    const q = query(
+      collection(db, "tickets"),
+      orderBy("create_time", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    // Hide shimmer
+    shimmer.style.display = "none";
     ticketsDiv.innerHTML = "";
 
-    if (tickets.length === 0) {
+    if (querySnapshot.empty) {
       emptyState.style.display = "block";
-    } else {
-      ticketsDiv.style.display = "block";
-      tickets.reverse().forEach(ticket => {
-        ticketsDiv.innerHTML += `
-          <div class="ticket-card">
-            <div class="ticket-title">${ticket.category}</div>
-            <div class="ticket-status">Status: ${ticket.status}</div>
-            <div style="font-size:12px;color:#6b7280;">
-              PIN: ${ticket.pin}
-            </div>
-          </div>
-        `;
-      });
+      return;
     }
-  }, 800);
+
+    ticketsDiv.style.display = "block";
+
+    querySnapshot.forEach((doc) => {
+      const ticket = doc.data();
+
+      // Format Date
+      let formattedDate = "N/A";
+      if (ticket.create_time && ticket.create_time.seconds) {
+        const date = new Date(ticket.create_time.seconds * 1000);
+        formattedDate = date.toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
+
+      // Status Badge Styling
+      let statusClass = "status-pending";
+      let statusText = "Pending";
+
+      if (ticket.status) {
+        const status = ticket.status.toLowerCase();
+        if (status === "resolved") {
+          statusClass = "status-resolved";
+          statusText = "Resolved";
+        } else if (status === "rejected") {
+          statusClass = "status-rejected";
+          statusText = "Rejected";
+        }
+      }
+
+      // Create Ticket Card
+      const card = `
+        <div class="ticket-card">
+          
+          <div class="ticket-header">
+            <span class="pin-badge">PIN: ${ticket.pin || "N/A"}</span>
+            <span class="ticket-date">${formattedDate}</span>
+          </div>
+
+          <div class="ticket-row">
+            <span class="ticket-category">
+              Category: ${ticket.category || "N/A"}
+            </span>
+            <span class="status-badge ${statusClass}">
+              ${statusText}
+            </span>
+          </div>
+
+          <div class="ticket-problem">
+            ${ticket.problem || "No description provided."}
+          </div>
+
+        </div>
+      `;
+
+      ticketsDiv.innerHTML += card;
+    });
+
+  } catch (error) {
+    console.error("Error loading tickets:", error);
+    shimmer.style.display = "none";
+    emptyState.style.display = "block";
+    emptyState.innerHTML = `
+      <h3>Error Loading Tickets</h3>
+      <p>${error.message}</p>
+    `;
+  }
 };
 
 // 🔹 Submit Ticket to Firebase
