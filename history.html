@@ -10,8 +10,185 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ================= GENERAL STYLES ================= */
 * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #f6f7fb;
+  display: flex;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: linear-gradient(180deg, #111827, #1f2937);
+  color: #fff;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px;
+  transition: 0.3s;
+  z-index: 2000;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar ul li {
+  padding: 14px;
+  margin: 6px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+/* ================= MAIN ================= */
+.main {
+  margin-left: 260px;
+  width: 100%;
+  transition: 0.3s;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.menu-btn {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* ================= CONTENT ================= */
+.content {
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #111827;
+}
+
+/* ================= HISTORY CARDS ================= */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.company {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.top-right {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.green {
+  color: #16a34a;
+  background: #e7f8ee;
+}
+
+.red {
+  color: #dc2626;
+  background: #fdeaea;
+}
+
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 10px 0;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profit {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.uid {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .sidebar {
+    left: -260px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+}
+/* * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -449,7 +626,7 @@ body {
   .content {
     padding: 30px 40px;
   }
-}
+} */
 </style>
 </head>
 
