@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Support</title>
+<title>FAQ - Kalash</title>
 
 <!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -90,148 +90,101 @@ body {
   padding: 20px;
 }
 
-/* Modern Ticket Card (Android CardView Style) */
-.ticket-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 16px;
-  margin: 12px 0;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+/* FAQ Header */
+.faq-header {
+  text-align: center;
+  margin-bottom: 25px;
 }
 
-/* Header Row */
-.ticket-header {
+.faq-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.faq-header p {
+  color: #6b7280;
+}
+
+/* FAQ Card */
+.faq-container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.faq-item {
+  background: #fff;
+  border-radius: 16px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.faq-question {
+  width: 100%;
+  padding: 18px 20px;
+  border: none;
+  background: none;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* PIN Badge */
-.pin-badge {
-  background: linear-gradient(135deg, #22c55e, #15803d);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: bold;
-  padding: 4px 12px;
-  border-radius: 12px;
+.faq-question:hover {
+  background: #f9fafb;
 }
 
-/* Ticket Date */
-.ticket-date {
-  font-size: 13px;
-  font-weight: 600;
-  color: #111827;
+.faq-icon {
+  font-size: 20px;
+  color: #22c55e;
+  transition: transform 0.3s;
 }
 
-/* Category & Status Row */
-.ticket-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-  flex-wrap: wrap;
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
 }
 
-/* Category Text */
-.ticket-category {
-  font-size: 16px;
-  font-weight: 700;
-  color: #111827;
-}
-
-/* Status Badges */
-.status-badge {
-  font-size: 12px;
-  font-weight: bold;
-  color: #ffffff;
-  padding: 4px 12px;
-  border-radius: 12px;
-}
-
-.status-pending {
-  background: #f59e0b;
-}
-
-.status-resolved {
-  background: #16a34a;
-}
-
-.status-rejected {
-  background: #dc2626;
-}
-
-/* Problem Description */
-.ticket-problem {
-  margin-top: 8px;
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 20px;
   font-size: 14px;
   color: #6b7280;
+  transition: max-height 0.3s ease, padding 0.3s ease;
 }
 
-/* Shimmer Loader */
-.shimmer {
-  width: 100%;
-  height: 80px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  background: linear-gradient(
-    90deg,
-    #eeeeee 25%,
-    #dddddd 37%,
-    #eeeeee 63%
-  );
-  background-size: 400% 100%;
-  animation: shimmer 1.2s infinite;
+.faq-item.active .faq-answer {
+  max-height: 200px;
+  padding: 0 20px 15px;
 }
 
-@keyframes shimmer {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
-}
-
-/* Empty State */
-.empty-state {
+/* Contact Card */
+.contact-card {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  color: white;
+  border-radius: 16px;
+  padding: 20px;
   text-align: center;
-  margin-top: 50px;
-  display: none;
+  margin-top: 25px;
 }
 
-.empty-state h3 {
-  font-size: 18px;
+.contact-card h3 {
   margin-bottom: 8px;
 }
 
-.empty-state p {
-  color: #6b7280;
-}
-
-/* Floating Action Button */
-.fab {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #22c55e;
-  color: #fff;
+.contact-card button {
+  margin-top: 10px;
+  padding: 10px 18px;
   border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 28px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.fab:hover {
-  background: #16a34a;
-}
-
-/* Pull to Refresh */
-.refresh-btn {
-  background: #22c55e;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  margin-bottom: 15px;
+  border-radius: 8px;
+  background: white;
+  color: #16a34a;
+  font-weight: bold;
   cursor: pointer;
 }
 
@@ -247,86 +200,6 @@ body {
     margin-left: 0;
   }
 }
-
-/* Bottom Sheet Modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.modal-sheet {
-  width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border-radius: 20px 20px 0 0;
-  padding: 20px;
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.close-btn {
-  font-size: 20px;
-  cursor: pointer;
-  color: #333;
-}
-
-.modal-sheet h2 {
-  font-size: 20px;
-  margin-top: 5px;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: #757575;
-  margin-bottom: 15px;
-}
-
-.label {
-  font-size: 14px;
-  font-weight: 600;
-  margin-top: 12px;
-  display: block;
-}
-
-.input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 6px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-.submit-btn {
-  width: 100%;
-  margin-top: 20px;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #22c55e, #15803d);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.submit-btn:hover {
-  opacity: 0.95;
-}
 </style>
 </head>
 
@@ -340,293 +213,116 @@ body {
     <ul class="sidebar-menu">
       <li><a href="home.html">🏠 Home</a></li>
       <li><a href="history.html">📜 Trade History</a></li>
-      <li><a onclick="window.location.href='f&Q.html'">❓ F&Q</a></li>
-      <li class="active"><a onclick="window.location.href='support.html'">📞 Support</a></li>
+      <li class="active"><a href="faq.html">❓ FAQ</a></li>
+      <li><a href="support.html">📞 Support</a></li>
       <li><a href="#" onclick="logout()">🚪 Logout</a></li>
     </ul>
   </aside>
 
-  <!-- Main Content -->
+  <!-- Main -->
   <div class="main">
 
     <!-- Topbar -->
     <header class="topbar">
       <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-      <h1>Support</h1>
+      <h1>Frequently Asked Questions</h1>
     </header>
 
-    <!-- Page Content -->
+    <!-- Content -->
     <div class="content">
-      <button class="refresh-btn" onclick="loadTickets()">🔄 Refresh</button>
 
-      <!-- Shimmer Loader -->
-      <div id="shimmer-container">
-        <div class="shimmer"></div>
-        <div class="shimmer"></div>
-        <div class="shimmer"></div>
-        <div class="shimmer"></div>
+      <div class="faq-header">
+        <h2>How Can We Help You?</h2>
+        <p>Find answers to common questions below.</p>
       </div>
 
-      <!-- Tickets List -->
-      <div id="tickets" style="display:none;"></div>
+      <div class="faq-container">
 
-      <!-- Empty State -->
-      <div class="empty-state" id="empty-state">
-        <h3>No Active Tickets</h3>
-        <p>You haven't raised any support tickets yet.</p>
+        <div class="faq-item">
+          <button class="faq-question">
+            How do I create an account?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Sign up using your mobile number and verify it with the OTP.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            How can I reset my password?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Click on "Forgot Password" on the login page and follow the instructions.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            How do I place a trade?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Navigate to the Home page, select an active trade, and confirm your order.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            How can I contact support?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Visit the Support page and create a support ticket.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            How long does verification take?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            Account verification usually takes between 24–48 hours.
+          </div>
+        </div>
+
       </div>
+
+      <!-- Contact Support -->
+      <div class="contact-card">
+        <h3>Still Need Help?</h3>
+        <p>Our support team is ready to assist you.</p>
+        <button onclick="window.location.href='support.html'">
+          Contact Support
+        </button>
+      </div>
+
     </div>
   </div>
 </div>
 
-<!-- Floating Action Button -->
-<button class="fab" onclick="createTicket()">＋</button>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import {
-  getAuth
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-// 🔹 Firebase Configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
-  authDomain: "kalash2-2bf90.firebaseapp.com",
-  projectId: "kalash2-2bf90",
-  storageBucket: "kalash2-2bf90.firebasestorage.app",
-  messagingSenderId: "462798382911",
-  appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
-};
-
-// 🔹 Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-// 🔹 Toggle Sidebar
-window.toggleSidebar = function () {
+<script>
+// Toggle Sidebar
+function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("active");
-};
+}
 
-// 🔹 Logout Function
-window.logout = function () {
+// Logout
+function logout() {
   localStorage.clear();
   window.location.href = "login.html";
-};
+}
 
-// 🔹 Open Bottom Sheet
-window.createTicket = function () {
-  document.getElementById("ticketModal").style.display = "flex";
-};
-
-// 🔹 Close Bottom Sheet
-window.closeTicketModal = function () {
-  document.getElementById("ticketModal").style.display = "none";
-};
-
-window.loadTickets = async function () {
-  const shimmer = document.getElementById("shimmer-container");
-  const ticketsDiv = document.getElementById("tickets");
-  const emptyState = document.getElementById("empty-state");
-
-  // Show loading shimmer
-  shimmer.style.display = "block";
-  ticketsDiv.style.display = "none";
-  emptyState.style.display = "none";
-
-  try {
-    // Import Firestore functions dynamically
-    const {
-      collection,
-      getDocs,
-      query,
-      orderBy
-    } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
-
-    // Fetch tickets ordered by latest time
-    const q = query(
-      collection(db, "tickets"),
-      orderBy("create_time", "desc")
-    );
-
-    const querySnapshot = await getDocs(q);
-
-    // Hide shimmer
-    shimmer.style.display = "none";
-    ticketsDiv.innerHTML = "";
-
-    if (querySnapshot.empty) {
-      emptyState.style.display = "block";
-      return;
-    }
-
-    ticketsDiv.style.display = "block";
-
-    querySnapshot.forEach((doc) => {
-      const ticket = doc.data();
-
-      // Format Date
-      let formattedDate = "N/A";
-      if (ticket.create_time && ticket.create_time.seconds) {
-        const date = new Date(ticket.create_time.seconds * 1000);
-        formattedDate = date.toLocaleDateString("en-IN", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
-      }
-
-      // Status Badge Styling
-      let statusClass = "status-pending";
-      let statusText = "Pending";
-
-      if (ticket.status) {
-        const status = ticket.status.toLowerCase();
-        if (status === "resolved") {
-          statusClass = "status-resolved";
-          statusText = "Resolved";
-        } else if (status === "rejected") {
-          statusClass = "status-rejected";
-          statusText = "Rejected";
-        }
-      }
-
-      // Create Ticket Card
-      const card = `
-        <div class="ticket-card">
-          
-          <div class="ticket-header">
-            <span class="pin-badge">PIN: ${ticket.pin || "N/A"}</span>
-            <span class="ticket-date">${formattedDate}</span>
-          </div>
-
-          <div class="ticket-row">
-            <span class="ticket-category">
-              Category: ${ticket.category || "N/A"}
-            </span>
-            <span class="status-badge ${statusClass}">
-              ${statusText}
-            </span>
-          </div>
-
-          <div class="ticket-problem">
-            ${ticket.problem || "No description provided."}
-          </div>
-
-        </div>
-      `;
-
-      ticketsDiv.innerHTML += card;
-    });
-
-  } catch (error) {
-    console.error("Error loading tickets:", error);
-    shimmer.style.display = "none";
-    emptyState.style.display = "block";
-    emptyState.innerHTML = `
-      <h3>Error Loading Tickets</h3>
-      <p>${error.message}</p>
-    `;
-  }
-};
-
-// 🔹 Submit Ticket to Firebase
-window.submitTicket = async function () {
-  const category = document.getElementById("category").value.trim();
-  const problem = document.getElementById("problem").value.trim();
-
-  if (!category || !problem) {
-    alert("Please fill all fields.");
-    return;
-  }
-
-  try {
-    const user = auth.currentUser;
-
-    const ticketMap = {
-      category: category,
-      problem: problem,
-      create_time: serverTimestamp(),
-      pin: Math.floor(100000 + Math.random() * 900000),
-      status: "pending",
-      number: user?.phoneNumber || localStorage.getItem("number") || "unknown"
-    };
-
-    // 🔹 Save to Firestore
-    await addDoc(collection(db, "tickets"), ticketMap);
-
-    // 🔹 Save locally for quick UI display
-    let tickets = JSON.parse(localStorage.getItem("supportTickets")) || [];
-    tickets.push({
-      category: category,
-      problem: problem,
-      status: "pending",
-      pin: ticketMap.pin
-    });
-    localStorage.setItem("supportTickets", JSON.stringify(tickets));
-
-    alert("We will solve your problem or contact you shortly.");
-
-    // Reset Form
-    document.getElementById("category").value = "";
-    document.getElementById("problem").value = "";
-
-    closeTicketModal();
-    loadTickets();
-
-  } catch (error) {
-    console.error("Firestore Error:", error);
-    alert("Error: " + error.message);
-  }
-};
-
-// 🔹 Load tickets on page load
-window.onload = () => {
-  loadTickets();
-};
+// FAQ Accordion
+document.querySelectorAll(".faq-question").forEach(button => {
+  button.addEventListener("click", () => {
+    const item = button.parentElement;
+    item.classList.toggle("active");
+  });
+});
 </script>
 
-<!-- Create Ticket Bottom Sheet -->
-<div id="ticketModal" class="modal-overlay">
-  <div class="modal-sheet">
-
-    <!-- Close Icon -->
-    <div class="modal-header">
-      <span class="close-btn" onclick="closeTicketModal()">✕</span>
-    </div>
-
-    <!-- Title -->
-    <h2>Create Support Ticket</h2>
-    <p class="subtitle">Select a category and describe your issue</p>
-
-    <!-- Category Dropdown -->
-    <label class="label">Category</label>
-    <select id="category" class="input">
-      <option value="">Select Category</option>
-      <option value="Payment">Payment</option>
-      <option value="Trade">Trade</option>
-      <option value="Account Verification">Account Verification</option>
-      <option value="Other">Other</option>
-    </select>
-
-    <!-- Problem Details -->
-    <label class="label">Problem Details</label>
-    <textarea id="problem" class="input" rows="4"
-      placeholder="Describe your issue..."></textarea>
-
-    <!-- Create Ticket Button -->
-    <button class="submit-btn" onclick="submitTicket()">
-      Create Ticket
-    </button>
-  </div>
-</div>
-
-  
 </body>
 </html>
