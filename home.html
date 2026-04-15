@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,146 +11,74 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* ================================
-   GLOBAL STYLES
-================================ */
-* {
+/* ================= GLOBAL STYLES ================ */
+* { 
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", "Poppins", sans-serif;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
 }
 
 body {
-  background: #f4f6f8;
-  overflow-x: hidden;
   display: flex;
-  color: #111827;
+  background: #f6f7fb;
 }
 
-/* ================================
-   SIDEBAR (UNIFIED DESIGN)
-================================ */
+/* ================= SIDEBAR ================= */
 .sidebar {
-  width: 250px;
+  width: 260px;
   height: 100vh;
-  background: linear-gradient(180deg, #0f172a, #020617);
-  color: #ffffff;
+  background: linear-gradient(180deg, #111827, #1f2937);
+  color: #fff;
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 2000;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
-  overflow-y: auto;
-  padding-top: 20px;
+  padding: 20px;
+  transition: 0.3s;
+  z-index: 2000; /* Sidebar sabse upar rahega */
 }
 
-/* Scrollbar */
-.sidebar::-webkit-scrollbar {
-  width: 6px;
-}
-.sidebar::-webkit-scrollbar-thumb {
-  background: #22c55e;
-  border-radius: 10px;
-}
-.sidebar::-webkit-scrollbar-track {
-  background: #020617;
-}
-
-/* Sidebar Title */
 .sidebar h2 {
   text-align: center;
-  font-size: 24px;
-  font-weight: 700;
-  color: #22c55e;
   margin-bottom: 20px;
-  letter-spacing: 1px;
 }
 
-/* Sidebar Menu */
 .sidebar ul {
   list-style: none;
-  padding: 10px;
 }
 
 .sidebar ul li {
-  padding: 12px 16px;
-  margin-bottom: 6px;
+  padding: 14px;
+  margin: 6px 0;
   border-radius: 10px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #cbd5e1;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: 0.3s;
 }
 
-/* Hover Effect */
-.sidebar ul li:hover {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+.sidebar ul li:hover,
+.sidebar ul li.active {
+  background: rgba(255, 255, 255, 0.15);
   transform: translateX(5px);
 }
 
-/* Active Menu */
-.sidebar ul li.active {
-  background: linear-gradient(90deg, #22c55e, #16a34a);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
-}
-
-/* Active Indicator */
-.sidebar ul li.active::before {
-  content: "";
-  position: absolute;
-  left: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5px;
-  height: 60%;
-  background: #22c55e;
-  border-radius: 10px;
-}
-
-/* Logout Styling */
-.sidebar ul li:last-child {
-  color: #f87171;
-}
-
-.sidebar ul li:last-child:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-}
-
-/* ================================
-   MAIN CONTENT
-================================ */
+/* ================= MAIN ================= */
 .main {
-  margin-left: 250px;
+  margin-left: 260px;
   width: 100%;
-  transition: margin-left 0.3s ease;
+  transition: 0.3s;
 }
 
-/* ================================
-   NAVBAR
-================================ */
+/* ================= NAVBAR ================= */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background: #ffffff;
+  background: #fff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
-  z-index: 1000;
-}
-
-.menu-btn {
-  font-size: 22px;
-  cursor: pointer;
+  z-index: 1000; /* Sidebar se neeche */
 }
 
 .left {
@@ -158,21 +87,24 @@ body {
   gap: 10px;
 }
 
+.menu-btn {
+  font-size: 22px;
+  cursor: pointer;
+}
+
 .right {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-/* ================================
-   ICONS
-================================ */
+/* ================= ICONS ================= */
 .icon {
   position: relative;
   width: 40px;
   height: 40px;
-  background: #f3f4f6;
   border-radius: 50%;
+  background: #f3f4f6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -183,6 +115,7 @@ body {
 .icon img {
   width: 20px;
   height: 20px;
+  pointer-events: none;
 }
 
 .icon:hover {
@@ -191,13 +124,37 @@ body {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* Notification Badge */
+.icon:active {
+  transform: scale(0.92);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Ripple Effect */
+.icon::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: 0.3s;
+}
+
+.icon:active::after {
+  opacity: 1;
+  transform: scale(1.2);
+  transition: 0s;
+}
+
+/* ================= BADGE ================= */
 .badge {
   position: absolute;
   top: -5px;
   right: -5px;
   background: #22c55e;
-  color: #ffffff;
+  color: #fff;
   width: 18px;
   height: 18px;
   font-size: 10px;
@@ -207,9 +164,7 @@ body {
   justify-content: center;
 }
 
-/* ================================
-   LIVE SWITCH
-================================ */
+/* ================= SWITCH ================= */
 .switch {
   position: relative;
   width: 50px;
@@ -222,11 +177,10 @@ body {
 
 .slider {
   position: absolute;
-  width: 100%;
-  height: 100%;
   background: #ccc;
   border-radius: 20px;
-  transition: 0.3s;
+  width: 100%;
+  height: 100%;
 }
 
 .slider::before {
@@ -234,7 +188,7 @@ body {
   position: absolute;
   width: 18px;
   height: 18px;
-  background: #ffffff;
+  background: white;
   border-radius: 50%;
   top: 3px;
   left: 3px;
@@ -249,23 +203,21 @@ input:checked + .slider::before {
   transform: translateX(26px);
 }
 
-/* ================================
-   CONTENT AREA
-================================ */
+/* ================= CONTENT ================= */
 .content {
   padding: 20px;
 }
 
 .page {
   display: none;
-  animation: fadeIn 0.3s ease;
+  animation: fade 0.3s ease;
 }
 
 .page.active {
   display: block;
 }
 
-@keyframes fadeIn {
+@keyframes fade {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -276,13 +228,668 @@ input:checked + .slider::before {
   }
 }
 
-/* ================================
-   TRADE CARDS
-================================ */
+/* ================= OFFLINE MODAL ================= */
+#offlineModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease;
+}
+
+.modal-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.4);
+}
+
+.modal-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.modal-content p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+#cancelBtn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#cancelBtn:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+}
+
+#sureBtn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
+  transition: all 0.3s ease;
+}
+
+#sureBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.45);
+}
+
+#sureBtn:active {
+  transform: scale(0.96);
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .sidebar {
+    left: -260px;
+  }
+
+  .sidebar.open {
+    left: 0;
+    z-index: 2000;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 22px;
+  }
+
+  .modal-content h3 {
+    font-size: 20px;
+  }
+
+  .modal-content p {
+    font-size: 13px;
+  }
+}
+/* ================= WHATSAPP MODAL UI ================= */
+#waModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.wa-modal-content {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease;
+}
+
+/* Icon */
+.wa-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(37, 211, 102, 0.4);
+}
+
+.wa-modal-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.wa-modal-content p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 18px;
+}
+
+/* Input */
+#waCodeInput {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 4px;
+  outline: none;
+  transition: 0.3s;
+}
+
+#waCodeInput:focus {
+  border-color: #25D366;
+  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
+}
+
+/* Buttons */
+.wa-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.wa-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+/* Close Button */
+.wa-btn-close {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.wa-btn-close:hover {
+  background: #e5e7eb;
+}
+
+/* Verify Button */
+.wa-btn-verify {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(37, 211, 102, 0.35);
+}
+
+.wa-btn-verify:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 211, 102, 0.45);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ================= TRADE ID MODAL UI ================= */
+#tradeIdModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.trade-modal-content {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease;
+}
+
+.trade-modal-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.trade-modal-message {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.trade-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Read Button */
+.trade-btn-read {
+  background: transparent;
+  border: none;
+  color: #2563eb;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+}
+
+.trade-btn-read:hover {
+  text-decoration: underline;
+}
+
+/* Get Trade ID Button */
+.trade-btn-get {
+  background: transparent;
+  border: 2px solid #2563eb;
+  color: #2563eb;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.trade-btn-get:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* ================= BLOCK MODAL (MODERN UI) ================= */
+.block-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.block-modal {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.4s ease;
+}
+
+/* Icon */
+.block-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.4);
+}
+
+/* Title */
+.block-modal h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+/* Message */
+.block-modal p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Button */
+.block-btn {
+  padding: 11px 26px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
+  transition: all 0.3s ease;
+}
+
+.block-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.45);
+}
+
+.block-btn:active {
+  transform: scale(0.96);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Overlay Background */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(5px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 15px;
+}
+
+/* Modal Box */
+.modal-container {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease-in-out;
+  text-align: center;
+}
+
+/* Title */
+.modal-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+/* Divider */
+.modal-divider {
+  width: 45px;
+  height: 4px;
+  background: #4CAF50;
+  margin: 0 auto 15px;
+  border-radius: 5px;
+}
+
+/* Content */
+.modal-content {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* Button */
+.modal-button {
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(135deg, #4CAF50, #2e7d32);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+
+.modal-button:hover {
+  background: linear-gradient(135deg, #43a047, #1b5e20);
+  transform: translateY(-2px);
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+/* Overlay Background */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(5px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 15px;
+  overflow-y: auto; /* Enables scrolling on small screens */
+}
+
+/* Modal Box */
+.modal-container {
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh; /* Prevents overflow */
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease-in-out;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollable Content */
+.modal-content {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+  text-align: left;
+  overflow-y: auto;
+  max-height: 50vh;
+  padding-right: 5px;
+}
+
+/* Sticky Button */
+.modal-button {
+  width: 100%;
+  min-height: 50px;
+  background: linear-gradient(135deg, #4CAF50, #2e7d32);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  position: sticky;
+  bottom: 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .modal-container {
+    max-height: 95vh;
+    padding: 18px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-content {
+    font-size: 14px;
+    max-height: 55vh;
+  }
+
+  .modal-button {
+    height: 48px;
+    font-size: 15px;
+  }
+}
+/* Shimmer Effect */
+.shimmer {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Trade Cards */
 .trades-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 15px;
+}
+
+.trade-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.trade-card:hover {
+  transform: translateY(-5px);
+}
+
+.trade-card h3 {
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.trade-card p {
+  font-size: 14px;
+  color: #4b5563;
 }
 
 .trade-card-modern {
@@ -299,15 +906,19 @@ input:checked + .slider::before {
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
 }
 
+/* Rows */
 .trade-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 6px;
   font-size: 14px;
 }
 
+/* Text Styles */
 .trade-name {
   font-weight: 600;
+  color: #111827;
 }
 
 .trade-active-zone {
@@ -323,22 +934,31 @@ input:checked + .slider::before {
   color: #16a34a;
 }
 
+.trade-qty {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Divider */
 .trade-divider {
   height: 1px;
   background: #e5e7eb;
   margin: 10px 0;
 }
 
+/* Footer */
 .trade-footer {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
+  color: #6b7280;
   background: #f9fafb;
   padding: 6px 8px;
   border-radius: 6px;
-  color: #6b7280;
 }
 
+/* Disclaimer */
 .trade-disclaimer {
   margin-top: 10px;
   padding: 8px;
@@ -349,86 +969,7 @@ input:checked + .slider::before {
   border-radius: 8px;
 }
 
-/* ================================
-   SHIMMER LOADER
-================================ */
-.shimmer {
-  width: 100%;
-  padding: 15px;
-  border-radius: 10px;
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* ================================
-   MODALS
-================================ */
-.modal-overlay,
-.trade-dialog-overlay,
-.block-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(6px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.modal-container,
-.trade-dialog,
-.block-modal,
-.wa-modal-content {
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 18px;
-  width: 90%;
-  max-width: 360px;
-  text-align: center;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
-  animation: slideUp 0.4s ease;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(40px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* ================================
-   RESPONSIVE DESIGN
-================================ */
-@media (max-width: 768px) {
-  .sidebar {
-    left: -250px;
-  }
-
-  .sidebar.open {
-    left: 0;
-  }
-
-  .main {
-    margin-left: 0;
-  }
-}
-
+/* Responsive */
 @media (max-width: 480px) {
   .trade-row {
     font-size: 13px;
@@ -439,6 +980,58 @@ input:checked + .slider::before {
     gap: 3px;
     align-items: flex-start;
   }
+}
+
+.trade-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.trade-dialog {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.trade-dialog h3 {
+  margin-bottom: 20px;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.dialog-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#acceptBtn {
+  background: #28a745;
+  color: white;
+}
+
+#rejectBtn {
+  background: #dc3545;
+  color: white;
 }
 </style>
 </head>
@@ -522,7 +1115,7 @@ input:checked + .slider::before {
 </div>
 
 <!-- Trading Info Modal -->
-<div id="tradingInfoModal" class="modal-overlay" style="display:noe;">
+<div id="tradingInfoModal" class="modal-overlay">
   <div class="modal-container">
     
     <!-- Title -->
