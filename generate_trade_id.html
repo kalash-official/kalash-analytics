@@ -274,36 +274,104 @@ body {
   </div>
 </div>
 
-<script>
-// Toggle Sidebar
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("active");
-}
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Logout Function
-function logout() {
-  localStorage.clear();
-  window.location.href = "login.html";
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
+  authDomain: "kalash2-2bf90.firebaseapp.com",
+  projectId: "kalash2-2bf90"
+};
 
-// Option Selection
-const options = document.querySelectorAll(".quiz-option");
-options.forEach(option => {
-  option.addEventListener("click", () => {
-    options.forEach(opt => opt.classList.remove("selected"));
-    option.classList.add("selected");
-  });
-});
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// Submit Answer
-function submitAnswer() {
-  const selected = document.querySelector(".quiz-option.selected");
-  if (!selected) {
-    alert("Please select an option!");
-  } else {
-    alert("You selected: " + selected.innerText);
+const container = document.getElementById("quiz-container");
+let questions = [];
+let answers = {};
+
+// Load Questions
+async function loadQuestions() {
+  container.innerHTML = "<p>Loading questions...</p>";
+
+  const querySnapshot = await getDocs(collection(db, "faq"));
+  container.innerHTML = "";
+
+  if (querySnapshot.empty) {
+    container.innerHTML = "<p>No questions found.</p>";
+    return;
   }
+
+  let index = 1;
+
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    questions.push(data);
+
+    const card = document.createElement("div");
+    card.className = "quiz-card";
+
+    card.innerHTML = `
+      <div class="quiz-question">
+        ${index}. ${data.que}
+      </div>
+      ${["A","B","C","D"].map(opt => `
+        <div class="quiz-option" 
+             onclick="selectOption(this, '${index}', '${opt}')"
+             data-question="${index}" 
+             data-option="${opt}">
+          <strong>${opt}.</strong> ${data[opt]}
+        </div>
+      `).join("")}
+    `;
+
+    container.appendChild(card);
+    index++;
+  });
 }
+
+window.selectOption = function(element, qIndex, option) {
+  document.querySelectorAll(
+    `.quiz-option[data-question='${qIndex}']`
+  ).forEach(opt => opt.classList.remove("selected"));
+
+  element.classList.add("selected");
+  answers[qIndex] = option;
+};
+
+window.submitQuiz = function() {
+  let score = 0;
+
+  questions.forEach((q, i) => {
+    const correct = q.correct_opt;
+    const selected = answers[i + 1];
+
+    document.querySelectorAll(
+      `.quiz-option[data-question='${i + 1}']`
+    ).forEach(opt => {
+      if (opt.dataset.option === correct) {
+        opt.classList.add("correct");
+      } else if (opt.dataset.option === selected) {
+        opt.classList.add("wrong");
+      }
+    });
+
+    if (selected === correct) score++;
+  });
+
+  alert(`Your Score: ${score} / ${questions.length}`);
+};
+
+window.toggleSidebar = function() {
+  document.getElementById("sidebar").classList.toggle("active");
+};
+
+loadQuestions();
 </script>
 
 </body>
