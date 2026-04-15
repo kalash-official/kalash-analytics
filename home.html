@@ -60,6 +60,133 @@ body {
   background: rgba(255, 255, 255, 0.15);
   transform: translateX(5px);
 }
+✨ Replace It With This Enhanced Sidebar CSS
+/* ================= MODERN SIDEBAR (ENHANCED) ================= */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: linear-gradient(180deg, #0f172a, #020617);
+  color: #ffffff;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px 15px;
+  transition: all 0.3s ease-in-out;
+  z-index: 2000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #22c55e #020617;
+}
+
+/* Custom Scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #020617;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 10px;
+}
+
+/* Sidebar Title */
+.sidebar h2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 25px;
+  color: #22c55e;
+}
+
+/* Sidebar Menu */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.sidebar ul li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 6px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #cbd5e1;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Hover Effect */
+.sidebar ul li:hover {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  transform: translateX(5px);
+}
+
+/* Active Menu */
+.sidebar ul li.active {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+/* Active Indicator */
+.sidebar ul li.active::before {
+  content: "";
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 60%;
+  background: #22c55e;
+  border-radius: 10px;
+}
+
+/* Logout Button */
+.sidebar ul li:last-child {
+  color: #f87171;
+}
+
+.sidebar ul li:last-child:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* Collapsed Sidebar (Optional) */
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar.collapsed h2 {
+  font-size: 18px;
+}
+
+.sidebar.collapsed ul li {
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* Responsive Sidebar */
+@media (max-width: 768px) {
+  .sidebar {
+    left: -260px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+}
 
 /* ================= MAIN ================= */
 .main {
