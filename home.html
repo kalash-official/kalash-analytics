@@ -1448,14 +1448,14 @@ async function checkAllConditionForLive(
   // 🔹 1. WhatsApp Verification Required
   if (wa_status === "false") {
     showWhatsAppDialog(sw, users_setting_did);
-    location.reload();
+    //location.reload();
     return;
   }
 
   // 🔹 2. Trade ID Missing
   else if (trade_id === "null" || trade_id === null || trade_id === "") {
     showTradeIdDialog(sw);
-    location.reload();
+   // location.reload();
      return;
   }
 
