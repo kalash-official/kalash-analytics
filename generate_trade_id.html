@@ -223,10 +223,6 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-// import {
-//    getAuth,
-//    onAuthStateChanged
-// } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* Firebase Configuration */
 const firebaseConfig = {
@@ -283,9 +279,9 @@ async function verifyTradeId(user) {
 
       // Check if trade_id exists and is not null or empty
       if (
-        userData.trade_id &&
-        userData.trade_id !== null &&
-        userData.trade_id !== "" &&
+        userData.trade_id ||
+        userData.trade_id !== null ||
+        userData.trade_id !== "" ||
         userData.trade_id !== "null"
       ) {
         // Redirect to Home Page
