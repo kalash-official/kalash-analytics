@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kalash</title>
-<!-- <link rel="stylesheet" href="css/home.css"> --> 
 <link rel="stylesheet" href="css/alert.css">
 <script src="js/alert.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1282,6 +1280,65 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// ================= LIVE USER TRACKING =================
+let liveUserRef = null;
+
+auth.onAuthStateChanged(async (user) => {
+  if (!user) return;
+
+  const phoneNumber = user.phoneNumber;
+  liveUserRef = db.collection("live_users").doc(phoneNumber);
+
+  // Mark user as ONLINE
+  await liveUserRef.set({
+    number: phoneNumber,
+    status: "online",
+    page: window.location.pathname.split("/").pop() || "home",
+    last_seen: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  console.log("User is online:", phoneNumber);
+
+  // Update last seen every 30 seconds
+  setInterval(() => {
+    liveUserRef.update({
+      status: "online",
+      last_seen: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }, 30000);
+});
+
+// Mark user OFFLINE when leaving the page
+window.addEventListener("beforeunload", () => {
+  if (liveUserRef) {
+    liveUserRef.update({
+      status: "offline",
+      last_seen: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+});
+
+// Detect internet disconnection
+window.addEventListener("offline", () => {
+  if (liveUserRef) {
+    liveUserRef.update({
+      status: "offline",
+      last_seen: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+});
+
+// Detect reconnection
+window.addEventListener("online", () => {
+  if (liveUserRef) {
+    liveUserRef.update({
+      status: "online",
+      last_seen: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+});
+
+  
 // 🔥 QUEUE BADGE LOGIC
 function loadQueueBadge() {
 
