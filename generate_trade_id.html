@@ -285,7 +285,8 @@ async function verifyTradeId(user) {
       if (
         userData.trade_id &&
         userData.trade_id !== null &&
-        userData.trade_id !== ""
+        userData.trade_id !== "" &&
+        userData.trade_id !== "null"
       ) {
         // Redirect to Home Page
         window.location.href = "home.html";
