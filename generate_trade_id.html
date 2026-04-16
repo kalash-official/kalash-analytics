@@ -296,6 +296,17 @@ async function verifyTradeId(user) {
   }
 }
 
+/* Reset Quiz Options */
+function resetQuiz() {
+  // Clear stored answers
+  answers = {};
+
+  // Remove all selection and result styles
+  document.querySelectorAll(".quiz-option").forEach(option => {
+    option.classList.remove("selected", "correct", "wrong");
+  });
+}
+
 /* Global Variables */
 const container = document.getElementById("quiz-container");
 let questions = [];
@@ -385,7 +396,14 @@ window.submitQuiz = function() {
     handleGenerateTradeId();
   } else {
     const inc_score = questions.length - score;
-    alert("You have selected ${inc_score} incorrect option. To generate a Trade ID, please select all the correct options.");
+    const optionText = inc_score === 1 ? "option" : "options";
+
+    alert(
+      `You have selected ${inc_score} incorrect ${optionText}. To generate a Trade ID, please select all the correct options.`
+    );
+
+    // Reset quiz after alert
+    resetQuiz();
   }
 };
 
