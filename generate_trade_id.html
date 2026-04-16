@@ -321,7 +321,7 @@ window.submitQuiz = function() {
     if (selected === correct) score++;
   });
 
-  if(score === ${questions.length}) {
+  if(${score} === ${questions.length}) {
     handleGenerateTradeId();
   } else {
     alert("Select all correct option to generate Trade ID")
