@@ -278,14 +278,8 @@ async function verifyTradeId(user) {
       const userData = userSnapshot.docs[0].data();
 
       // Check if trade_id exists and is not null or empty
-      if (
-        userData.trade_id ||
-        userData.trade_id !== null ||
-        userData.trade_id !== "" ||
-        userData.trade_id !== "null"
-      ) {
-        // Redirect to Home Page
-        window.location.href = "home.html";
+      if (userData.trade_id && userData.trade_id.trim() !== "") {
+          window.location.href = "home.html";
       }
     }
   } catch (error) {
