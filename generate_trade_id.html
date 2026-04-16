@@ -232,12 +232,15 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyAUTZtR_9sM-EXq-AChMtYNh-XBpHXFs3E",
   authDomain: "kalash2-2bf90.firebaseapp.com",
-  projectId: "kalash2-2bf90"
+  projectId: "kalash2-2bf90",
+  storageBucket: "kalash2-2bf90.firebasestorage.app",
+  messagingSenderId: "462798382911",
+  appId: "1:462798382911:web:0cb93d05089de80dd3d58a"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth();
+const auth = getAuth(app);
 
 const container = document.getElementById("quiz-container");
 let questions = [];
