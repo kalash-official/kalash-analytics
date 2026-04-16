@@ -216,8 +216,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
   getFirestore,
   collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  query,
+  where,
+  getDocs,
+  limit,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* Firebase Configuration */
 const firebaseConfig = {
@@ -228,6 +237,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth();
 
 const container = document.getElementById("quiz-container");
 let questions = [];
@@ -311,7 +321,12 @@ window.submitQuiz = function() {
     if (selected === correct) score++;
   });
 
-  alert(`Your Score: ${score} / ${questions.length}`);
+  if(score === ${questions.length}) {
+    handleGenerateTradeId();
+  } else {
+    alert("Select all correct option to generate Trade ID")
+  }
+  //alert(`Your Score: ${score} / ${questions.length}`);
 };
 
 /* Sidebar Toggle */
@@ -324,6 +339,71 @@ window.logout = function() {
   localStorage.clear();
   window.location.href = "login.html";
 };
+
+function generateCode() {
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const year = now.getFullYear();
+
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    const datePart = `${day}${month}${year}-${hours}${minutes}${seconds}`;
+    const randomPart = getAlphaNumeric(4);
+
+    return `${datePart}-${randomPart}`;
+}
+
+// Main function
+async function handleGenerateTradeId() {
+  try {
+    const uniqueTradeId = generateCode();
+    const currentUser = auth.currentUser; 
+
+    // Get current user's phone number
+    if (!currentUser) {
+      alert("User not authenticated");
+      return;
+    }
+
+    const phoneNumber = currentUser.phoneNumber;
+
+    // Find user by phone number
+    const userQuery = query(
+      collection(db, "users_setting"),
+      where("number", "==", phoneNumber),
+      limit(1)
+    );
+
+    const userSnapshot = await getDocs(userQuery);
+
+    if (userSnapshot.empty) {
+      alert("User record not found");
+      return;
+    }
+
+    // Update trade_id
+    const userDoc = userSnapshot.docs[0];
+    const userRef = doc(db, "users_setting", userDoc.id);
+
+    await updateDoc(userRef, {
+      trade_id: uniqueTradeId
+    });
+
+    // Success message
+    showCustomToast("Trade ID allotted", "info");
+
+    // Redirect to FAQ page
+    window.location.href = "faq.html";
+
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error: " + error.message);
+  }
+}
 
 /* Load Questions on Page Load */
 loadQuestions();
