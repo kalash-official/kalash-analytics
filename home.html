@@ -1158,6 +1158,31 @@ input:checked + .slider::before {
   background: #dc3545;
   color: white;
 }
+/* ================= TRADE HINT ================= */
+.trade-hint {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border-left: 4px solid #2563eb;
+  color: #1e3a8a;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin: 10px 0 20px;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+  line-height: 1.5;
+}
+
+.trade-hint::before {
+  content: "ℹ️ ";
+  margin-right: 4px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .trade-hint {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
 </style>
 </head>
 
@@ -1204,6 +1229,11 @@ input:checked + .slider::before {
   <div id="home" class="page active">
   <h2>Allotted Trades</h2>
 
+  <div class="trade-hint">
+  ℹ️ You will receive trade updates and alerts only when you are on the Home page.
+  Alerts will still be delivered if the Home page is open in the background.
+  </div>
+    
   <!-- Shimmer Loader -->
   <div id="shimmerLayout" class="shimmer">Loading trades...</div>
 
