@@ -220,9 +220,15 @@ import {
   getDocs,
   limit,
   doc,
-  updateDoc
+  updateDoc,
+  getAuth,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// import {
+//   getAuth,
+//   onAuthStateChanged
+// } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* Firebase Configuration */
 const firebaseConfig = {
@@ -238,6 +244,59 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+/* Check if Trade ID Already Exists */
+async function checkExistingTradeId() {
+  try {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      // Wait for authentication state
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          await verifyTradeId(user);
+        } else {
+          window.location.href = "login.html";
+        }
+      });
+    } else {
+      await verifyTradeId(currentUser);
+    }
+  } catch (error) {
+    console.error("Error checking trade ID:", error);
+  }
+}
+
+/* Verify Trade ID in Firestore */
+async function verifyTradeId(user) {
+  try {
+    const phoneNumber = user.phoneNumber;
+
+    const userQuery = query(
+      collection(db, "users_setting"),
+      where("number", "==", phoneNumber),
+      limit(1)
+    );
+
+    const userSnapshot = await getDocs(userQuery);
+
+    if (!userSnapshot.empty) {
+      const userData = userSnapshot.docs[0].data();
+
+      // Check if trade_id exists and is not null or empty
+      if (
+        userData.trade_id &&
+        userData.trade_id !== null &&
+        userData.trade_id !== ""
+      ) {
+        // Redirect to Home Page
+        window.location.href = "home.html";
+      }
+    }
+  } catch (error) {
+    console.error("Error verifying trade ID:", error);
+  }
+}
 
 /* Global Variables */
 const container = document.getElementById("quiz-container");
@@ -327,7 +386,8 @@ window.submitQuiz = function() {
   if (score === questions.length) {
     handleGenerateTradeId();
   } else {
-    alert("Select all correct option to generate Trade ID");
+    const inc_score = questions.length - score;
+    alert("You have selected ${inc_score} incorrect option. To generate a Trade ID, please select all the correct options.");
   }
 };
 
